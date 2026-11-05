@@ -14,7 +14,8 @@ assert.match(topbar, /class="user-avatar"[\s\S]*data-lucide="user-round"/);
 assert.match(topbar, /class="user-account-copy"[\s\S]*<strong id="currentUserDisplayName">正在加载<\/strong>[\s\S]*class="user-login-dot"[\s\S]*已登录/);
 assert.match(topbar, /<strong id="currentMenuUserDisplayName">正在加载<\/strong>[\s\S]*<span id="currentUserRoleDisplay">当前身份：正在加载<\/span>/);
 assert.match(topbar, /id="userAccountMenu"[^>]*role="menu"[^>]*hidden/);
-assert.doesNotMatch(topbar, /data-user-action="switch"|切换身份|体验其他岗位视角/);
+assert.match(topbar, /data-user-action="switch-account"[^>]*data-user-id="user-admin"[\s\S]*系统管理员/);
+assert.match(topbar, /data-user-action="switch-account"[^>]*data-user-id="user-current"[\s\S]*张调度/);
 assert.match(topbar, /role="menuitem"[^>]*data-user-action="logout"[\s\S]*退出登录/);
 assert.match(topbar, /id="userActionFeedback"[^>]*role="status"[^>]*aria-live="polite"[^>]*hidden/);
 assert.match(styles, /\.user-avatar\s*\{[\s\S]*border-radius:\s*50%/);
@@ -22,6 +23,7 @@ assert.match(styles, /\.user-login-dot\s*\{[\s\S]*background:\s*var\(--success\)
 assert.match(styles, /\.user-account-menu\s*\{[\s\S]*position:\s*absolute/);
 assert.match(script, /function setUserAccountMenu\(open\)[\s\S]*aria-expanded[\s\S]*userAccountMenu\.hidden = !open/);
 assert.match(script, /function renderCurrentUserIdentity\(\)[\s\S]*UserAccess\?\.currentUser[\s\S]*UserAccess\?\.currentRole[\s\S]*currentUserRoleDisplay[\s\S]*userAccountButton\?\.setAttribute\("aria-label"/);
+assert.match(script, /dataset\.userAction === "switch-account"[\s\S]*switchCurrentUser[\s\S]*user-access-changed/);
 assert.match(script, /user-access-changed[\s\S]*renderCurrentUserIdentity\(\)/);
 assert.doesNotMatch(script, /身份切换功能演示/);
 assert.match(script, /logout: "退出登录功能演示，当前登录状态未改变"/);

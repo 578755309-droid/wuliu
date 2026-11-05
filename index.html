@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="design-tokens.css" />
     <link rel="stylesheet" href="feedback-management.css" />
     <link rel="stylesheet" href="operations-analysis.css" />
+    <link rel="stylesheet" href="logistics-workspace.css?v=task-metric-layout" />
   </head>
   <body>
     <div class="app-shell">
@@ -21,10 +22,10 @@
         </div>
 
         <nav class="nav-menu">
-          <button class="nav-item nav-dashboard selected" data-page="vehicle-dashboard" type="button"><span class="nav-icon">▦</span>首页看板</button>
+          <button class="nav-item nav-dashboard selected" data-page="vehicle-dashboard" type="button"><span class="nav-icon"><i data-lucide="layout-dashboard" aria-hidden="true"></i></span>首页看板</button>
           <section class="nav-section active">
             <button class="nav-parent" type="button">
-              <span class="nav-icon">▣</span>
+              <span class="nav-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span>
               计划与派单
             </button>
             <button class="nav-child" data-page="waybill" type="button">计划与任务</button>
@@ -41,7 +42,7 @@
           </section>
           <section class="nav-section">
             <button class="nav-parent" type="button">
-              <span class="nav-icon">▤</span>
+              <span class="nav-icon"><i data-lucide="truck" aria-hidden="true"></i></span>
               车辆管理
             </button>
             <button class="nav-child nav-child-alert" data-page="vehicle-archives" id="vehicleArchiveNav" type="button" aria-describedby="vehicleInsuranceExpiredTooltip">
@@ -54,7 +55,7 @@
           </section>
           <section class="nav-section">
             <button class="nav-parent" type="button">
-              <span class="nav-icon">♙</span>
+              <span class="nav-icon"><i data-lucide="contact-round" aria-hidden="true"></i></span>
               司机管理
             </button>
             <button class="nav-child nav-child-alert" data-page="driver-archives" id="driverArchiveNav" type="button" aria-describedby="driverCredentialExpiredTooltip">
@@ -71,7 +72,7 @@
             <button class="nav-child" data-page="self-owned-vehicle-analysis" type="button">自营车辆分析表</button>
           </section>
           <section class="nav-section">
-            <button class="nav-parent" type="button"><span class="nav-icon">￥</span>结算中心</button>
+            <button class="nav-parent" type="button"><span class="nav-icon"><i data-lucide="wallet" aria-hidden="true"></i></span>结算中心</button>
             <button class="nav-child" data-page="settlement-management" type="button">结算管理</button>
             <button class="nav-child" data-page="finance-reports" type="button">运输管理台账</button>
             <button class="nav-child" data-page="settlement-receivable" type="button">应收账款管理</button>
@@ -83,7 +84,7 @@
             <button class="nav-child" data-page="settlement-energy" type="button">预充值管理</button>
           </section>
           <section class="nav-section">
-            <button class="nav-parent" type="button"><span class="nav-icon">⚙</span>系统配置</button>
+            <button class="nav-parent" type="button"><span class="nav-icon"><i data-lucide="settings" aria-hidden="true"></i></span>系统配置</button>
             <button class="nav-child" data-page="platform-config" type="button">平台配置</button>
             <button class="nav-child" data-page="transport-task-config" type="button">任务类型配置</button>
             <button class="nav-child" data-page="vehicle-maintenance-fees" type="button">车辆维护费用配置</button>
@@ -95,7 +96,7 @@
             <button class="nav-child" data-page="operation-logs" type="button">操作日志</button>
             <button class="nav-child" data-page="auto-dispatch-config" type="button">自动派单配置</button>
           </section>
-          <button class="nav-item" type="button"><span class="nav-icon">?</span>关于我们</button>
+          <button class="nav-item" type="button"><span class="nav-icon"><i data-lucide="circle-help" aria-hidden="true"></i></span>关于我们</button>
         </nav>
       </aside>
 
@@ -122,6 +123,14 @@
                   <strong id="currentMenuUserDisplayName">正在加载</strong>
                   <span id="currentUserRoleDisplay">当前身份：正在加载</span>
                 </div>
+                <button type="button" role="menuitemradio" data-user-action="switch-account" data-user-id="user-admin" aria-checked="false">
+                  <i data-lucide="shield-check" aria-hidden="true"></i>
+                  <span><strong>系统管理员</strong><small>全部功能和全部数据</small></span>
+                </button>
+                <button type="button" role="menuitemradio" data-user-action="switch-account" data-user-id="user-current" aria-checked="false">
+                  <i data-lucide="user-cog" aria-hidden="true"></i>
+                  <span><strong>张调度</strong><small>调度员权限视角</small></span>
+                </button>
                 <button class="danger" type="button" role="menuitem" data-user-action="logout">
                   <i data-lucide="log-out" aria-hidden="true"></i>
                   <span><strong>退出登录</strong><small>返回登录页面</small></span>
@@ -149,11 +158,12 @@
               </form>
             </section>
 
-            <section class="dashboard-panel amount-panel" aria-label="运输金额统计">
-              <header class="dashboard-panel-heading"><div><strong>运输金额</strong><span>按线路预估费用口径，不含税费调整</span></div><div class="amount-dimension" role="group" aria-label="金额分布维度"><button class="active" data-amount-dimension="customer" type="button">按客户</button><button data-amount-dimension="route" type="button">按线路</button></div></header>
-              <div class="amount-panel-content"><div class="amount-totals" id="dashboardAmountTotals"></div><div class="amount-distribution" id="dashboardAmountDistribution"></div></div>
-            </section>
-
+            <nav class="dashboard-shortcuts" aria-label="快捷入口">
+              <strong>快捷入口</strong>
+              <button type="button" data-dashboard-action="waybill"><i data-lucide="clipboard-list" aria-hidden="true"></i>计划与任务</button>
+              <button type="button" data-dashboard-action="dispatch-management"><i data-lucide="truck" aria-hidden="true"></i>任务派单</button>
+              <button type="button" data-dashboard-action="announcements"><i data-lucide="megaphone" aria-hidden="true"></i>公告管理</button>
+            </nav>
             <div class="dashboard-overview-grid">
               <section class="dashboard-panel capacity-overview-panel" aria-label="运力状态区">
                 <header class="dashboard-panel-heading"><div><strong>运力状态</strong><span>车辆与司机实时可用性</span></div><button class="panel-link" data-dashboard-action="vehicle-list" type="button">运力档案 <i data-lucide="chevron-right" class="dashboard-icon" aria-hidden="true"></i></button></header>
@@ -178,6 +188,15 @@
               </section>
             </div>
 
+            <section class="dashboard-panel amount-panel" aria-label="运输金额统计">
+              <header class="dashboard-panel-heading"><div><strong>运输金额</strong><span>按线路预估费用口径，不含税费调整</span></div><div class="amount-dimension" role="group" aria-label="金额分布维度"><button class="active" data-amount-dimension="customer" type="button">按客户</button><button data-amount-dimension="route" type="button">按线路</button></div></header>
+              <div class="amount-panel-content"><div class="amount-totals" id="dashboardAmountTotals"></div><div class="amount-distribution" id="dashboardAmountDistribution"></div></div>
+            </section>
+
+            <section class="dashboard-panel dashboard-trend-panel" aria-label="任务趋势">
+              <header class="dashboard-panel-heading"><div><strong>任务趋势</strong><span>按任务日期汇总 · 随顶部筛选更新</span></div></header>
+              <div id="dashboardTaskTrend"></div>
+            </section>
             <div class="dashboard-detail-grid">
               <section class="dashboard-panel capacity-task-panel" aria-label="实时运力任务">
                 <header class="dashboard-panel-heading"><div><strong>实时运力任务</strong><span>点击任务查看任务单与节点照片</span></div><div class="capacity-legend"><span class="near-dot"></span>快完成 <span class="exception-dot"></span>异常</div></header>
@@ -270,6 +289,13 @@
           </section>
 
           <section class="page-view" id="waybillPage">
+            <header class="plan-workspace-heading">
+              <span class="page-eyebrow">计划与派单</span>
+              <h2>计划与任务</h2>
+              <p>查看计划执行情况，筛选任务并跟进派单进度。</p>
+            </header>
+            <section class="plan-task-quick-stats" id="planTaskQuickStats" aria-label="计划任务快捷统计"></section>
+
             <form class="query-panel query-collapsed" id="queryForm">
               <div class="query-grid">
                 <label class="field">
@@ -306,14 +332,14 @@
 
               <div class="query-footer query-footer-end">
                 <div class="action-bar">
-                  <button class="btn quiet query-clear" type="button">清空</button>
+                  <button class="btn quiet query-clear" type="button"><i data-lucide="rotate-ccw" class="workspace-action-icon" aria-hidden="true"></i>清空</button>
                   <button class="btn quiet query-toggle" type="button" aria-expanded="false">展开</button>
-                  <button class="btn primary" type="submit">查询</button>
+                  <button class="btn primary" type="submit"><i data-lucide="search" class="workspace-action-icon" aria-hidden="true"></i>查询</button>
                   <span class="query-action-separator" aria-hidden="true"></span>
                   <button class="btn primary" type="button" id="planTaskTemplatesBtn"><i data-lucide="layout-template" class="dashboard-icon" aria-hidden="true"></i>计划任务模板</button>
-                  <button class="btn accent" type="button" id="addBtn">新建计划任务</button>
-                  <button class="btn primary" type="button" id="batchPlanTaskBtn">批量导入</button>
-                  <button class="btn primary ghost-trigger" type="button" id="moreBtn">更多功能</button>
+                  <button class="btn accent" type="button" id="addBtn"><i data-lucide="plus" class="workspace-action-icon" aria-hidden="true"></i>新建计划任务</button>
+                  <button class="btn primary" type="button" id="batchPlanTaskBtn"><i data-lucide="upload" class="workspace-action-icon" aria-hidden="true"></i>批量导入</button>
+                  <button class="btn primary ghost-trigger" type="button" id="moreBtn"><i data-lucide="ellipsis" class="workspace-action-icon" aria-hidden="true"></i>更多功能</button>
                   <div class="more-menu" id="moreMenu">
                     <button type="button">导出运单</button>
                     <button type="button">打印回单</button>
@@ -321,8 +347,6 @@
                 </div>
               </div>
             </form>
-
-            <section class="plan-task-quick-stats" id="planTaskQuickStats" aria-label="计划任务快捷统计"></section>
 
             <section class="table-card" aria-label="计划任务数据表格">
               <div class="table-summary">
@@ -2431,11 +2455,11 @@
     <script src="dispatch-operation-log.js"></script>
     <script src="plan-task-archive.js"></script>
     <script src="settlement-rules.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=task-metric-layout"></script>
     <script src="operations-analysis.js"></script>
     <script src="transport-task-config-ui.js"></script>
     <script src="settlement-management.js"></script>
-    <script src="dispatch-management.js"></script>
+    <script src="dispatch-management.js?v=stat-icons-2"></script>
     <script src="auto-dispatch.js"></script>
     <script src="customer.js"></script>
     <script src="admin-dialogs.js"></script>

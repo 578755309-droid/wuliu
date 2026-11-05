@@ -697,6 +697,12 @@ function dispatchJobLocations(dispatch) {
 
 function renderDispatchJobLocations(dispatch, className = "") {
   const locations = dispatchJobLocations(dispatch);
+  if (className !== "detail-job-locations") {
+    const arrow = '<svg class="driver-route-arrow" viewBox="0 0 32 12" aria-hidden="true"><path d="M2 6h7m14 0h7" stroke-dasharray="1 3"/><path d="M12 6h8m-3-3 3 3-3 3"/></svg>';
+    return `<section class="driver-route-stops" aria-label="作业地点">${locations.map(({ name, address }) =>
+      `<div class="driver-route-stop"><span>${h(name)}</span><strong>${h(address || "待补充")}</strong></div>`
+    ).join(arrow)}</section>`;
+  }
   return `<section class="driver-job-locations ${className}" aria-label="作业地点"><div class="driver-job-location-heading"><strong>作业地点</strong><span>${locations.length} 个地点</span></div>${locations.map((location, index) => `<div class="driver-job-location-row"><span><i>${h(String(index + 1).padStart(2, "0"))}</i>${h(location.name)}</span><strong>${h(location.address || "待补充")}</strong></div>`).join("")}</section>`;
 }
 
@@ -752,7 +758,7 @@ function getTaskProgress(dispatch) {
 function renderTaskNodeOverview(dispatch) {
   const progress = getTaskProgress(dispatch);
   const position = `${progress.completedCount}/${progress.nodes.length}`;
-  return `<section class="task-node-overview" aria-label="${h(`${progress.taskType}任务进度`)}"><div class="task-node-heading"><span>任务类型</span><strong>${h(progress.taskType)}</strong></div><div class="task-progress-meta"><span>当前节点 <b>${h(progress.currentNode)}</b></span><strong>${position}</strong></div><div class="task-progress-track" role="progressbar" aria-label="任务进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.progress}"><i style="width:${progress.progress}%"></i></div></section>`;
+  return `<section class="task-node-overview" aria-label="${h(`${progress.taskType}任务进度`)}"><div class="task-node-heading"><span>任务类型</span><strong>${h(progress.taskType)}</strong><b class="task-progress-count" aria-label="进度 ${h(position)}">${h(position)}</b></div><div class="task-progress-track" role="progressbar" aria-label="任务进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.progress}"><i style="width:${progress.progress}%"></i></div></section>`;
 }
 
 function taskNodeActionState(dispatch, index) {
@@ -987,8 +993,6 @@ function renderProgressPhotoRequirements(dispatch, node) {
     result.uploaded += Math.min(Number(requirement.quantity) || 0, uploadedPhotosForRequirement(dispatch, requirement).length);
     return result;
   }, { required: 0, uploaded: 0 });
-  document.querySelector("#photoRequirementsTitle").textContent = `${node} · ${progress.uploaded}/${progress.required} 张已上传`;
-  count.textContent = `${progress.uploaded}/${progress.required}`;
   section.dataset.finalNode = "true";
   hint.textContent = "完成当前节点前请补齐本节点的拍照要求。";
   list.innerHTML = requirements.map((requirement) => {
@@ -998,9 +1002,9 @@ function renderProgressPhotoRequirements(dispatch, node) {
     const remaining = Math.max(0, required - uploadedCount);
     const slots = Array.from({ length: remaining }, (_, index) => {
       const slotNumber = uploadedCount + index + 1;
-      return `<label class="photo-slot"><input data-photo-slot data-photo-requirement-id="${h(requirement.id)}" data-photo-requirement-name="${h(requirement.name)}" data-photo-requirement-description="${h(requirement.description || "")}" data-photo-slot-number="${slotNumber}" data-photo-label="${h(requirement.name)}" type="file" accept="image/*" capture="environment" /><span class="photo-slot-index">${String(slotNumber).padStart(2, "0")}</span><span class="photo-slot-copy"><strong>拍摄第 ${slotNumber} 张</strong><small>点击拍照或从相册选择</small></span><span class="photo-slot-state">待拍</span></label>`;
+      return `<label class="photo-slot photo-slot-upload"><input data-photo-slot data-photo-requirement-id="${h(requirement.id)}" data-photo-requirement-name="${h(requirement.name)}" data-photo-requirement-description="${h(requirement.description || "")}" data-photo-slot-number="${slotNumber}" data-photo-label="${h(requirement.name)}" type="file" accept="image/*" capture="environment" /><span class="photo-slot-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span><span class="photo-slot-upload-text">上传</span><span class="photo-slot-state" hidden>待拍</span><span class="photo-slot-copy" hidden><small></small></span></label>`;
     }).join("");
-    return `<section class="photo-requirement-group"><div class="photo-requirement-group-heading"><div><strong>${h(requirement.name)}</strong><p>${h(requirement.description || "")}</p></div><span>${uploadedCount}/${required} 张</span></div>${slots ? `<div class="photo-slot-list">${slots}</div>` : `<p class="photo-requirement-complete">该项照片已齐</p>`}</section>`;
+    return `<section class="photo-requirement-group"><div class="photo-requirement-group-heading"><div><strong>${h(requirement.name)}</strong><p>${h(requirement.description || "")}</p></div><span>${uploadedCount}/${required} 张</span></div>${slots ? `<div class="photo-slot-list photo-slot-grid">${slots}</div>` : `<p class="photo-requirement-complete">该项照片已齐</p>`}</section>`;
   }).join("");
 }
 
@@ -1021,11 +1025,11 @@ function updateProgressPhotoCount() {
   inputs.forEach((input) => {
     const slot = input.closest(".photo-slot");
     const state = slot.querySelector(".photo-slot-state");
-    const copy = slot.querySelector(".photo-slot-copy small");
+    const uploadText = slot.querySelector(".photo-slot-upload-text");
     const file = input.files?.[0];
     slot.classList.toggle("selected", Boolean(file));
-    state.textContent = file ? "已选择" : "待拍";
-    copy.textContent = file ? file.name : `第 ${input.dataset.photoSlotNumber} 张 · 点击拍照或从相册选择`;
+    if (state) state.textContent = file ? "已选择" : "待拍";
+    if (uploadText) uploadText.textContent = file ? (file.name.length > 10 ? "已选择" : file.name) : "上传";
   });
 }
 
@@ -1039,6 +1043,12 @@ function isTaskInProgress(dispatch) {
 
 function taskCard(dispatch) {
   const category = dispatchCategory(dispatch);
+  const eta = /^预计.+送达[。！!]?$/.test(dispatch.note?.trim() || "") ? dispatch.note.trim() : "";
+  const statusText = h(statusLabel(dispatch));
+  const typeText = h(dispatchTaskType(dispatch));
+  const consignee = h(dispatch.consignee || "-");
+  const arrivalTime = h(String(dispatch.arrivalTime || "-").replace("T", " ").slice(0, 16));
+  const dispatchTime = h(dispatch.dispatchTime || "-");
   return `
     <article class="task-card" data-dispatch-card="${h(dispatch.id)}">
       <div class="task-card-header">
@@ -1046,23 +1056,47 @@ function taskCard(dispatch) {
           <strong class="task-route-name">${h(dispatch.routeName)}</strong>
           <span class="task-number">运单号 ${h(dispatch.waybillNo)}</span>
         </div>
-        <span class="status-badge ${category}">${h(statusLabel(dispatch))}</span>
+        <div class="task-card-badges">
+          <span class="dual-badge dual-badge-${category}"><span>${statusText}</span><i aria-hidden="true"></i><span>${typeText}</span></span>
+        </div>
       </div>
-      <div class="dispatch-time"><span>派单时间</span><strong>${h(dispatch.dispatchTime || "-")}</strong></div>
+      ${renderTaskNodeOverviewV2(dispatch)}
       ${renderDispatchJobLocations(dispatch, "task-card-locations")}
-      <div class="task-meta">
-        <span class="meta-chip">车 ${h(dispatch.vehicleId || "待分配")}</span>
-        <span class="meta-chip">箱 ${h(dispatch.boxes)}</span>
+      <div class="task-meta task-equipment">
+        <span>车 ${h(dispatch.vehicleId || "待分配")}</span>
+        <span class="task-meta-divider" aria-hidden="true"></span>
+        <span>箱 ${h(dispatch.boxes)}</span>
       </div>
-      <div class="task-meta task-extra-meta"><span>收货人 ${h(dispatch.consignee || "-")}</span><span>到达时间 ${h(String(dispatch.arrivalTime || "-").replace("T", " ").slice(0, 16))}</span><span>到达地点 ${h(dispatch.arrivalLocation || "-")}</span><span>还箱地 ${h(dispatch.loadAddress || "-")}</span></div>
-      ${renderTaskNodeOverview(dispatch)}
-      ${dispatch.note ? `<p class="task-note">备注：${h(dispatch.note)}</p>` : ""}
+      <div class="task-card-info-grid">
+        <div class="info-cell"><span class="info-label">收货人</span><span class="info-value">${consignee}</span></div>
+        <div class="info-cell"><span class="info-label">到达时间</span><span class="info-value">${arrivalTime}</span></div>
+        <div class="info-cell"><span class="info-label">派单时间</span><span class="info-value">${dispatchTime}</span></div>
+      </div>
+      ${dispatch.note && !eta ? `<p class="task-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg><span>备注：${h(dispatch.note)}</span></p>` : ""}
+      ${eta ? `<p class="task-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>${h(eta)}</span></p>` : ""}
       <div class="task-card-actions">
         <button class="card-button" data-action="detail" data-id="${h(dispatch.id)}" type="button">查看详情</button>
         ${category === "pending" ? `<button class="card-button primary" data-action="accept" data-id="${h(dispatch.id)}" type="button">立即接单</button>` : ""}
         ${category === "active" ? `<button class="card-button soft" data-action="progress" data-id="${h(dispatch.id)}" type="button">更新进度</button>` : ""}
       </div>
     </article>`;
+}
+
+function renderTaskNodeOverviewV2(dispatch) {
+  const progress = getTaskProgress(dispatch);
+  const nodes = progress.nodes;
+  const currentIdx = progress.currentIndex;
+  const blocks = nodes.map((name, i) => {
+    let state;
+    if (i < currentIdx) state = "done";
+    else if (i === currentIdx) state = "current";
+    else state = "pending";
+    return `<i class="tp-block tp-block-${state}" data-idx="${i}" title="${h(name)}"></i>`;
+  }).join("");
+  return `<section class="task-progress-bar" aria-label="任务进度" aria-valuenow="${progress.progress}" aria-valuemin="0" aria-valuemax="100">
+    <div class="task-progress-bar-header"><span>任务进度</span><b>${progress.progress}%</b><em>${progress.completedCount}/${nodes.length}</em></div>
+    <div class="task-progress-blocks">${blocks}</div>
+  </section>`;
 }
 
 function emptyState(title, description) {
@@ -1088,19 +1122,49 @@ function renderTasks() {
 
 function orderCard(dispatch) {
   const category = dispatchCategory(dispatch);
-  const acceptAction = category === "pending"
-    ? `<button class="order-accept-action" data-action="accept" data-id="${h(dispatch.id)}" type="button">立即接单</button>`
-    : "";
-  const progressAction = category === "active"
-    ? `<button class="order-progress-action" data-action="progress" data-id="${h(dispatch.id)}" data-node="${h(nextNode(dispatch))}" type="button">提交 ${h(nextNode(dispatch))}</button>`
-    : "";
+  const eta = /^预计.+送达[。！!]?$/.test(dispatch.note?.trim() || "") ? dispatch.note.trim() : "";
+  const statusText = h(statusLabel(dispatch));
+  const typeText = h(dispatchTaskType(dispatch));
+  const consignee = h(dispatch.consignee || "-");
+  const arrivalTime = h(String(dispatch.arrivalTime || "-").replace("T", " ").slice(0, 16));
+  const dispatchTime = h(String(dispatch.dispatchTime || "-").replace("T", " ").slice(0, 16));
+  const actions = [];
+  actions.push(`<button class="card-button" data-action="detail" data-id="${h(dispatch.id)}" type="button">查看详情</button>`);
+  if (category === "pending") {
+    actions.push(`<button class="card-button primary" data-action="accept" data-id="${h(dispatch.id)}" type="button">立即接单</button>`);
+  }
+  if (category === "active") {
+    actions.push(`<button class="card-button soft" data-action="progress" data-id="${h(dispatch.id)}" type="button">更新进度</button>`);
+  }
+  actions.push(`<button class="card-button" data-action="contact" data-id="${h(dispatch.id)}" type="button">联系调度</button>`);
   return `
-    <article class="order-card" data-action="detail" data-id="${h(dispatch.id)}">
-      <div class="order-card-top"><strong>${h(dispatch.waybillNo)}</strong><span class="status-badge ${category}">${h(statusLabel(dispatch))}</span></div>
-      ${renderDispatchJobLocations(dispatch, "order-card-locations")}
-      <div class="order-info"><span>派单时间　<b>${h(String(dispatch.dispatchTime || "-").replace("T", " ").slice(0, 16))}</b></span><span>车辆　<b>${h(dispatch.vehicleId || "-")}</b></span><span>箱信息　<b>${h(dispatch.boxes)}</b></span><span>收货人　<b>${h(dispatch.consignee || "-")}</b></span><span>到达时间　<b>${h(String(dispatch.arrivalTime || "-").replace("T", " ").slice(0, 16))}</b></span><span>到达地点　<b>${h(dispatch.arrivalLocation || "-")}</b></span><span class="order-info-full">还箱地　<b>${h(dispatch.loadAddress || "-")}</b></span></div>
-      ${renderTaskNodeOverview(dispatch)}
-      <div class="order-card-actions"><button class="order-contact-action" data-action="contact" data-id="${h(dispatch.id)}" type="button">联系调度</button>${acceptAction}${progressAction}</div>
+    <article class="task-card" data-dispatch-card="${h(dispatch.id)}">
+      <div class="task-card-header">
+        <div class="task-title-group">
+          <strong class="task-route-name">${h(dispatch.waybillNo)}</strong>
+          <span class="task-number">运单号 ${h(dispatch.waybillNo)}</span>
+        </div>
+        <div class="task-card-badges">
+          <span class="dual-badge dual-badge-${category}"><span>${statusText}</span><i aria-hidden="true"></i><span>${typeText}</span></span>
+        </div>
+      </div>
+      ${renderTaskNodeOverviewV2(dispatch)}
+      ${renderDispatchJobLocations(dispatch, "task-card-locations")}
+      <div class="task-meta task-equipment">
+        <span>车 ${h(dispatch.vehicleId || "待分配")}</span>
+        <span class="task-meta-divider" aria-hidden="true"></span>
+        <span>箱 ${h(dispatch.boxes)}</span>
+      </div>
+      <div class="task-card-info-grid">
+        <div class="info-cell"><span class="info-label">收货人</span><span class="info-value">${consignee}</span></div>
+        <div class="info-cell"><span class="info-label">到达时间</span><span class="info-value">${arrivalTime}</span></div>
+        <div class="info-cell"><span class="info-label">派单时间</span><span class="info-value">${dispatchTime}</span></div>
+      </div>
+      ${dispatch.note && !eta ? `<p class="task-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg><span>备注：${h(dispatch.note)}</span></p>` : ""}
+      ${eta ? `<p class="task-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>${h(eta)}</span></p>` : ""}
+      <div class="task-card-actions">
+        ${actions.join("")}
+      </div>
     </article>`;
 }
 
@@ -1152,12 +1216,20 @@ function renderProfile() {
     ? `${vehicle.type || "车辆"} · ${vehicle.state || "状态待同步"}`
     : "暂无车辆信息";
   renderDriverMessages();
+  const iconSvg = (paths) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">${paths}</svg>`;
+  const icons = {
+    all: iconSvg('<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'),
+    pickup: iconSvg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>'),
+    transit: iconSvg('<path d="M3 12h4l3-9 4 18 3-9h4"/>'),
+    completed: iconSvg('<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>'),
+    cancelled: iconSvg('<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>')
+  };
   document.querySelector("#profileOrderStats").innerHTML = `
-    <button data-order-stage="all" type="button"><strong>${orders.length}</strong><span>全部运单</span></button>
-    <button data-order-stage="pickup" type="button"><strong>${pickup}</strong><span>待执行</span></button>
-    <button data-order-stage="transit" type="button"><strong>${transit}</strong><span>运输中</span></button>
-    <button data-order-stage="completed" type="button"><strong>${completed}</strong><span>已完成</span></button>
-    <button data-order-stage="cancelled" type="button"><strong>${cancelled}</strong><span>已取消</span></button>`;
+    <button data-order-stage="all" type="button"><i class="stat-icon">${icons.all}</i><strong>${orders.length}</strong><span>全部运单</span></button>
+    <button data-order-stage="pickup" type="button"><i class="stat-icon">${icons.pickup}</i><strong>${pickup}</strong><span>待执行</span></button>
+    <button data-order-stage="transit" type="button"><i class="stat-icon">${icons.transit}</i><strong>${transit}</strong><span>运输中</span></button>
+    <button data-order-stage="completed" type="button"><i class="stat-icon">${icons.completed}</i><strong>${completed}</strong><span>已完成</span></button>
+    <button data-order-stage="cancelled" type="button"><i class="stat-icon">${icons.cancelled}</i><strong>${cancelled}</strong><span>已取消</span></button>`;
 }
 
 function infoRows(rows) {
@@ -1382,11 +1454,11 @@ function renderDriverFeedback() {
   }
   elements.subpageContent.innerHTML = `<div class="feedback-mobile-page">${tabs}<form class="feedback-form-card" id="driverFeedbackForm">
     <div class="feedback-form-intro"><span><i data-lucide="message-square-plus"></i></span><div><strong>告诉我们遇到的问题</strong><small>身份与客户端信息会自动随反馈提交</small></div></div>
-    <label class="feedback-field"><span>问题类型</span><select name="categoryCode" required><option value="">请选择问题类型</option>${categories.map((item) => `<option value="${h(item.code)}">${h(item.label)}</option>`).join("")}</select></label>
-    <label class="feedback-field"><span>关联运单 <em>选填</em></span><select name="relatedId"><option value="">不关联运单</option>${relatedDispatches.map((item) => `<option value="${h(item.id)}" data-related-label="${h(`${item.waybillNo} · ${item.routeName}`)}">${h(item.waybillNo)} · ${h(item.routeName)}</option>`).join("")}</select></label>
-    <label class="feedback-field"><span>问题描述 <em data-feedback-count>0/1000</em></span><textarea name="description" rows="5" minlength="10" maxlength="1000" placeholder="请描述发生了什么、期望如何改进，至少填写 10 个字" required></textarea></label>
-    <label class="feedback-field"><span>图片或视频 <em>选填</em></span><label class="feedback-upload"><input name="attachments" type="file" accept="image/*,video/mp4,video/quicktime" multiple /><span class="feedback-upload-icon"><i data-lucide="image-plus"></i></span><span><strong>上传现场截图或视频</strong><small>最多 9 个附件，视频最多 2 个；图片≤10MB，视频≤100MB</small></span></label><small class="feedback-file-summary" data-feedback-files>尚未选择附件</small></label>
-    <label class="feedback-field"><span>联系电话</span><input name="contactPhone" inputmode="tel" maxlength="11" value="${h(driver.phone)}" required /></label>
+    <div class="mobile-field required"><span>问题类型</span><select name="categoryCode" required data-mobile-select-init="true" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;"><option value="">请选择问题类型</option>${categories.map((item) => `<option value="${h(item.code)}">${h(item.label)}</option>`).join("")}</select><div class="mobile-select-display" data-field-name="categoryCode" data-field-label="问题类型" onclick="openFieldSelect(this)" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:14px;color:#b5bac7;text-align:right;cursor:pointer;"><span class="select-display-text">请选择问题类型</span><svg viewBox="0 0 24 24" fill="none" stroke="%2397a1b3" stroke-width="2" width="16" height="16"><path d="M6 9l6 6 6-6"/></svg></div></div>
+    <div class="mobile-field"><span>关联运单</span><select name="relatedId" data-mobile-select-init="true" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;"><option value="">不关联运单</option>${relatedDispatches.map((item) => `<option value="${h(item.id)}" data-related-label="${h(`${item.waybillNo} · ${item.routeName}`)}">${h(item.waybillNo)} · ${h(item.routeName)}</option>`).join("")}</select><div class="mobile-select-display" data-field-name="relatedId" data-field-label="关联运单" onclick="openFieldSelect(this)" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:14px;color:#b5bac7;text-align:right;cursor:pointer;"><span class="select-display-text">不关联运单</span><svg viewBox="0 0 24 24" fill="none" stroke="%2397a1b3" stroke-width="2" width="16" height="16"><path d="M6 9l6 6 6-6"/></svg></div></div>
+    <div class="mobile-field" style="flex-direction:column;align-items:flex-start;gap:8px;"><span>问题描述 <em data-feedback-count style="font-size:12px;color:#989aab;font-weight:400;">0/1000</em></span><textarea name="description" rows="5" minlength="10" maxlength="1000" placeholder="请描述发生了什么、期望如何改进，至少填写 10 个字" required style="width:100%;min-height:100px;padding:12px;border:1px solid #e5e8ef;border-radius:8px;background:#fafbfc;font-size:14px;color:#30324d;text-align:left;resize:vertical;"></textarea></div>
+    <div class="mobile-field"><span>图片或视频</span><label class="feedback-upload" style="flex:1;"><input name="attachments" type="file" accept="image/*,video/mp4,video/quicktime" multiple style="display:none;" /><span class="feedback-upload-icon"><i data-lucide="image-plus"></i></span><span><strong>上传现场截图或视频</strong><small>最多 9 个附件，视频最多 2 个；图片≤10MB，视频≤100MB</small></span></label></div>
+    <div class="mobile-field required"><span>联系电话</span><input name="contactPhone" inputmode="tel" maxlength="11" value="${h(driver.phone)}" required placeholder="请输入联系电话" placeholder="请输入联系电话" style="flex:1;min-width:0;border:none;background:transparent;font-size:14px;color:#30324d;text-align:right;padding:0;outline:none;" /></div>
     <button class="feedback-submit-button" type="submit">提交意见反馈</button>
   </form></div>`;
 }
@@ -1652,11 +1724,11 @@ function renderDetail() {
   const taskProgress = getTaskProgress(dispatch);
   const taskPosition = `${taskProgress.completedCount}/${taskProgress.nodes.length}`;
   const timeline = [...(dispatch.timeline || [])].reverse().map((item) => `
-    <div class="timeline-row"><time>${h(item.time.split(" ")[1] || item.time)}<br>${h(item.time.split(" ")[0] || "")}</time><span class="timeline-axis"><i></i></span><div class="timeline-copy"><strong>${h(item.node)}</strong><p>${h(item.desc)}</p>${item.photos?.length || item.photoAttachments?.length ? `<div class="photo-tags">${renderTimelinePhotoTags(item)}</div>` : ""}</div></div>`).join("");
+    <div class="timeline-row"><div class="timeline-copy"><strong class="timeline-node">${h(item.node)}</strong><time class="timeline-time">${h(item.time.split(" ")[1] || item.time)} ${h(item.time.split(" ")[0] || "")}</time><p class="timeline-desc">${h(item.desc)}</p>${item.photos?.length || item.photoAttachments?.length ? `<div class="photo-tags">${renderTimelinePhotoTags(item)}</div>` : ""}</div></div>`).join("");
   elements.detailContent.innerHTML = `
     <section class="detail-status-card"><div class="detail-status-top"><span>${h(dispatch.waybillNo)}</span><strong>${h(statusLabel(dispatch))}</strong></div><h2>${h(statusDescription(dispatch))}</h2><p>派单时间 ${h(String(dispatch.dispatchTime || "-").replace("T", " ").slice(0, 16))}</p></section>
     <section class="detail-route-card"><div class="detail-route-title"><strong>${h(dispatch.routeName)}</strong><span>${h(dispatch.vehicleId || "待分配")}</span></div>${renderDispatchJobLocations(dispatch, "detail-job-locations")}<div class="address-action"><button data-detail-action="navigate" type="button">复制装卸地</button><a href="tel:4008006688">联系调度</a></div></section>
-    <section class="detail-card"><div class="detail-card-heading"><strong class="detail-card-title">任务进度</strong><span>${h(taskProgress.taskType)}</span></div><div class="detail-progress-meta"><span>当前节点 <strong>${h(taskProgress.currentNode)}</strong></span><b>${taskPosition}</b></div><div class="detail-progress-track" role="progressbar" aria-label="任务进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${taskProgress.progress}"><i style="width:${taskProgress.progress}%"></i></div></section>
+    <section class="detail-card"><div class="detail-card-heading"><strong class="detail-card-title">任务进度</strong><span class="dual-badge dual-badge-${category}"><span>${h(statusLabel(dispatch))}</span><i aria-hidden="true"></i><span>${h(taskProgress.taskType)}</span></span></div><div class="detail-progress-meta"><span>当前节点 <strong>${h(taskProgress.currentNode)}</strong></span><b>${taskPosition}</b></div>${renderTaskNodeOverviewV2(dispatch)}</section>
     <section class="detail-card"><strong class="detail-card-title">节点记录</strong><div class="timeline-list">${timeline || `<div class="empty-state"><p>暂无节点记录</p></div>`}</div></section>
     <section class="detail-card"><strong class="detail-card-title">运单信息</strong><div class="detail-grid"><div class="detail-field"><span>客户名称</span><strong>${h(meta.customer || "待补充")}</strong></div><div class="detail-field"><span>提单号</span><strong>${h(meta.billNo || "-")}</strong></div><div class="detail-field"><span>箱信息</span><strong>${h(dispatch.boxes)}</strong></div><div class="detail-field"><span>封号</span><strong>${h(meta.sealNo || "-")}</strong></div><div class="detail-field"><span>车辆</span><strong>${h(dispatch.vehicleId || "待分配")}</strong></div><div class="detail-field"><span>收货人</span><strong>${h(dispatch.consignee || "-")}</strong></div><div class="detail-field"><span>到达时间</span><strong>${h(String(dispatch.arrivalTime || "-").replace("T", " ").slice(0, 16))}</strong></div><div class="detail-field"><span>到达地点</span><strong>${h(dispatch.arrivalLocation || "-")}</strong></div><div class="detail-field full"><span>还箱地</span><strong>${h(dispatch.loadAddress || "-")}</strong></div><div class="detail-field full"><span>备注</span><strong>${h(dispatch.note || "无")}</strong></div>${dispatch.rejectionReason ? `<div class="detail-field full"><span>拒单原因</span><strong>${h(dispatch.rejectionReason)}</strong></div>` : ""}</div></section>
     `;
@@ -2534,3 +2606,158 @@ switchView("tasks");
 if (window.opener && !window.opener.closed) {
   window.opener.postMessage({ type: "dispatch-sync-request", expenses: state.expenses }, "*");
 }
+
+/* ===== 底部弹窗选择器组件 ===== */
+(function() {
+  // 创建弹窗 DOM
+  function createSelectSheet() {
+    if (document.getElementById('mobileSelectSheet')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'mobileSelectOverlay';
+    overlay.className = 'mobile-select-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:0;visibility:hidden;transition:opacity 0.3s;';
+    document.body.appendChild(overlay);
+
+    const sheet = document.createElement('div');
+    sheet.id = 'mobileSelectSheet';
+    sheet.className = 'mobile-select-sheet';
+    sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:9999;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:60vh;display:flex;flex-direction:column;overflow:hidden;';
+    sheet.innerHTML =
+      '<div class="mobile-select-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f1f5;">' +
+        '<strong id="mobileSelectTitle" style="font-size:16px;font-weight:600;color:#30324d;">请选择</strong>' +
+        '<button type="button" onclick="closeMobileSelect()" style="width:32px;height:32px;border:none;background:#f5f6fa;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<div id="mobileSelectOptions" class="mobile-select-options" style="flex:1;overflow-y:auto;padding:8px 0;-webkit-overflow-scrolling:touch;"></div>';
+    document.body.appendChild(sheet);
+
+    overlay.addEventListener('click', closeMobileSelect);
+  }
+
+  // 打开弹窗
+  window.openMobileSelect = function(options, title, currentValue, onSelect) {
+    createSelectSheet();
+    const overlay = document.getElementById('mobileSelectOverlay');
+    const sheet = document.getElementById('mobileSelectSheet');
+    const optionsEl = document.getElementById('mobileSelectOptions');
+    const titleEl = document.getElementById('mobileSelectTitle');
+
+    titleEl.textContent = title || '请选择';
+
+    optionsEl.innerHTML = options.map(function(opt) {
+      const val = (typeof opt === 'object' && opt !== null) ? opt[0] : opt;
+      const label = (typeof opt === 'object' && opt !== null) ? opt[1] : opt;
+      const isSelected = String(val) === String(currentValue);
+      const checkSvg = isSelected
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="#3a7afe" stroke-width="2.5" width="18" height="18"><path d="M20 6L9 17l-5-5"/></svg>'
+        : '';
+      return '<div class="mobile-select-option' + (isSelected ? ' selected' : '') + '"' +
+        ' data-value="' + String(val).replace(/"/g, '&quot;') + '"' +
+        ' style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;font-size:15px;color:' + (isSelected ? '#3a7afe' : '#30324d') + ';cursor:pointer;font-weight:' + (isSelected ? '600' : '400') + ';transition:background 0.2s;"' +
+        ' onclick="selectMobileOption(this)">' +
+        '<span>' + label + '</span>' + checkSvg +
+      '</div>';
+    }).join('');
+
+    window._mobileSelectCallback = onSelect;
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:1;visibility:visible;transition:opacity 0.3s;';
+    sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:9999;transform:translateY(0);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:60vh;display:flex;flex-direction:column;overflow:hidden;';
+  };
+
+  // 关闭弹窗
+  window.closeMobileSelect = function() {
+    const overlay = document.getElementById('mobileSelectOverlay');
+    const sheet = document.getElementById('mobileSelectSheet');
+    if (overlay) overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:0;visibility:hidden;transition:opacity 0.3s;';
+    if (sheet) sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:9999;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:60vh;display:flex;flex-direction:column;overflow:hidden;';
+    window._mobileSelectCallback = null;
+  };
+
+  // 选择选项
+  window.selectMobileOption = function(el) {
+    const value = el.dataset.value;
+    if (window._mobileSelectCallback) {
+      window._mobileSelectCallback(value);
+    }
+    closeMobileSelect();
+  };
+
+  // 初始化：把 select 转成自定义选择器
+  function initMobileSelects() {
+    document.querySelectorAll('.mobile-field select, select[data-mobile-select]').forEach(function(select) {
+      if (select.dataset.mobileSelectInit) return;
+      select.dataset.mobileSelectInit = 'true';
+
+      const field = select.closest('.mobile-field') || select.parentElement;
+      const labelEl = field ? field.querySelector('span') : null;
+      const label = labelEl ? labelEl.textContent : '请选择';
+      const display = document.createElement('div');
+      display.className = 'mobile-select-display';
+      display.style.cssText = 'flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:14px;color:#30324d;text-align:right;cursor:pointer;';
+
+      const updateDisplay = function() {
+        const selected = select.options[select.selectedIndex];
+        const text = selected && select.value ? selected.text : (selected && selected.value === '' ? selected.text : '请选择');
+        const isPlaceholder = !select.value;
+        display.innerHTML = '<span style="color:' + (isPlaceholder ? '#b5bac7' : '#30324d') + ';">' + text + '</span>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="#97a1b3" stroke-width="2" width="16" height="16"><path d="M6 9l6 6 6-6"/></svg>';
+      };
+      updateDisplay();
+
+      display.addEventListener('click', function() {
+        const options = Array.from(select.options).map(function(opt) { return [opt.value, opt.text]; });
+        openMobileSelect(options, label, select.value, function(val) {
+          select.value = val;
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+          updateDisplay();
+        });
+      });
+
+      select.parentElement.insertBefore(display, select);
+      select.style.cssText = 'position:absolute;opacity:0;pointer-events:none;width:0;height:0;';
+    });
+  }
+
+  // 页面加载后初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileSelects);
+  } else {
+    initMobileSelects();
+  }
+
+  // 监听动态内容
+  const selectObserver = new MutationObserver(function(mutations) {
+    let needInit = false;
+    mutations.forEach(function(m) {
+      m.addedNodes.forEach(function(node) {
+        if (node.nodeType === 1 && (node.tagName === 'SELECT' || (node.querySelector && node.querySelector('select')))) {
+          needInit = true;
+        }
+      });
+    });
+    if (needInit) initMobileSelects();
+  });
+  selectObserver.observe(document.body, { childList: true, subtree: true });
+})();
+
+/* ===== 打开字段选择器（供 fieldMarkup 生成的自定义选择器调用） ===== */
+window.openFieldSelect = function(displayEl) {
+  const fieldName = displayEl.dataset.fieldName;
+  const fieldLabel = displayEl.dataset.fieldLabel || '请选择';
+  const select = displayEl.parentElement.querySelector('select[name="' + fieldName + '"]');
+  if (!select) return;
+
+  const options = Array.from(select.options).map(function(opt) { return [opt.value, opt.text]; });
+  const currentValue = select.value;
+
+  window.openMobileSelect(options, fieldLabel, currentValue, function(val) {
+    select.value = val;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    // 更新显示
+    const selected = select.options[select.selectedIndex];
+    const textEl = displayEl.querySelector('.select-display-text');
+    if (textEl) textEl.textContent = selected ? selected.text : '请选择';
+    displayEl.style.color = val ? '#30324d' : '#b5bac7';
+  });
+};

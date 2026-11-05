@@ -123,6 +123,34 @@ test("demo startup switches the active account to the system administrator", () 
   assert.ok(JSON.parse(savedStorage.get(api.STORAGE_KEY)).users.find((user) => user.isCurrentUser && user.account === "admin"));
 });
 
+test("account switching persists between administrator and dispatcher", () => {
+  const switchStorage = new Map();
+  const storageApi = { getItem: (key) => switchStorage.get(key) || null, setItem: (key, value) => switchStorage.set(key, value) };
+  const initial = api.load(storageApi);
+  assert.equal(api.currentUser(initial).id, "user-admin");
+  const dispatcher = api.switchCurrentUser("user-current", storageApi);
+  assert.equal(dispatcher.user.name, "张调度");
+  assert.equal(api.currentRole(dispatcher.configuration).id, "role-dispatch");
+  assert.equal(api.currentUser(api.load(storageApi)).id, "user-current", "the selected demo account survives reload");
+  const administrator = api.switchCurrentUser("user-admin", storageApi);
+  assert.equal(api.currentRole(administrator.configuration).id, "role-admin");
+  assert.equal(api.currentUser(api.load(storageApi)).id, "user-admin");
+});
+
+test("system administrator always has every registered action and all data", () => {
+  const configuration = api.load();
+  configuration.users.forEach((user) => { user.isCurrentUser = user.id === "user-admin"; });
+  const adminRole = configuration.roles.find((role) => role.id === "role-admin");
+  adminRole.permissions.dashboard = { view: false };
+  adminRole.scope = { type: "custom", customers: [], projects: [], routes: [] };
+  const normalized = api.normalizeConfiguration(configuration);
+  for (const module of api.MODULES) {
+    for (const action of module.actions) assert.equal(api.can(module.id, action, normalized), true, `${module.id}.${action} should be allowed`);
+  }
+  assert.equal(api.can("dashboard", "special", normalized), true, "administrator bypasses UI action inference outside a module matrix");
+  assert.deepEqual([...api.filterRecords([{ id: "a" }, { id: "b" }], normalized).map((item) => item.id)], ["a", "b"]);
+});
+
 test("data scopes filter by selected business dimensions and fail closed when empty", () => {
   const configuration = api.load();
   const financeRole = configuration.roles.find((role) => role.id === "role-finance");

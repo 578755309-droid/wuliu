@@ -1,0 +1,724 @@
+/* The four desktop views share a local palette. The shell follows the active view. */
+.app-shell:has(:is(#dashboardPage, #waybillPage, #planTaskDetailPage, #dispatchManagementPage).active) {
+  --primary: #0065ff;
+  --primary-hover: #0054d6;
+  --primary-soft: #eaf3ff;
+  --status-active-bg: #eaf3ff;
+  --status-active-fg: #0054d6;
+  --workspace-line: #dfe8f6;
+  --workspace-shadow: 0 6px 20px rgba(24, 63, 119, .06);
+}
+.main-panel:has(:is(#dashboardPage, #waybillPage, #planTaskDetailPage, #dispatchManagementPage).active) {
+  background:
+    radial-gradient(ellipse 220px 170px at 12% 105px, rgb(159 202 255 / 28%), transparent),
+    radial-gradient(ellipse 195px 155px at 49% 245px, rgb(142 222 194 / 26%), transparent),
+    radial-gradient(ellipse 165px 135px at 89% 140px, rgb(251 222 128 / 25%), transparent),
+    radial-gradient(ellipse 235px 195px at 93% 545px, rgb(163 205 255 / 21%), transparent),
+    radial-gradient(ellipse 185px 155px at 22% 690px, rgb(157 225 204 / 18%), transparent),
+    #f7faff;
+}
+.app-shell:has(:is(#dashboardPage, #waybillPage, #planTaskDetailPage, #dispatchManagementPage).active) :is(.nav-item.selected, .nav-child.selected) {
+  background: var(--primary);
+  color: #fff;
+}
+:is(#dashboardPage, #waybillPage, #planTaskDetailPage, #dispatchManagementPage) :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+:is(#dashboardPage, #waybillPage, #planTaskDetailPage, #dispatchManagementPage) :is(.btn, input, select) {
+  border-radius: 8px;
+}
+:is(#waybillPage, #dispatchManagementPage) .btn.primary:not(:disabled),
+#waybillPage #addBtn {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+:is(#waybillPage, #dispatchManagementPage) .btn.primary:not(:disabled):hover,
+#waybillPage #addBtn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+#waybillPage :is(#planTaskTemplatesBtn, #batchPlanTaskBtn, #moreBtn) {
+  background: #fff;
+  border-color: #bfd6fb;
+  color: var(--primary-hover);
+}
+#waybillPage :is(#planTaskTemplatesBtn, #batchPlanTaskBtn, #moreBtn):hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-hover);
+}
+#dashboardPage { min-width: 0; }
+#dashboardPage .dashboard-command-bar {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  border: 1px solid #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--workspace-shadow);
+}
+#dashboardPage .dashboard-command-copy {
+  min-width: 0;
+  min-height: 125px;
+  flex-wrap: wrap;
+  align-content: center;
+  padding: 20px 26px;
+}
+#dashboardPage .dashboard-command-copy > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+#dashboardPage .dashboard-command-copy small { flex-basis: 100%; font-size: 13px; color: #4b6486; }
+#dashboardPage .dashboard-updated { color: #526e93; font-size: 11px; }
+#dashboardPage .dashboard-filters {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 20px;
+}
+#dashboardPage .dashboard-filters label { color: #526785; font-size: 11px; }
+#dashboardPage .dashboard-filters select { background-color: #f7faff; }
+#dashboardPage .dashboard-filters .dashboard-period select { color: var(--primary-hover); }
+#dashboardPage .dashboard-panel,
+#waybillPage :is(.table-card, .query-panel),
+#planTaskDetailPage .plan-detail-section,
+#dispatchManagementPage .dispatch-management-lane {
+  border: 1px solid var(--workspace-line);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--workspace-shadow);
+}
+#dashboardPage .dashboard-panel-heading,
+#waybillPage .table-summary,
+#dispatchManagementPage .dispatch-lane-heading {
+  background: linear-gradient(110deg, #fff 44%, #f1f7ff);
+}
+#dashboardPage .dashboard-panel-heading strong,
+#waybillPage .table-summary strong,
+#planTaskDetailPage .plan-detail-section-heading strong,
+#dispatchManagementPage .dispatch-lane-heading strong { font-size: 15px; color: #172f54; }
+#dashboardPage .dashboard-panel-heading > div > span { color: #546985; font-size: 11px; }
+#dashboardPage .amount-panel { margin-top: 14px; }
+#dashboardPage .amount-dimension button.active { background: var(--primary); }
+#dashboardPage .amount-total strong { font-size: clamp(16px, 1.4vw, 27px); font-variant-numeric: tabular-nums; }
+#dashboardPage .amount-distribution-row b { background: linear-gradient(90deg, #86b9ff, var(--primary)); }
+#waybillPage .plan-task-quick-stats { margin: 0 0 14px; }
+#waybillPage .query-panel { margin-bottom: 14px; }
+:is(#waybillPage, #dispatchManagementPage) .dispatch-management-stat {
+  border-color: var(--workspace-line);
+  border-radius: 12px;
+  box-shadow: var(--workspace-shadow);
+}
+:is(#waybillPage, #dispatchManagementPage) .dispatch-management-stat.active {
+  border-color: #fff;
+  background: #fff;
+  box-shadow: 0 4px 14px rgb(41 67 105 / 12%);
+}
+:is(#waybillPage, #dispatchManagementPage) .dispatch-management-stat strong {
+  color: #173359;
+  font-variant-numeric: tabular-nums;
+}
+:is(#waybillPage, #planTaskDetailPage, #dispatchManagementPage) thead th {
+  background: #eff5fd;
+  color: #385371;
+}
+:is(#waybillPage, #planTaskDetailPage, #dispatchManagementPage) tbody tr:hover td { background-color: #f5f9ff; }
+#waybillPage .fixed-action-column { box-shadow: -5px 0 12px rgba(33, 75, 127, .07); }
+:is(#waybillPage, #planTaskDetailPage) :is(.plan-detail-progress i, .page-current) {
+  background: var(--primary);
+}
+#planTaskDetailPage .dispatch-detail-page-heading,
+#dispatchManagementPage .dispatch-management-heading {
+  padding: 15px 18px;
+  border: 1px solid #fff;
+  border-radius: 12px;
+  background: linear-gradient(115deg, #fff 35%, #e1eeff);
+  box-shadow: var(--workspace-shadow);
+}
+#planTaskDetailPage .plan-detail-info-grid > div {
+  padding: 12px;
+  border-radius: 8px;
+  background: #f5f9ff;
+}
+#planTaskDetailPage .plan-detail-info-grid span { color: #536b89; font-size: 11px; }
+#planTaskDetailPage .plan-detail-info-grid strong {
+  color: #19365a;
+  font-size: 13px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#planTaskDetailPage .plan-detail-progress b,
+#dispatchManagementPage .dispatch-lane-index { color: var(--primary-hover); }
+#dispatchManagementPage .dispatch-lane-index { border-radius: 8px; background: #e5f0ff; }
+#dispatchManagementPage .capacity-lane-column { padding-left: 0; border-left: 0; }
+#dispatchManagementPage .dispatch-management-lane { flex: 1; }
+#dispatchManagementPage .dispatch-lane-filterbar { background: #f7faff; }
+#dispatchManagementPage .dispatch-lane-filterbar label { color: #516985; font-size: 11px; }
+#dispatchManagementPage .dispatch-lane-filterbar :is(input, select) { font-size: 11px; }
+@media (max-width: 1200px) {
+  #dashboardPage :is(.dashboard-overview-grid, .dashboard-detail-grid) { grid-template-columns: minmax(0, 1fr); }
+  #dispatchManagementPage .dispatch-management-lanes { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  #dashboardPage .dashboard-command-copy { min-height: 108px; padding: 14px; }
+  #dashboardPage .dashboard-command-copy strong { font-size: 23px; }
+  #dashboardPage .dashboard-filters { padding: 12px; }
+  #planTaskDetailPage .plan-detail-section-heading,
+  #dispatchManagementPage .dispatch-management-heading { flex-wrap: wrap; }
+}
+
+/* Shared navigation stays dark across desktop routes. */
+.app-shell > .sidebar {
+  --primary: #0065ff;
+  color: #dbe8fa;
+  background: linear-gradient(170deg, #162d50, #0b1c35 75%);
+  border-right-color: #203657;
+}
+.sidebar .brand { border-bottom-color: #304767; }
+.sidebar .brand-mark { background: linear-gradient(145deg, #4389ff, #0065ff); }
+.sidebar .brand strong { color: #f6f9ff; }
+.sidebar .brand span, .sidebar .nav-icon { color: #9ab4d8; }
+.sidebar .nav-child { color: #bfd0e8; }
+.sidebar .nav-section.active > .nav-parent { color: #fff; }
+.sidebar :is(.nav-item, .nav-parent, .nav-child):hover {
+  color: #fff;
+  background: #253e62;
+}
+.app-shell > .sidebar :is(.nav-item, .nav-child).selected {
+  color: #fff;
+  background: #0065ff;
+  box-shadow: none;
+}
+.sidebar .selected .nav-icon { color: #fff; }
+.sidebar .nav-menu { scrollbar-width: none; }
+.sidebar .nav-menu::-webkit-scrollbar { display: none; }
+.sidebar button:focus-visible { outline: 2px solid #9cc5ff; outline-offset: -3px; }
+
+:is(#dashboardPage, #waybillPage, #planTaskDetailPage) {
+  font-family: Inter, "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+}
+#dashboardPage.active {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+#dashboardPage :is(.dashboard-command-bar, .dashboard-overview-grid, .dashboard-detail-grid, .amount-panel) { margin: 0; }
+#dashboardPage .dashboard-shortcuts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid var(--workspace-line);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--workspace-shadow);
+}
+.dashboard-shortcuts strong { color: #172f54; margin-right: 6px; }
+.dashboard-shortcuts button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid #dce8fa;
+  border-radius: 8px;
+  background: #f6f9ff;
+  color: #194d95;
+  font-weight: 600;
+}
+.dashboard-shortcuts button:hover { background: #e9f2ff; border-color: #9dbff7; }
+.dashboard-shortcuts svg { width: 15px; height: 15px; color: #0065ff; }
+#dashboardPage .dashboard-task-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(118px, (100% - 16px) / 3)), 1fr));
+}
+#dashboardPage .dashboard-task-metric {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 10px;
+}
+#dashboardPage .dashboard-metric-copy { display: grid; gap: 5px; }
+#dashboardPage .dashboard-task-metric .dashboard-metric-badge { width: 36px; height: 36px; }
+#dashboardPage .dashboard-task-metric strong {
+  color: var(--metric-ink, #2058a9);
+  font-size: 25px;
+  font-variant-numeric: tabular-nums;
+}
+#dashboardPage .dashboard-metric-copy span { color: #516580; font-size: 11px; }
+.dashboard-task-metric.assigned { --metric-ink: #6b499d; }
+.dashboard-task-metric.active { --metric-ink: #925416; }
+.dashboard-task-metric.pending { --metric-ink: #806015; }
+.dashboard-task-metric.exception { --metric-ink: #a93650; }
+.dashboard-task-metric.done { --metric-ink: #1f7354; }
+#dashboardTaskTrend { padding: 12px 18px 16px; }
+.dashboard-trend-chart { display: block; width: 100%; height: auto; max-height: 190px; }
+.dashboard-trend-chart :is(path, polyline) { fill: none; vector-effect: non-scaling-stroke; }
+.dashboard-trend-grid { stroke: #e1ebf8; }
+.dashboard-trend-chart polyline { stroke: #0065ff; stroke-width: 2; stroke-linejoin: round; }
+.dashboard-trend-chart circle { fill: #fff; stroke: #0065ff; stroke-width: 2; }
+.dashboard-trend-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: #526985;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.dashboard-trend-caption strong { color: #18385f; }
+
+.plan-workspace-heading { margin-bottom: 14px; padding: 4px 2px; }
+.plan-workspace-heading h2 { margin: 4px 0; color: #142f55; font-size: 23px; }
+.plan-workspace-heading p { margin: 0; color: #526985; }
+#waybillPage .plan-task-quick-stat { min-height: 78px; }
+#waybillPage thead th { border-bottom-color: #dbe7f8; }
+#planTaskDetailPage .dispatch-detail-page-title h2 { color: #142f55; }
+#planTaskDetailPage .plan-detail-section { padding: clamp(14px, 1.5vw, 22px); }
+#planTaskDetailPage .plan-detail-section-heading { margin-bottom: 14px; }
+#planTaskDetailPage .plan-detail-section-heading small { color: #576d89; font-size: 11px; }
+#planTaskDetailPage .plan-detail-info-grid > div { border: 1px solid #e6edf8; }
+
+/* Frosted surfaces reveal the colored lighting without fading their content. */
+:is(#dashboardPage, #waybillPage, #planTaskDetailPage) {
+  --glass-surface: rgb(255 255 255 / 80%);
+  --glass-border: rgb(255 255 255 / 96%);
+  --glass-shadow: 0 8px 24px rgb(62 79 136 / 8%), inset 0 1px 0 rgb(255 255 255 / 65%);
+}
+#dashboardPage :is(.dashboard-command-bar, .dashboard-panel, .dashboard-shortcuts),
+#waybillPage :is(.query-panel, .table-card, .plan-task-quick-stat),
+#planTaskDetailPage :is(.dispatch-detail-page-heading, .plan-detail-section) {
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+#dashboardPage .dashboard-command-bar {
+  background:
+    url("assets/logistics-cockpit.svg") right center / min(42%, 620px) auto no-repeat,
+    radial-gradient(ellipse 130px 80px at 88% 14%, rgb(255 237 181 / 27%), transparent),
+    radial-gradient(ellipse 225px 155px at 76% 86%, rgb(185 236 219 / 31%), transparent),
+    radial-gradient(ellipse 265px 160px at 13% 30%, rgb(195 225 255 / 36%), transparent),
+    var(--glass-surface);
+}
+#dashboardPage :is(.dashboard-filters, .dashboard-panel-heading),
+#waybillPage .table-summary {
+  background: transparent;
+  border-bottom-color: rgb(124 149 204 / 15%);
+}
+#waybillPage .plan-task-quick-stat.active {
+  background: #fff;
+  border-color: var(--badge-dark, #386bea);
+  box-shadow: 0 4px 14px rgb(41 67 105 / 12%);
+}
+#planTaskDetailPage .plan-detail-info-grid > div {
+  background: rgb(224 235 255 / 42%);
+  border-color: rgb(255 255 255 / 90%);
+}
+#dashboardPage {
+  --chart-available: #55bc92;
+  --chart-moving: #6385ea;
+  --chart-maintenance: #f0ae63;
+  --chart-disabled: #aab9d4;
+  --chart-attendance: #78a5e5;
+  --chart-leave: #a895e3;
+}
+#dashboardPage .capacity-status-item.available i { background: var(--chart-available); }
+#dashboardPage .capacity-status-item.moving i { background: var(--chart-moving); }
+#dashboardPage .capacity-status-item.maintenance i { background: var(--chart-maintenance); }
+#dashboardPage .capacity-status-item.disabled i { background: var(--chart-disabled); }
+#dashboardPage .capacity-status-item.attendance i { background: var(--chart-attendance); }
+#dashboardPage .capacity-status-item.leave i { background: var(--chart-leave); }
+#dashboardPage .dashboard-trend-chart :is(polyline, circle) { stroke: var(--chart-moving); }
+#dashboardPage .amount-distribution-row b { background: linear-gradient(90deg, #a3baf8, var(--chart-moving)); }
+#dashboardPage .amount-distribution-row:nth-child(4n + 2) b { background: linear-gradient(90deg, #99dbc4, var(--chart-available)); }
+#dashboardPage .amount-distribution-row:nth-child(4n + 3) b { background: linear-gradient(90deg, #cfc1f6, var(--chart-leave)); }
+#dashboardPage .amount-distribution-row:nth-child(4n + 4) b { background: linear-gradient(90deg, #ffdaac, var(--chart-maintenance)); }
+#dashboardPage :is(.dashboard-task-metric, .amount-total) {
+  background: linear-gradient(145deg, var(--badge-wash, #e8f2ff), rgb(255 255 255 / 76%) 94%);
+}
+#dashboardPage .dashboard-metric-badge {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 2px 4px var(--badge-wash, #d9e9ff));
+}
+#dashboardPage .amount-total .dashboard-metric-badge { width: 28px; height: 28px; }
+.dashboard-metric-badge .badge-light { stop-color: var(--badge-light, #76a9ff); }
+.dashboard-metric-badge .badge-dark { stop-color: var(--badge-dark, #386bea); }
+.dashboard-task-metric.assigned { --badge-light: #aaa4ff; --badge-dark: #6860e6; --badge-wash: #efeaff; }
+.dashboard-task-metric.active,
+.amount-total.total { --badge-light: #ffbf65; --badge-dark: #e68421; --badge-wash: #fff0db; }
+.dashboard-task-metric.pending { --badge-light: #f5cd67; --badge-dark: #c48a1e; --badge-wash: #fff5d8; }
+.dashboard-task-metric.exception { --badge-light: #f68da1; --badge-dark: #d44c6e; --badge-wash: #ffeaf0; }
+.dashboard-task-metric.done,
+.amount-total.month { --badge-light: #52dfc5; --badge-dark: #0c9f8b; --badge-wash: #dff8f2; }
+#waybillPage .workspace-action-icon { width: 14px; height: 14px; flex-shrink: 0; stroke-width: 1.8; }
+@media (max-width: 720px) {
+  #dashboardPage .dashboard-command-bar { background-size: 0, auto, auto, auto; }
+}
+
+#waybillPage .plan-task-quick-stat:not(.active) {
+  background: linear-gradient(145deg, var(--badge-wash, #e8f2ff), var(--glass-surface) 88%);
+}
+#waybillPage .plan-task-quick-stat::before { background: var(--badge-dark, #386bea); }
+.workspace-stat-icon { display: block; flex: 0 0 auto; }
+.plan-task-quick-stat.overdue { --badge-light: #f68da1; --badge-dark: #d44c6e; --badge-wash: #ffeaf0; }
+.plan-task-quick-stat.pending { --badge-light: #ffbf65; --badge-dark: #e68421; --badge-wash: #fff0db; }
+.plan-task-quick-stat.today { --badge-light: #f5cd67; --badge-dark: #c48a1e; --badge-wash: #fff5d8; }
+.plan-task-quick-stat.tomorrow { --badge-light: #aaa4ff; --badge-dark: #6860e6; --badge-wash: #efeaff; }
+
+#dispatchManagementPage .metric-card:not(.active) {
+  background: linear-gradient(145deg, var(--dispatch-stat-wash, #eaf3ff), #fff 88%);
+}
+#dispatchManagementPage :is(.pending, .near) { --dispatch-stat-wash: #fff1de; }
+#dispatchManagementPage :is(.tomorrow, .idle) { --dispatch-stat-wash: #e5f8f2; }
+
+@media (max-width: 560px) {
+  #dashboardPage .task-overview-content { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ============================================================
+ * Global Flat Tab Style (参考：扁平下划线 Tab)
+ * 选中态：加粗 + 居中短蓝色下划线
+ * 未选中态：灰色细字
+ * ============================================================ */
+.tabs {
+  gap: 36px;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.tab {
+  position: relative;
+  min-width: 0;
+  height: auto;
+  padding: 10px 2px;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #8a94a6;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color .18s ease;
+}
+
+.tab:hover {
+  color: #1a2b4a;
+}
+
+.tab.active {
+  height: auto !important;
+  background: transparent !important;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* 扁平下划线：居中短条，宽度约 56% */
+.tab.active::after {
+  position: absolute;
+  right: 22%;
+  bottom: 0;
+  left: 22%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--primary);
+  content: "";
+}
+
+/* ============================================================
+ * Global Search Box Style (参考：圆角浅灰 + 放大镜)
+ * 搜索类 input[type="search"] 统一升级
+ * ============================================================ */
+
+/* 所有 type="search" 的输入框 —— 浅灰圆角背景 + 左侧放大镜 */
+input[type="search"] {
+  height: 40px !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  padding: 0 12px 0 38px !important;
+  background: #f2f4f8 !important;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a0a9bb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><path d='m21 21-4.35-4.35'/></svg>") !important;
+  background-repeat: no-repeat !important;
+  background-position: 11px center !important;
+  background-size: 16px 16px !important;
+  color: #1c2b45 !important;
+  outline: none !important;
+  transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease !important;
+}
+
+input[type="search"]::placeholder {
+  color: #a8b0c0 !important;
+  font-weight: 400 !important;
+}
+
+input[type="search"]:focus {
+  background-color: #fff !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(0, 101, 255, .1) !important;
+}
+
+/* 聚焦后放大镜变主色 */
+input[type="search"]:focus {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230065ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><path d='m21 21-4.35-4.35'/></svg>") !important;
+}
+
+/* 有值时放大镜也变蓝 */
+input[type="search"]:not(:placeholder-shown):not(:focus) {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230065ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><path d='m21 21-4.35-4.35'/></svg>") !important;
+  color: var(--primary) !important;
+}
+
+/* dispatchManagement 筛选器里的搜索框尺寸适配 */
+#dispatchManagementPage .dispatch-lane-filterbar input[type="search"] {
+  height: 36px !important;
+  border-radius: 8px !important;
+}
+
+/* 移动端也适配 —— 让管理端和司机端的搜索框也统一 */
+.admin-mobile-shell input[type="search"],
+.phone-shell input[type="search"] {
+  height: 42px !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+}
+
+/* ============================================================
+ * Minimum font-size guard: nothing below 12px in mobile shells
+ * ============================================================ */
+.phone-shell,
+.manager-shell {
+  font-size: max(12px, 1rem);
+}
+.phone-shell * {
+  font-size: inherit;
+}
+.phone-shell small,
+.phone-shell span,
+.phone-shell label,
+.phone-shell button,
+.phone-shell a,
+.phone-shell .eyebrow,
+.phone-shell .chip,
+.phone-shell .online-chip,
+.phone-shell .overview-item span,
+.phone-shell .mobile-tab,
+.manager-shell small,
+.manager-shell span,
+.manager-shell label,
+.manager-shell button,
+.manager-shell a,
+.manager-shell .module-badge,
+.manager-shell .report-task-metric small {
+  font-size: max(12px, inherit) !important;
+}
+
+/* ============================================================
+ * Global Flat Tab Override: 药丸填充 → 扁平下划线
+ * 覆盖 .filter-chip / .segment-tabs / .report-segment 等所有 Tab
+ * ============================================================ */
+
+/* filter-chip（司机端 + 管理移动端通用） */
+.filter-scroll,
+.module-filter-row,
+.order-status-tabs {
+  gap: 28px !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+.filter-chip {
+  position: relative !important;
+  min-width: 0 !important;
+  height: auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 10px 2px !important;
+  background: transparent !important;
+  color: #8a94a6 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  transition: color .18s ease !important;
+}
+.filter-chip span {
+  display: none !important;
+}
+.filter-chip:hover { color: #1a2b4a !important; }
+.filter-chip.active {
+  color: var(--primary) !important;
+  font-weight: 700 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.filter-chip.active::after {
+  position: absolute;
+  right: 22%;
+  bottom: 0;
+  left: 22%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--primary);
+  content: "";
+}
+
+/* segment-tabs / report-segment（管理移动端分段 Tab） */
+.segment-tabs,
+.report-segment {
+  background: transparent !important;
+  border: 0 !important;
+  gap: 28px !important;
+  border-radius: 0 !important;
+}
+.segment-tabs button,
+.report-segment button {
+  position: relative !important;
+  min-height: auto !important;
+  height: auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 10px 2px !important;
+  background: transparent !important;
+  color: #8a94a6 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  transition: color .18s ease !important;
+}
+.segment-tabs button:hover,
+.report-segment button:hover { color: #1a2b4a !important; }
+.segment-tabs button.active,
+.report-segment button.active {
+  color: var(--primary) !important;
+  font-weight: 700 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.segment-tabs button.active::after,
+.report-segment button.active::after {
+  position: absolute;
+  right: 22%;
+  bottom: 0;
+  left: 22%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--primary);
+  content: "";
+}
+
+/* feedback 页面的 tabs */
+.feedback-mobile-tabs {
+  background: transparent !important;
+  border: 0 !important;
+  gap: 28px !important;
+}
+.feedback-mobile-tabs button {
+  position: relative !important;
+  min-height: auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 10px 2px !important;
+  background: transparent !important;
+  color: #8a94a6 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  transition: color .18s ease !important;
+}
+.feedback-mobile-tabs button.active {
+  color: var(--primary) !important;
+  font-weight: 700 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.feedback-mobile-tabs button.active::after {
+  position: absolute;
+  right: 22%;
+  bottom: 0;
+  left: 22%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--primary);
+  content: "";
+}
+
+/* ===== 全局搜索框：图2样式（白底+右放大镜+圆角矩形） ===== */
+input[type=search],
+.filter-search input,
+.search-box input,
+.order-search input,
+.filter-search-bar input,
+.header-search input,
+.toolbar-search input {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background: #ffffff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2397a1b3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 18px !important;
+  border: 1px solid #e5e8ef !important;
+  border-radius: 10px !important;
+  padding: 10px 40px 10px 14px !important;
+  font-size: 14px !important;
+  color: #30324d !important;
+  box-shadow: 0 1px 3px rgba(35,55,90,.04) !important;
+  transition: border-color .2s, box-shadow .2s !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+input[type=search]:focus,
+.filter-search input:focus,
+.search-box input:focus,
+.order-search input:focus,
+.filter-search-bar input:focus,
+.header-search input:focus,
+.toolbar-search input:focus {
+  outline: none !important;
+  border-color: var(--primary) !important;
+  background-color: #ffffff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%230065ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E") !important;
+  box-shadow: 0 0 0 3px rgba(0, 101, 255, 0.1) !important;
+}
+input[type=search]::placeholder,
+.filter-search input::placeholder,
+.search-box input::placeholder,
+.order-search input::placeholder,
+.filter-search-bar input::placeholder,
+.header-search input::placeholder,
+.toolbar-search input::placeholder {
+  color: #b5bac7 !important;
+}
+/* 隐藏浏览器原生搜索图标和清除按钮 */
+input[type=search]::-webkit-search-decoration,
+input[type=search]::-webkit-search-cancel-button,
+input[type=search]::-webkit-search-results-button,
+input[type=search]::-webkit-search-results-decoration {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  display: none !important;
+}
+/* 搜索框容器去掉旧包装 */
+.filter-search, .search-box, .order-search, .filter-search-bar, .header-search, .toolbar-search {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+/* 隐藏容器中可能存在的左侧放大镜 icon */
+.filter-search > svg, .filter-search > i, .filter-search > span:first-child:not(:has(input)),
+.search-box > svg, .search-box > i,
+.order-search > svg, .order-search > i {
+  display: none !important;
+}

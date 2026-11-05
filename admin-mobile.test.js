@@ -134,6 +134,10 @@ for (const fieldName of ["routeCode", "customerId", "customerName", "projectId",
   assert.ok(script.includes(fieldName), `固定线路列表 / 详情 / 表单缺少后台字段 ${fieldName}`);
 }
 assert.match(script, /计划任务编号[\s\S]*线路信息[\s\S]*派单与执行信息/);
+for (const [fieldName, label] of [["customerId", "客户编号"], ["projectId", "项目编号"], ["pickupPoint", "提箱点"], ["loadingPoint", "装货点"], ["unloadingPoint", "卸货点"], ["dropoffPoint", "落箱点"], ["taskType", "任务类型"], ["mileage", "里程（公里）"], ["commissionRemark", "提成规则说明"]]) {
+  assert.match(script, new RegExp(`${fieldName}:\\s*"${label}"`), `计划详情线路字段 ${fieldName} 缺少中文标签`);
+}
+assert.match(script, /value === "rate" \? "按收入比例提成" : value === "fixed" \? "固定金额提成"/);
 assert.doesNotMatch(script.slice(script.indexOf('moduleCatalog.plan.items ='), script.indexOf('moduleCatalog.capacity.items =')), /派发模式/);
 assert.doesNotMatch(script.slice(script.indexOf('function renderPlanDetail('), script.indexOf('const MOBILE_RECORDS_KEY')), /派发模式/);
 for (const fieldName of ["planTaskNo", "executionTime", "taskType", "projectName", "routeId", "customerId", "boxType", "containers", "receivableFees", "payableFees"]) {

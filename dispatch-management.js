@@ -258,16 +258,16 @@
     const taskDate = (task) => String(task.plannedBerthingTime || task.executionTime || getWaybill(task).plannedBerthingTime || getWaybill(task).executionTime || task.orderDate || "").slice(0, 10);
     const pendingTasks = getPendingTasks();
     const taskStats = [
-      ["待派单总计", pendingTasks.length, "pending", "clock-3", ""],
-      ["今日待派单", pendingTasks.filter((task) => taskDate(task) === todayText).length, "today", "calendar-days", todayText],
-      ["明日待派单", pendingTasks.filter((task) => taskDate(task) === tomorrowText).length, "tomorrow", "calendar-plus", tomorrowText],
+      ["待派单总计", pendingTasks.length, "pending", ""],
+      ["今日待派单", pendingTasks.filter((task) => taskDate(task) === todayText).length, "today", todayText],
+      ["明日待派单", pendingTasks.filter((task) => taskDate(task) === tomorrowText).length, "tomorrow", tomorrowText],
     ];
     const capacityStats = [
-      ["空闲", resources.filter((item) => item.state === "空闲").length, "idle", "circle-dot", "空闲"],
-      ["运输中", resources.filter((item) => item.state === "运输中").length, "moving", "navigation", "运输中"],
-      ["即将完成", resources.filter((item) => item.state === "即将完成").length, "near", "timer", "即将完成"],
+      ["空闲", resources.filter((item) => item.state === "空闲").length, "idle", "空闲"],
+      ["运输中", resources.filter((item) => item.state === "运输中").length, "moving", "运输中"],
+      ["即将完成", resources.filter((item) => item.state === "即将完成").length, "near", "即将完成"],
     ];
-    const renderCards = (items, type = "") => items.map(([label, value, className, icon, filterValue]) => {
+    const renderCards = (items, type = "") => items.map(([label, value, className, filterValue]) => {
       const interactive = Boolean(type);
       const active = type === "task"
         ? (filterValue ? elements.taskDateFilter.value === filterValue : !elements.taskDateFilter.value)
@@ -277,7 +277,7 @@
         : type === "capacity" ? `data-capacity-stat-state="${filterValue}"` : "";
       return `
       ${interactive ? `<button class="dispatch-management-stat metric-card ${className} ${active ? "active" : ""}" ${filterAttributes} type="button" aria-pressed="${active}" aria-label="筛选${label}${type === "task" ? "任务" : "运力"}">` : `<div class="dispatch-management-stat metric-card ${className}">`}
-        <span class="dispatch-management-stat-icon"><i data-lucide="${icon}" aria-hidden="true"></i></span>
+        <img class="workspace-stat-icon" src="assets/stat-icons/${className}.svg" width="28" height="28" alt="">
         <div><span class="metric-label">${label}</span><strong class="metric-value">${value}</strong></div>
       ${interactive ? "</button>" : "</div>"}`;
     }).join("");

@@ -1,0 +1,197 @@
+:root {
+  --primary: #0065FF;
+  --primary-hover: #0054d6;
+  --primary-soft: #ecf5ff;
+  --text: #303133;
+  --muted: #606266;
+  --line: #e4e7ed;
+  --line-strong: #dcdfe6;
+  --page: #f2f3f5;
+  --surface-soft: #f5f7fa;
+  --success: #67c23a;
+  --warning: #e6a23c;
+  --danger: #f56c6c;
+  --info: #909399;
+  --success-soft: #f0f9eb;
+  --warning-soft: #fdf6ec;
+  --danger-soft: #fef0f0;
+  --status-active-bg: var(--primary-soft);
+  --status-active-fg: var(--primary);
+  --status-complete-bg: var(--success-soft);
+  --status-complete-fg: #397820;
+  --status-pending-bg: var(--warning-soft);
+  --status-pending-fg: #94611b;
+  --status-cancel-bg: var(--surface-soft);
+  --status-cancel-fg: var(--muted);
+  --card-gap: 10px;
+  --radius-card: 12px;
+}
+
+/* Shared bottom navigation icon states */
+:is(#managerBottomNav, #bottomNav) button {
+  color: #606266;
+}
+:is(#managerBottomNav, #bottomNav) button.active { color: #20242c; }
+:is(#managerBottomNav, #bottomNav) button.active > span:first-child {
+  color: inherit;
+  background: transparent;
+  box-shadow: none;
+}
+:is(#managerBottomNav, #bottomNav) svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.7;
+}
+:is(#managerBottomNav, #bottomNav) .nav-icon-solid {
+  display: none;
+  fill: currentColor;
+  stroke: none;
+}
+:is(#managerBottomNav, #bottomNav) button.active .nav-icon-line { display: none; }
+:is(#managerBottomNav, #bottomNav) button.active .nav-icon-solid { display: block; }
+:is(#managerBottomNav, #bottomNav) .nav-icon-cut {
+  fill: none;
+  stroke: var(--surface);
+  stroke-linecap: round;
+}
+
+/* Profile overview and shortcuts shared by both mobile roles. */
+#profileView {
+  overflow-y: auto;
+  padding-top: var(--card-gap);
+}
+.profile-overview {
+  padding: 12px;
+  border-radius: var(--radius-card);
+  color: #fff;
+  background:
+    linear-gradient(135deg, transparent 58%, #ffffff14 58% 68%, transparent 68% 76%, #ffffff12 76% 86%, transparent 86%),
+    linear-gradient(145deg, #0054d6, var(--primary) 70%, #0057de);
+  box-shadow: var(--shadow-card);
+}
+#profileView .profile-overview :is(.manager-profile, .profile-hero) {
+  padding: 2px 2px 12px;
+}
+#profileView .profile-overview :is(h2, p, small, strong, .manager-profile-copy > span, .profile-stat span, .profile-order-stats span, .profile-order-panel header span, .profile-identity-actions b) {
+  color: #fff;
+}
+#profileView .profile-overview :is(.manager-profile > button, .profile-identity-actions button, .profile-order-panel header button, #profileCertificationBadge) {
+  min-height: 28px;
+  padding-inline: 8px;
+  border: 1px solid #ffffff65;
+  border-radius: 8px;
+  color: #fff;
+  background: #ffffff20;
+}
+#profileView .profile-overview :is(.profile-stat, .profile-order-panel) {
+  margin: 0;
+  border: 1px solid #ffffff45;
+  border-radius: var(--radius-card);
+  background: #ffffff17;
+  box-shadow: none;
+}
+#profileView .profile-overview .profile-stat div + div::before { background: #ffffff35; }
+#profileView .profile-order-stats { border-top-color: #ffffff35; }
+#profileView .profile-order-stats button { min-width: 0; border-right-color: #ffffff35; background: transparent; }
+#profileView .profile-order-stats button::after { background: #ffffff60; }
+#profileView .profile-order-stats span { font-size: 10px; white-space: normal; }
+#profileView :is(.profile-menu, .profile-menu-group) {
+  background: var(--surface);
+}
+#profileView :is(.profile-menu, .profile-menu-group) > h2 {
+  padding: 11px 14px 8px;
+  border: 0;
+  color: var(--ink);
+  font-size: 14px;
+}
+#profileView :is(.profile-menu, .profile-menu-list) > button {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 49px;
+  grid-template-columns: 24px minmax(max-content, 1fr) minmax(0, auto) 12px;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 12px;
+  border: 0;
+  color: var(--text);
+  background: transparent;
+  text-align: left;
+}
+#profileView :is(.profile-menu, .profile-menu-list) > button:not(:last-child)::after {
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+  left: 45px;
+  height: 1px;
+  background: #f0f2f5;
+  content: "";
+}
+#profileView .profile-row-icon { display: block; }
+#profileView .profile-menu-copy { display: contents; }
+#profileView :is(.profile-menu-copy strong, .profile-menu-list button > span:not(.profile-vehicle-summary)) {
+  grid-column: 2;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+#profileView :is(.profile-menu-copy small, .profile-menu-list button > small, .profile-vehicle-summary) {
+  grid-column: 3;
+  min-width: 0;
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: right;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#profileView .profile-vehicle-summary { max-width: 100%; }
+#profileView .profile-vehicle-summary :is(strong, small) { white-space: normal; overflow-wrap: anywhere; }
+#profileView :is(.profile-menu, .profile-menu-list) > button > :is(svg, b) {
+  grid-column: 4;
+  width: 12px;
+  color: #a8abb2;
+}
+
+/* Read-only fields use the same label/value rows in cards and details. */
+.manager-shell .list-card-grid,
+.phone-shell .detail-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+.manager-shell .list-card-grid { padding-top: 0; }
+.manager-shell :is(.list-field, .detail-row),
+.phone-shell :is(.detail-field, .info-row) {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 10px;
+  padding-block: 8px;
+}
+.manager-shell .detail-row,
+.phone-shell :is(.detail-field, .info-row) { border-bottom: 1px solid var(--line); }
+.manager-shell .detail-row:last-child,
+.phone-shell :is(.detail-field, .info-row):last-child { border-bottom: 0; }
+.manager-shell :is(.list-field, .detail-row) > span,
+.phone-shell :is(.detail-field, .info-row) > span {
+  flex: 0 1 38%;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.manager-shell :is(.list-field, .detail-row) > strong,
+.phone-shell :is(.detail-field, .info-row) > strong {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: right;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

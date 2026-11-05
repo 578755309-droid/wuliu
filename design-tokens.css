@@ -163,3 +163,34 @@
   dialog.dispatch-confirm-dialog::backdrop,
   dialog.dispatch-result-dialog::backdrop { background: rgba(23, 32, 51, .42); backdrop-filter: blur(2px); }
 }
+
+/* ===== 全圆角改12px（Tab/Chip/按钮统一） ===== */
+.filter-chip,
+.module-filter-row button,
+.order-status-tabs button,
+.segment-tabs button,
+.report-segment button,
+.feedback-mobile-tabs button,
+button[class*='filter'],
+button[class*='tab'] {
+  border-radius: 12px !important;
+}
+/* 保留真正的圆形元素（头像、指示点、关闭按钮） */
+.manager-avatar,
+.profile-avatar-preview,
+.online-state i,
+.message-item.unread::after,
+.report-status-pie,
+.report-status-item i,
+.manager-bottom-nav button > span,
+.subpage-action,
+.auto-setting-banner > span,
+.mobile-search button,
+.module-empty span,
+.auto-control > span,
+.route-dot,
+.driver-job-location-row > span i,
+.photo-slot-remove,
+.feedback-timeline i {
+  border-radius: 50% !important;
+}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="86" viewBox="0 0 120 86" fill="none">
+  <defs>
+    <linearGradient id="wing" x1="32" y1="28" x2="89" y2="72" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8ffff"/><stop offset=".52" stop-color="#a9e7ff"/><stop offset="1" stop-color="#68b5fc"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="62" y1="33" x2="91" y2="71" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7dccff"/><stop offset="1" stop-color="#2875e9"/>
+    </linearGradient>
+    <radialGradient id="halo"><stop stop-color="#58beff" stop-opacity=".48"/><stop offset="1" stop-color="#58beff" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="74" cy="66" rx="46" ry="20" fill="url(#halo)"/>
+  <path d="M12 72c11 1 23-3 37-13M24 80c12-2 24-8 33-16" stroke="#66b5eb" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 5"/>
+  <path d="m25 44 79-28-25 56-15-20-19 9 4-13z" fill="url(#fold)"/>
+  <path d="m25 44 79-28-55 32zm39 8 40-36-25 56z" fill="url(#wing)" stroke="#f4fcff" stroke-opacity=".7" stroke-linejoin="round"/>
+  <path d="m49 48-4 13 19-9 40-36z" fill="#67baf7"/>
+  <path d="M83 10v9m-4.5-4.5h9M110 39v8m-4-4h8" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+</svg>

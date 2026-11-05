@@ -112,8 +112,8 @@ const mobileFormDefinitions = {
     sections: [
       { title: "线路基础信息", hint: "客户项目、起止地址与线路状态", fields: [
         { name: "routeName", label: "线路名称", required: true, full: true, placeholder: "请输入线路名称" },
-        { name: "customerId", label: "客户", type: "select", required: true, options: [] },
-        { name: "projectId", label: "项目", type: "select", required: true, options: [] },
+        { name: "customerId", label: "客户", type: "select", required: true, placeholder: "请选择客户", options: [] },
+        { name: "projectId", label: "项目", type: "select", required: true, placeholder: "请选择项目", options: [] },
         { name: "origin", label: "提箱地", required: true, placeholder: "请输入提箱地" },
         { name: "destination", label: "装卸地", required: true, placeholder: "请输入装卸地" },
         { name: "pickupPoint", label: "提箱点", required: true, placeholder: "请输入提箱点" },
@@ -122,14 +122,14 @@ const mobileFormDefinitions = {
         { name: "dropoffPoint", label: "落箱点", required: true, placeholder: "请输入落箱点" },
         { name: "viaPoints", label: "途经点", full: true, placeholder: "多个地点用顿号分隔" },
         { name: "mileage", label: "里程（KM）", type: "number", min: "0", step: "0.1", required: true, placeholder: "请输入单程里程" },
-        { name: "routeState", label: "线路状态", type: "select", required: true, options: ["启用", "停用"] },
+        { name: "routeState", label: "线路状态", type: "select", required: true, placeholder: "请选择线路状态", options: ["启用", "停用"] },
         { name: "remark", label: "备注", full: true, type: "textarea", placeholder: "请输入线路备注" },
       ] },
       { title: "收入与提成", hint: "配置单次运输核算基准", fields: [
-        { name: "estimatedRevenue", label: "单次预估收入（元）", type: "number", min: "0", step: "0.01", required: true },
-        { name: "baseFreight", label: "线路基础运价（元）", type: "number", min: "0", step: "0.01", required: true },
-        { name: "commissionType", label: "提成方式", type: "select", required: true, options: [["fixed", "固定金额提成"], ["rate", "按收入比例提成"]] },
-        { name: "commissionValue", label: "提成规则值", type: "number", min: "0", step: "0.01", required: true },
+        { name: "estimatedRevenue", label: "单次预估收入（元）", type: "number", min: "0", step: "0.01", required: true, placeholder: "请输入预估收入" },
+        { name: "baseFreight", label: "线路基础运价（元）", type: "number", min: "0", step: "0.01", required: true, placeholder: "请输入基础运价" },
+        { name: "commissionType", label: "提成方式", type: "select", required: true, placeholder: "请选择提成方式", options: [["fixed", "固定金额提成"], ["rate", "按收入比例提成"]] },
+        { name: "commissionValue", label: "提成规则值", type: "number", min: "0", step: "0.01", required: true, placeholder: "请输入提成规则值" },
         { name: "commissionRemark", label: "提成规则说明", full: true, placeholder: "例如：含往返空驶补贴" },
       ] },
       { title: "关联配置", hint: "派单时优先推荐，可不指定", fields: [
@@ -144,12 +144,12 @@ const mobileFormDefinitions = {
       { title: "身份与归属", hint: "车辆识别与车队信息", fields: [
         { name: "plateNo", label: "车牌号码", required: true, placeholder: "例如 浙B·A1234" },
         { name: "vehicleType", label: "车辆类型", required: true, placeholder: "例如 集装箱牵引车" },
-        { name: "vin", label: "车架号", required: true }, { name: "engineNo", label: "发动机号", required: true },
-        { name: "driver", label: "驾驶员", required: true }, { name: "fleet", label: "所属车队" },
+        { name: "vin", label: "车架号", required: true, placeholder: "请输入车架号" }, { name: "engineNo", label: "发动机号", required: true, placeholder: "请输入发动机号" },
+        { name: "driver", label: "驾驶员", required: true, placeholder: "请输入驾驶员" }, { name: "fleet", label: "所属车队", placeholder: "请输入所属车队" },
         { name: "fleetName", label: "车队名称" },
-        { name: "capacityOwnership", label: "运力归属", type: "select", required: true, options: ["自营", "三方"] },
+        { name: "capacityOwnership", label: "运力归属", type: "select", required: true, placeholder: "请选择运力归属", options: ["自营", "三方"] },
         { name: "supplierName", label: "三方供应商", type: "select", options: [["", "自营无需选择"], ...window.CapacityOwnership.readSuppliers().filter((item) => item.status === "启用").map((item) => [item.name, item.name])] },
-        { name: "vehicleState", label: "车辆状态", type: "select", required: true, options: ["在用", "停用", "维修中"] },
+        { name: "vehicleState", label: "车辆状态", type: "select", required: true, placeholder: "请选择车辆状态", options: ["在用", "停用", "维修中"] },
       ] },
       { title: "车辆参数", hint: "载重、油耗与技术等级", fields: [
         { name: "curbWeight", label: "整备质量（吨）", type: "number", min: "0", step: "0.01" },
@@ -160,16 +160,16 @@ const mobileFormDefinitions = {
       ] },
       { title: "证照与审验", hint: "行驶证、营运证和审验资料", fields: [
         { name: "drivingLicenseNo", label: "行驶证号" }, { name: "drivingLicenseExpiry", label: "行驶证有效期", type: "date" },
-        { name: "permitNo", label: "营运证号", required: true }, { name: "operatingPermitExpiry", label: "营运证有效期", type: "date" },
-        { name: "inspectionDue", label: "审验到期日期", type: "date", required: true },
+        { name: "permitNo", label: "营运证号", required: true, placeholder: "请输入营运证号" }, { name: "operatingPermitExpiry", label: "营运证有效期", type: "date", placeholder: "请选择有效期" },
+        { name: "inspectionDue", label: "审验到期日期", type: "date", required: true, placeholder: "请选择审验到期日期" },
         { name: "attachments", label: "附件资料", placeholder: "例如：行驶证、营运证、保单", full: true },
       ] },
       { title: "保险与备注", hint: "保单及到期日期", fields: [
         { name: "commercialInsuranceCompany", label: "商业险保险公司" }, { name: "commercialInsuranceNo", label: "商业险单号" }, { name: "commercialInsuranceExpiry", label: "商业险有效期", type: "date" },
         { name: "mandatoryInsuranceCompany", label: "强制险保险公司" }, { name: "mandatoryInsuranceNo", label: "强制险单号" }, { name: "mandatoryInsuranceExpiry", label: "强制险有效期", type: "date" },
         { name: "cargoInsuranceNo", label: "货物险单号" }, { name: "cargoInsuranceExpiry", label: "货物险有效期", type: "date" },
-        { name: "insuranceDue", label: "保险到期日期", type: "date", required: true },
-        { name: "remark", label: "备注", type: "textarea", full: true },
+        { name: "insuranceDue", label: "保险到期日期", type: "date", required: true, placeholder: "请选择保险到期日期" },
+        { name: "remark", label: "备注", type: "textarea", placeholder: "请输入备注", full: true },
       ] },
     ],
   },
@@ -177,33 +177,33 @@ const mobileFormDefinitions = {
     intro: "建立司机基础资料、运力归属、驾驶证、从业资格证和结算信息。",
     sections: [
       { title: "基础信息", hint: "司机身份与车队归属", fields: [
-        { name: "name", label: "姓名", required: true }, { name: "gender", label: "性别", type: "select", required: true, options: ["男", "女"] },
-        { name: "idCard", label: "身份证号码", required: true, full: true, inputmode: "text" },
-        { name: "phone", label: "手机号", type: "tel", required: true, pattern: "1[0-9]{10}", inputmode: "numeric" },
-        { name: "address", label: "住址", required: true, full: true },
-        { name: "emergencyContact", label: "紧急联系人", required: true },
-        { name: "emergencyPhone", label: "紧急联系电话", type: "tel", required: true, pattern: "1[0-9]{10}", inputmode: "numeric" },
-        { name: "entryDate", label: "入职日期", type: "date", required: true },
-        { name: "driverState", label: "司机状态", type: "select", required: true, options: ["空闲", "运输中", "停用"] },
-        { name: "capacityOwnership", label: "运力归属", type: "select", required: true, options: ["自营", "三方"] },
+        { name: "name", label: "姓名", required: true, placeholder: "请输入姓名" }, { name: "gender", label: "性别", type: "select", required: true, placeholder: "请选择性别", options: ["男", "女"] },
+        { name: "idCard", label: "身份证号码", required: true, full: true, inputmode: "text", placeholder: "请输入身份证号码" },
+        { name: "phone", label: "手机号", type: "tel", required: true, placeholder: "请输入手机号", pattern: "1[0-9]{10}", inputmode: "numeric", placeholder: "请输入手机号" },
+        { name: "address", label: "住址", required: true, full: true, placeholder: "请输入住址" },
+        { name: "emergencyContact", label: "紧急联系人", required: true, placeholder: "请输入紧急联系人" },
+        { name: "emergencyPhone", label: "紧急联系电话", type: "tel", required: true, placeholder: "请输入紧急联系电话", pattern: "1[0-9]{10}", inputmode: "numeric", placeholder: "请输入紧急联系电话" },
+        { name: "entryDate", label: "入职日期", type: "date", required: true, placeholder: "请选择入职日期" },
+        { name: "driverState", label: "司机状态", type: "select", required: true, placeholder: "请选择司机状态", options: ["空闲", "运输中", "停用"] },
+        { name: "capacityOwnership", label: "运力归属", type: "select", required: true, placeholder: "请选择运力归属", options: ["自营", "三方"] },
         { name: "supplierName", label: "三方供应商", type: "select", options: [["", "自营无需选择"], ...window.CapacityOwnership.readSuppliers().filter((item) => item.status === "启用").map((item) => [item.name, item.name])] },
         { name: "certificationStatus", label: "认证状态", type: "select", options: [["unverified", "未认证"], ["pending", "审核中"], ["verified", "已认证"], ["rejected", "已驳回"]] },
-        { name: "fleet", label: "所属车队", required: true },
+        { name: "fleet", label: "所属车队", required: true, placeholder: "请输入所属车队" },
       ] },
       { title: "驾驶证", hint: "驾驶证信息与电子附件", fields: [
-        { name: "licenseNo", label: "驾驶证号", required: true }, { name: "licenseClass", label: "准驾车型", required: true, value: "A2" },
-        { name: "licenseIssueDate", label: "发证日期", type: "date", required: true },
-        { name: "licenseExpiry", label: "有效期截止日期", type: "date", required: true },
+        { name: "licenseNo", label: "驾驶证号", required: true, placeholder: "请输入驾驶证号" }, { name: "licenseClass", label: "准驾车型", required: true, placeholder: "请输入准驾车型", value: "A2" },
+        { name: "licenseIssueDate", label: "发证日期", type: "date", required: true, placeholder: "请选择发证日期" },
+        { name: "licenseExpiry", label: "有效期截止日期", type: "date", required: true, placeholder: "请选择有效期截止日期" },
         { name: "licenseAttachment", label: "驾驶证附件", type: "file", full: true },
       ] },
       { title: "道路运输从业资格证", hint: "资格证信息与附件", fields: [
-        { name: "qualificationNo", label: "资格证号", required: true },
-        { name: "qualificationExpiry", label: "有效期截止日期", type: "date", required: true },
+        { name: "qualificationNo", label: "资格证号", required: true, placeholder: "请输入资格证号" },
+        { name: "qualificationExpiry", label: "有效期截止日期", type: "date", required: true, placeholder: "请选择有效期截止日期" },
         { name: "qualificationAttachment", label: "证件附件", type: "file", full: true },
       ] },
       { title: "其他信息", hint: "运费结算与补充说明", fields: [
         { name: "bankCard", label: "银行卡号", inputmode: "numeric" }, { name: "bankName", label: "开户银行" },
-        { name: "remark", label: "备注", type: "textarea", full: true },
+        { name: "remark", label: "备注", type: "textarea", placeholder: "请输入备注", full: true },
       ] },
     ],
   },
@@ -214,56 +214,56 @@ const mobileFormDefinitions = {
         { name: "customerNo", label: "单位编号", readonly: true, hint: "系统自动生成，无需填写" },
         { name: "customerName", label: "单位全称", required: true, full: true, placeholder: "营业执照上的企业全称" },
         { name: "shortName", label: "简称" },
-        { name: "businessRole", label: "单位角色", type: "select", required: true, options: ["客户", "三方供应商", "客户+三方供应商"] },
-        { name: "customerType", label: "客户类型", type: "select", required: true, options: [["", "请选择"], "直客", "货代", "贸易企业", "国际货运代理（货代）", "船公司 / 船代", "第三方物流 / 供应链公司", "跨境电商物流商", "维修厂"] },
-        { name: "creditCode", label: "统一社会信用代码", required: true, full: true, pattern: "[0-9A-Z]{18}", maxlength: "18", hint: "18 位数字或大写字母" },
-        { name: "customerStatus", label: "客户状态", type: "select", required: true, options: ["启用", "停用"] },
+        { name: "businessRole", label: "单位角色", type: "select", required: true, placeholder: "请选择单位角色", options: ["客户", "三方供应商", "客户+三方供应商"] },
+        { name: "customerType", label: "客户类型", type: "select", required: true, placeholder: "请选择客户类型", options: [["", "请选择"], "直客", "货代", "贸易企业", "国际货运代理（货代）", "船公司 / 船代", "第三方物流 / 供应链公司", "跨境电商物流商", "维修厂"] },
+        { name: "creditCode", label: "统一社会信用代码", required: true, placeholder: "请输入统一社会信用代码", full: true, pattern: "[0-9A-Z]{18}", maxlength: "18", hint: "18 位数字或大写字母" },
+        { name: "customerStatus", label: "客户状态", type: "select", required: true, placeholder: "请选择客户状态", options: ["启用", "停用"] },
       ] },
       { title: "联系信息", hint: "日常运输协调联系人", fields: [
-        { name: "contactName", label: "主要联系人", required: true },
-        { name: "mobile", label: "手机", type: "tel", required: true, pattern: "1[0-9]{10}", maxlength: "11", inputmode: "numeric" },
+        { name: "contactName", label: "主要联系人", required: true, placeholder: "请输入主要联系人" },
+        { name: "mobile", label: "手机", type: "tel", required: true, placeholder: "请输入手机", pattern: "1[0-9]{10}", maxlength: "11", inputmode: "numeric" },
         { name: "phone", label: "电话", type: "tel" }, { name: "email", label: "邮箱", type: "email" },
       ] },
       { title: "地址信息", hint: "运单选择客户后自动带出", fields: [
         { name: "registeredAddress", label: "注册地址", full: true },
-        { name: "loadAddress", label: "默认装货地址", required: true, full: true },
-        { name: "unloadAddress", label: "默认卸货地址", required: true, full: true },
+        { name: "loadAddress", label: "默认装货地址", required: true, placeholder: "请输入默认装货地址", full: true },
+        { name: "unloadAddress", label: "默认卸货地址", required: true, placeholder: "请输入默认卸货地址", full: true },
       ] },
       { title: "结算信息", hint: "默认结算和开票资料", fields: [
-        { name: "settlementCycle", label: "结算周期", type: "select", required: true, options: [["", "请选择"], "现结", "月结15天", "月结30天", "月结45天", "月结60天"] },
+        { name: "settlementCycle", label: "结算周期", type: "select", required: true, placeholder: "请选择结算周期", options: [["", "请选择"], "现结", "月结15天", "月结30天", "月结45天", "月结60天"] },
         { name: "invoiceTitle", label: "开票抬头", full: true }, { name: "taxNo", label: "税号" },
         { name: "bankName", label: "开户银行", full: true }, { name: "bankAccount", label: "银行账号", inputmode: "numeric" },
-        { name: "remark", label: "备注", type: "textarea", full: true },
+        { name: "remark", label: "备注", type: "textarea", placeholder: "请输入备注", full: true },
       ] },
     ],
   },
   trailer: {
     intro: "维护挂车身份、营运证、审验和保险资料，供车辆和派单关联使用。",
     sections: [{ title: "挂车档案", hint: "身份、归属与证照", fields: [
-      { name: "plateNo", label: "挂车车牌", required: true }, { name: "trailerType", label: "挂车类型", required: true },
-      { name: "vin", label: "车架号", required: true }, { name: "fleet", label: "所属车队" },
-      { name: "capacityOwnership", label: "运力归属", type: "select", required: true, options: ["自营", "三方"] },
+      { name: "plateNo", label: "挂车车牌", required: true, placeholder: "请输入挂车车牌" }, { name: "trailerType", label: "挂车类型", required: true, placeholder: "请输入挂车类型" },
+      { name: "vin", label: "车架号", required: true, placeholder: "请输入车架号" }, { name: "fleet", label: "所属车队", placeholder: "请输入所属车队" },
+      { name: "capacityOwnership", label: "运力归属", type: "select", required: true, placeholder: "请选择运力归属", options: ["自营", "三方"] },
       { name: "supplierName", label: "三方供应商", type: "select", options: [["", "自营无需选择"], ...window.CapacityOwnership.readSuppliers().filter((item) => item.status === "启用").map((item) => [item.name, item.name])] },
-      { name: "trailerState", label: "挂车状态", type: "select", required: true, options: ["在用", "停用", "维修中"] },
-      { name: "registrationCertNo", label: "车辆登记证号" }, { name: "permitNo", label: "营运证号", required: true },
-      { name: "operatingPermitExpiry", label: "营运证有效期", type: "date" }, { name: "inspectionDue", label: "审验到期", type: "date" },
+      { name: "trailerState", label: "挂车状态", type: "select", required: true, placeholder: "请选择挂车状态", options: ["在用", "停用", "维修中"] },
+      { name: "registrationCertNo", label: "车辆登记证号" }, { name: "permitNo", label: "营运证号", required: true, placeholder: "请输入营运证号" },
+      { name: "operatingPermitExpiry", label: "营运证有效期", type: "date", placeholder: "请选择有效期" }, { name: "inspectionDue", label: "审验到期", type: "date" },
       { name: "engineNo", label: "发动机号" },
       { name: "mandatoryInsuranceCompany", label: "强制险保险公司" }, { name: "mandatoryInsuranceNo", label: "强制险单号" }, { name: "mandatoryInsuranceExpiry", label: "强制险有效期", type: "date" },
       { name: "commercialInsuranceCompany", label: "商业险保险公司" }, { name: "commercialInsuranceNo", label: "商业险单号" }, { name: "commercialInsuranceExpiry", label: "商业险有效期", type: "date" },
-      { name: "attachments", label: "附件" }, { name: "remark", label: "备注", type: "textarea", full: true },
+      { name: "attachments", label: "附件" }, { name: "remark", label: "备注", type: "textarea", placeholder: "请输入备注", full: true },
     ] }],
   },
   plan: {
     intro: "创建计划任务后生成子运单，统一进入待派发池。",
     sections: [{ title: "计划任务", hint: "计划执行日期、子任务靠台时间和客户项目", fields: [
-      { name: "planExecutionDate", label: "计划执行日期", type: "date", required: true },
-      { name: "plannedBerthingTime", label: "子任务计划靠台时间", type: "datetime-local", required: true },
-      { name: "customerName", label: "客户名称", required: true }, { name: "projectName", label: "项目名称", required: true },
-      { name: "routeId", label: "固定线路", type: "select", required: true, options: [] },
-      { name: "boxType", label: "柜型", type: "select", required: true, options: ["40HQ", "40GP", "20GP", "45HQ"] },
-      { name: "quantity", label: "任务数量", type: "number", min: "1", max: "100", required: true, value: "1" },
-      { name: "taskType", label: "任务类型", type: "select", required: true, options: ["提空装货", "提重送货", "排空箱（A→B）", "排重箱（A→B）"] },
-      { name: "remark", label: "备注", type: "textarea", full: true },
+      { name: "planExecutionDate", label: "计划执行日期", type: "date", required: true, placeholder: "请选择计划执行日期" },
+      { name: "plannedBerthingTime", label: "子任务计划靠台时间", type: "datetime-local", required: true, placeholder: "请选择靠台时间" },
+      { name: "customerName", label: "客户名称", required: true, placeholder: "请输入客户名称" }, { name: "projectName", label: "项目名称", required: true, placeholder: "请输入项目名称" },
+      { name: "routeId", label: "固定线路", type: "select", required: true, placeholder: "请选择固定线路", options: [] },
+      { name: "boxType", label: "柜型", type: "select", required: true, placeholder: "请选择柜型", options: ["40HQ", "40GP", "20GP", "45HQ"] },
+      { name: "quantity", label: "任务数量", type: "number", min: "1", max: "100", required: true, placeholder: "请输入任务数量", value: "1" },
+      { name: "taskType", label: "任务类型", type: "select", required: true, placeholder: "请选择任务类型", options: ["提空装货", "提重送货", "排空箱（A→B）", "排重箱（A→B）"] },
+      { name: "remark", label: "备注", type: "textarea", placeholder: "请输入备注", full: true },
     ] }],
   },
 };
@@ -355,10 +355,12 @@ function fieldMarkup(field) {
     field.readonly ? "readonly" : "", field.disabled ? "disabled" : "",
   ].filter(Boolean).join(" ");
   let control;
-  if (field.type === "select") control = `<select name="${h(field.name)}" ${attributes}>${(field.options || []).map((item) => optionMarkup(item, field.value)).join("")}</select>`;
+  if (field.type === "select") {
+    control = `<select name="${h(field.name)}" ${attributes}>${(field.options || []).map((item) => optionMarkup(item, field.value)).join("")}</select>`;
+  }
   else if (field.type === "textarea") control = `<textarea name="${h(field.name)}" ${attributes}>${h(field.value || "")}</textarea>`;
   else control = `<input name="${h(field.name)}" type="${h(field.type || "text")}" value="${h(field.value || "")}" ${attributes} />`;
-  return `<label class="${className}"><span>${h(field.label)}</span>${control}${field.hint ? `<small>${h(field.hint)}</small>` : ""}</label>`;
+  return `<div class="${className}"><span>${field.required ? '<i class="required-star">*</i>' : ''}${h(field.label)}</span>${control}${field.hint ? `<small>${h(field.hint)}</small>` : ""}</div>`;
 }
 
 function sectionMarkup(section, index) {
@@ -408,7 +410,7 @@ function nextBusinessId(prefix, count) {
 }
 
 function sharedStatusClass(status) {
-  return ["已完成", "启用", "在用", "空闲", "已确认"].includes(status) ? "success" : ["已过期", "停用", "作废"].includes(status) ? "danger" : ["待派单", "待派发", "维修中", "待处理", "草稿"].includes(status) ? "warning" : "";
+  return ["已完成", "启用", "在用", "空闲", "已确认"].includes(status) ? "success" : ["已过期", "停用", "作废", "异常"].includes(status) ? "danger" : ["待派单", "待派发", "维修中", "待处理", "草稿"].includes(status) ? "warning" : "";
 }
 
 function certificationStatusLabel(status) {
@@ -416,8 +418,7 @@ function certificationStatusLabel(status) {
 }
 
 function loadSharedCatalog() {
-  const snapshot = window.AdminDataBridge?.read?.();
-  if (!snapshot) return;
+  const snapshot = window.AdminDataBridge?.read?.() || {};
   const routes = Array.isArray(snapshot.fixedRoutes) ? snapshot.fixedRoutes : [];
   const waybills = Array.isArray(snapshot.waybills) ? snapshot.waybills : [];
   const dispatches = Array.isArray(snapshot.dispatches) ? snapshot.dispatches : [];
@@ -445,27 +446,81 @@ function loadSharedCatalog() {
   if (trailers.length) moduleCatalog.trailer.items = trailers.map((trailer) => ({ id: trailer.id, title: trailer.plateNo, subtitle: trailer.trailerType || "挂车", status: trailer.trailerState || "停用", statusClass: sharedStatusClass(trailer.trailerState), fields: [["运力归属", trailer.capacityOwnership], ["所属单位", window.CapacityOwnership.organizationName(trailer)], ["车架号", trailer.vin || "-"], ["所属车队", trailer.fleet || "-"], ["营运证号", trailer.permitNo || "-"], ["审验到期", trailer.inspectionDue || "-"]], note: trailer.remark || "", raw: trailer }));
   if (drivers.length) moduleCatalog.driver.items = drivers.map((driver) => ({ id: driver.id, title: driver.name, subtitle: `${driver.fleet || "未设置车队"} · ${driver.phone || "-"}`, status: driver.driverState || "停用", statusClass: sharedStatusClass(driver.driverState), fields: [["运力归属", driver.capacityOwnership], ["所属单位", window.CapacityOwnership.organizationName(driver)], ["司机编号", driver.id], ["准驾车型", driver.licenseClass || "A2"], ["车辆", driver.vehiclePlate || driver.vehicle || "未绑定"], ["认证状态", certificationStatusLabel(driver.certificationStatus)]], note: driver.remark || "", raw: driver }));
   if (customers.length) moduleCatalog.customer.items = customers.map((customer) => ({ id: customer.customerNo, title: customer.customerName, subtitle: `简称：${customer.shortName || "-"}`, status: customer.customerStatus || "启用", statusClass: sharedStatusClass(customer.customerStatus), fields: [["单位编号", customer.customerNo], ["单位角色", customer.businessRole || "客户"], ["客户类型", customer.customerType || "-"], ["联系人", customer.contactName || "-"], ["手机", customer.mobile || "-"], ["结算周期", customer.settlementCycle || "-"]], note: customer.remark || "", raw: customer }));
+  ensurePendingDispatchSamples();
+  if (Array.isArray(snapshot.waybills)) {
+    rebuildPlanCatalog(waybills, dispatches, routes);
+  } else {
+    addPlanPreviewSamples();
+    rebuildPlanCatalog(
+      moduleCatalog.waybill.items.map((item) => item.raw).filter((row) => row?.planTaskNo),
+      moduleCatalog.dispatch.items.map(dispatchRawForItem),
+      moduleCatalog.route.items.map((item) => item.raw).filter(Boolean)
+    );
+  }
+  rebuildDispatchManagementCatalog();
+  rebuildCapacityCatalog(dispatches);
+}
+
+function addPlanPreviewSamples() {
+  const examples = [
+    ["XL-001", "运输中", "重箱在途", "提空装货", "已完成装货，正在驶往目的地"],
+    ["XL-002", "运输中", "空箱在途", "提重送货", "已完成卸货，正在返还空箱"],
+    ["XL-003", "已完成", "完成落重", "排重箱（A→B）", "重箱已交接"],
+    ["XL-004", "已完成", "完成落空", "排空箱（A→B）", "空箱已交接"],
+    ["XL-001", "异常", "装货暂停", "提空装货", "仓库临时暂停装货，等待确认"],
+    ["XL-002", "异常", "卸货延误", "提重送货", "到场后发现预约信息不一致"],
+  ];
+  examples.forEach(([routeId, status, currentNode, taskType, remark], index) => {
+    const sequence = String(index + 1).padStart(2, "0");
+    const waybillNo = `WB-DEMO-${sequence}`;
+    if (moduleCatalog.waybill.items.some((item) => item.id === waybillNo)) return;
+    const route = moduleCatalog.route.items.find((item) => item.id === routeId)?.raw;
+    if (!route) return;
+    const { customerName, projectName, routeName, defaultDriver, defaultVehicle } = route;
+    const date = "2026-10-13";
+    const raw = {
+      waybillNo, planTaskId: `PT-DEMO-${sequence}`, planTaskNo: `JH20261013${sequence}`,
+      childSequence: 1, routeId, routeName, customerName, projectName, taskType,
+      orderDate: date, planExecutionDate: date, boxType: "40HQ", remark,
+    };
+    const dispatch = {
+      id: `PD-DEMO-${sequence}`, waybillNo, routeId, routeName, customerName,
+      status, currentNode, taskType, driverName: defaultDriver, vehicleId: defaultVehicle,
+      dispatchTime: `${date} 08:30`, dispatchMode: "manual", note: remark,
+    };
+    moduleCatalog.waybill.items.push({
+      id: waybillNo, title: customerName, subtitle: routeName, status: "已审核", statusClass: "success",
+      fields: [["计划任务", raw.planTaskNo], ["任务类型", taskType]], note: remark, raw,
+    });
+    moduleCatalog.dispatch.items.push({
+      id: dispatch.id, title: routeName, subtitle: waybillNo, status, statusClass: sharedStatusClass(status),
+      fields: [["当前节点", currentNode], ["司机", defaultDriver], ["车辆", defaultVehicle]],
+      note: remark, raw: dispatch,
+    });
+  });
+}
+
+function rebuildPlanCatalog(waybills, dispatches, routes) {
   const groups = new Map();
   waybills.forEach((waybill) => { const id = waybill.planTaskId || `PT-LEGACY-${waybill.waybillNo}`; const group = groups.get(id) || { id, no: waybill.planTaskNo || id, first: waybill, rows: [] }; group.rows.push(waybill); groups.set(id, group); });
   moduleCatalog.plan.items = [...groups.values()].map((group) => {
     const linkedDispatches = group.rows.flatMap((row) => dispatches.filter((dispatch) => dispatch.waybillNo === row.waybillNo));
     const done = linkedDispatches.filter((dispatch) => dispatch.status === "已完成").length;
     const active = linkedDispatches.filter((dispatch) => ["已派单", "运输中"].includes(dispatch.status)).length;
-    const pending = Math.max(0, group.rows.length - done - active);
-    const status = linkedDispatches.some((dispatch) => ["异常", "取消"].includes(dispatch.status)) ? "异常" : done === group.rows.length ? "已完成" : active ? "进行中" : "待派发";
+    const exceptions = linkedDispatches.filter((dispatch) => ["异常", "取消"].includes(dispatch.status)).length;
+    const pending = Math.max(0, group.rows.length - done - active - exceptions);
+    const status = exceptions ? "异常" : done === group.rows.length ? "已完成" : active ? "进行中" : "待派发";
     const routeIds = [...new Set(group.rows.map((row) => row.routeId).filter(Boolean))];
     const routeNames = routeIds.map((id) => routes.find((route) => route.id === id)?.routeName || id).join("、") || "-";
     return {
       id: group.id, title: group.no,
       subtitle: `${group.first.customerName || "-"} · ${group.first.projectName || "未分配项目"}`,
       status, statusClass: sharedStatusClass(status),
-      fields: [["客户 / 项目", `${group.first.customerName || "-"} / ${group.first.projectName || "未分配项目"}`], ["线路", routeNames], ["任务类型", group.first.taskType || "提空装货"], ["计划执行日期", group.first.planExecutionDate || String(group.first.executionTime || group.first.orderDate || "-").slice(0, 10)], ["子任务执行情况", `待派单 ${pending} · 进行中 ${active} · 已完成 ${done}`]],
+      fields: [["客户 / 项目", `${group.first.customerName || "-"} / ${group.first.projectName || "未分配项目"}`], ["线路", routeNames], ["任务类型", group.first.taskType || "提空装货"], ["计划执行日期", group.first.planExecutionDate || String(group.first.executionTime || group.first.orderDate || "-").slice(0, 10)], ["子任务执行情况", `待派单 ${pending} · 进行中 ${active} · 已完成 ${done}${exceptions ? ` · 异常 ${exceptions}` : ""}`]],
       note: `${group.rows.length} 条子任务`, raw: { ...group, linkedDispatches, routeIds },
     };
   });
-  ensurePendingDispatchSamples();
-  rebuildDispatchManagementCatalog();
-  rebuildCapacityCatalog(dispatches);
+
 }
 
 function dispatchModeLabel(mode) {
@@ -568,8 +623,8 @@ function containerCardMarkup() {
     ${fieldMarkup({ name: "containerNo", label: "箱号", required: true, placeholder: "请输入箱号" })}
     ${fieldMarkup({ name: "sealNo", label: "封号", required: true, placeholder: "请输入封号" })}
     ${fieldMarkup({ name: "containerType", label: "箱型", type: "select", options: ["40HQ", "40GP", "20GP", "20HQ"] })}
-    ${fieldMarkup({ name: "pickupPoint", label: "提箱点", required: true })}
-    ${fieldMarkup({ name: "returnPoint", label: "还箱点", required: true, full: true })}
+    ${fieldMarkup({ name: "pickupPoint", label: "提箱点", required: true, placeholder: "请输入提箱点" })}
+    ${fieldMarkup({ name: "returnPoint", label: "还箱点", required: true, placeholder: "请输入还箱点", full: true })}
   </div><button class="repeat-card-remove" data-remove-repeat type="button">删除此箱</button></div>`;
 }
 
@@ -578,10 +633,10 @@ function feeCardMarkup(type) {
   const targetOptions = type === "receivable" ? ["客户", "其他"] : ["司机", "承运商", "其他"];
   return `<div class="repeat-card" data-repeat-card="fee" data-fee-type="${type}"><div class="mobile-form-grid">
     ${fieldMarkup({ name: `${type}Target`, label: "结算对象", type: "select", options: targetOptions })}
-    ${fieldMarkup({ name: `${type}Unit`, label: "单位名称", required: true })}
+    ${fieldMarkup({ name: `${type}Unit`, label: "单位名称", required: true, placeholder: "请输入单位名称" })}
     ${fieldMarkup({ name: `${type}Kind`, label: "费用类型", required: true, placeholder: "例如 运费" })}
-    ${fieldMarkup({ name: `${type}Quantity`, label: "数量", type: "number", min: "0", step: "1", required: true, value: "1" })}
-    ${fieldMarkup({ name: `${type}Price`, label: "单价", type: "number", min: "0", step: "0.01", required: true })}
+    ${fieldMarkup({ name: `${type}Quantity`, label: "数量", type: "number", min: "0", step: "1", required: true, value: "1", placeholder: "请输入数量" })}
+    ${fieldMarkup({ name: `${type}Price`, label: "单价", type: "number", min: "0", step: "0.01", required: true, placeholder: "请输入单价" })}
     ${fieldMarkup({ name: `${type}Settled`, label: settlementLabel, type: "number", min: "0", step: "0.01", value: "0" })}
     ${fieldMarkup({ name: `${type}Invoice`, label: "需开票", type: "select", options: ["否", "是"] })}
     <div class="commission-preview"><span>金额 / 未结</span><strong data-fee-total>¥0.00 / ¥0.00</strong></div>
@@ -597,12 +652,12 @@ function waybillEntryMarkup() {
       <div class="generated-strip"><div><span>运单号</span><strong id="mobileGeneratedWaybillNo">${waybillNo}</strong></div><div><span>接单日期</span><strong>${localDate()}</strong></div></div>
       <input name="waybillNo" type="hidden" value="${waybillNo}" /><input name="orderDate" type="hidden" value="${localDate()}" />
       <div class="mobile-form-grid">
-        ${fieldMarkup({ name: "routeId", label: "固定线路", type: "select", required: true, options: routeOptions })}
-        ${fieldMarkup({ name: "customerId", label: "客户名称", type: "select", required: true, options: customerOptions })}
+        ${fieldMarkup({ name: "routeId", label: "固定线路", type: "select", required: true, placeholder: "请选择固定线路", options: routeOptions })}
+        ${fieldMarkup({ name: "customerId", label: "客户名称", type: "select", required: true, placeholder: "请选择客户名称", options: customerOptions })}
         ${fieldMarkup({ name: "billNo", label: "提单号" })}${fieldMarkup({ name: "receiptDate", label: "回单日期", type: "date" })}
         ${fieldMarkup({ name: "loadAddress", label: "装卸地址", required: true, full: true, placeholder: "选择客户后自动带出" })}
         <div class="mobile-switches"><label><input name="needReceipt" type="checkbox" />需要回单</label><label><input name="receivedReceipt" type="checkbox" />收到回单</label></div>
-        ${fieldMarkup({ name: "remark", label: "备注", type: "textarea", full: true })}
+        ${fieldMarkup({ name: "remark", label: "备注", type: "textarea", placeholder: "请输入备注", full: true })}
       </div>
     </section>
     <section class="mobile-form-section"><div class="repeat-heading"><div><strong>箱信息</strong><small>默认 1 个，可继续新增</small></div><button data-add-repeat="container" type="button">新增箱信息</button></div><div class="repeat-list" id="mobileContainerList">${containerCardMarkup()}</div></section>
@@ -617,12 +672,12 @@ function dispatchEntryMarkup() {
   const projectOptions = [["", "请选择项目"], ...projects.map((item) => [item.projectId, item.projectName || item.projectId])];
   const trailerOptions = [["", "未绑定挂车"], ...moduleCatalog.trailer.items.filter((item) => item.status === "在用").map((item) => [item.id, `${item.title} · ${item.subtitle}`])];
   return `${formIntro("send", "先选择已有运单，再维护箱封号、运力及到达信息；保存后同步司机移动端。")}
-    <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>01</span><div><strong>选择任务</strong><small>运单、项目和固定线路</small></div></header><div class="mobile-form-grid">${fieldMarkup({ name: "waybillId", label: "运单号", type: "select", required: true, full: true, options: waybillOptions })}${fieldMarkup({ name: "projectId", label: "项目", type: "select", options: projectOptions })}${fieldMarkup({ name: "routeId", label: "固定线路", type: "select", required: true, options: routeOptions })}</div>
+    <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>01</span><div><strong>选择任务</strong><small>运单、项目和固定线路</small></div></header><div class="mobile-form-grid">${fieldMarkup({ name: "waybillId", label: "运单号", type: "select", required: true, placeholder: "请选择运单号", full: true, options: waybillOptions })}${fieldMarkup({ name: "projectId", label: "项目", type: "select", options: projectOptions })}${fieldMarkup({ name: "routeId", label: "固定线路", type: "select", required: true, placeholder: "请选择固定线路", options: routeOptions })}</div>
       <div class="readonly-summary" id="mobileDispatchSummary"><div><span>固定线路</span><strong data-summary="route"></strong></div><div><span>提箱地</span><strong data-summary="origin"></strong></div><div><span>装卸地</span><strong data-summary="destination"></strong></div><div><span>还箱地</span><strong data-summary="address"></strong></div><div><span>箱信息</span><strong data-summary="boxes"></strong></div><div><span>预估收入</span><strong data-summary="revenue"></strong></div><div><span>司机提成</span><strong data-summary="commission"></strong></div></div>
       <section class="mobile-form-section" id="mobileDispatchJobLocations"><header class="mobile-form-section-heading"><span>作业</span><div><strong>作业地点</strong><small>按任务类型配置的顺序维护每个作业地址</small></div></header><div class="mobile-form-grid" data-job-location-fields></div></section>
     </section>
     <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>02</span><div><strong>箱信息</strong><small>每个集装箱对应填写自己的铅封号</small></div></header><div class="mobile-form-grid mobile-dispatch-box-grid">
-      ${fieldMarkup({ name: "boxType", label: "箱型", type: "select", required: true, options: ["40HQ", "40GP", "20GP", "45HQ"] })}
+      ${fieldMarkup({ name: "boxType", label: "箱型", type: "select", required: true, placeholder: "请选择箱型", options: ["40HQ", "40GP", "20GP", "45HQ"] })}
       <fieldset class="mobile-container-group"><legend>集装箱 1</legend><div class="mobile-container-fields">
         ${fieldMarkup({ name: "boxNo1", label: "箱号", placeholder: "请输入集装箱号" })}
         ${fieldMarkup({ name: "sealNo1", label: "对应铅封号", placeholder: "请输入该箱铅封号" })}
@@ -633,8 +688,8 @@ function dispatchEntryMarkup() {
       </div></fieldset>
     </div></section>
     <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>03</span><div><strong>调度安排</strong><small>选择司机、车辆和挂车</small></div></header><div class="mobile-form-grid">
-      ${fieldMarkup({ name: "driverId", label: "司机", type: "select", required: true, disabled: true, options: [["", "请选择司机"], ...window.CapacityOwnership.sortSelfFirst(moduleCatalog.driver.items.filter((item) => item.status !== "停用"), (item) => item.raw?.capacityOwnership).map((item) => [item.id, `【${item.raw?.capacityOwnership || "待确定"}】${item.title}${item.raw?.capacityOwnership === "三方" ? ` / ${window.CapacityOwnership.organizationName(item.raw)}` : ""}`])] })}
-      ${fieldMarkup({ name: "vehicleId", label: "车辆", type: "select", required: true, disabled: true, options: [["", "请选择车辆"], ...window.CapacityOwnership.sortSelfFirst(moduleCatalog.vehicle.items.filter((item) => item.status === "在用"), (item) => item.raw?.capacityOwnership).map((item) => [item.id, `【${item.raw?.capacityOwnership || "待确定"}】${item.id}${item.raw?.capacityOwnership === "三方" ? ` / ${window.CapacityOwnership.organizationName(item.raw)}` : ""}`])] })}
+      ${fieldMarkup({ name: "driverId", label: "司机", type: "select", required: true, placeholder: "请选择司机", disabled: true, options: [["", "请选择司机"], ...window.CapacityOwnership.sortSelfFirst(moduleCatalog.driver.items.filter((item) => item.status !== "停用"), (item) => item.raw?.capacityOwnership).map((item) => [item.id, `【${item.raw?.capacityOwnership || "待确定"}】${item.title}${item.raw?.capacityOwnership === "三方" ? ` / ${window.CapacityOwnership.organizationName(item.raw)}` : ""}`])] })}
+      ${fieldMarkup({ name: "vehicleId", label: "车辆", type: "select", required: true, placeholder: "请选择车辆", disabled: true, options: [["", "请选择车辆"], ...window.CapacityOwnership.sortSelfFirst(moduleCatalog.vehicle.items.filter((item) => item.status === "在用"), (item) => item.raw?.capacityOwnership).map((item) => [item.id, `【${item.raw?.capacityOwnership || "待确定"}】${item.id}${item.raw?.capacityOwnership === "三方" ? ` / ${window.CapacityOwnership.organizationName(item.raw)}` : ""}`])] })}
       ${fieldMarkup({ name: "trailerId", label: "挂车", type: "select", options: trailerOptions })}
       ${fieldMarkup({ name: "vehicleType", label: "车辆动力类型", type: "select", options: ["燃油车", "LNG", "新能源车"] })}
       ${fieldMarkup({ name: "consignee", label: "收货人" })}
@@ -797,7 +852,12 @@ function openProfileSubpage(action) {
 }
 
 function closeProfileSubpage(force = false) {
-  if (!force && state.profilePage === "profile" && profileEditDirty && !window.confirm("个人资料尚未保存，确定放弃修改吗？")) return false;
+  if (!force && state.profilePage === "profile" && profileEditDirty) {
+    const dialog = $("#profileDiscardDialog");
+    dialog.returnValue = "";
+    if (!dialog.open) dialog.showModal();
+    return false;
+  }
   const page = $("#managerProfileSubpage");
   page.classList.remove("open");
   page.setAttribute("aria-hidden", "true");
@@ -878,10 +938,9 @@ function reportRawData() {
   };
 }
 
-function reportPopulateFilters() {
-  const customer = $("#reportCustomer");
-  const project = $("#reportProject");
-  const route = $("#reportRoute");
+function reportPopulateFilters(
+  customer = $("#reportCustomer"), project = $("#reportProject"), route = $("#reportRoute")
+) {
   const keep = (select, options, placeholder) => {
     const current = select.value;
     select.innerHTML = `<option value="">${placeholder}</option>${options.map((item) => `<option value="${h(item.value)}">${h(item.label)}</option>`).join("")}`;
@@ -962,8 +1021,8 @@ function reportCapacityGroups(data, range) {
     return driver.driverState === "空闲" ? "空闲" : "出勤";
   };
   return {
-    vehicles: ["空闲", "在途", "维修", "停用"].map((status) => [status, data.vehicles.filter((item) => vehicleState(item) === status).length, ({ 空闲: "#35a578", 在途: "#3889bd", 维修: "#d69a46", 停用: "#99a3ae" })[status], data.vehicles.filter((item) => vehicleState(item) === status).map((item) => item.plateNo)]),
-    drivers: ["出勤", "休假", "在途", "空闲"].map((status) => [status, data.drivers.filter((item) => driverState(item) === status).length, ({ 出勤: "#259ca7", 休假: "#99a3ae", 在途: "#3889bd", 空闲: "#35a578" })[status], data.drivers.filter((item) => driverState(item) === status).map((item) => item.id)]),
+    vehicles: ["空闲", "在途", "维修", "停用"].map((status) => [status, data.vehicles.filter((item) => vehicleState(item) === status).length, ({ 空闲: "#52C41A", 在途: "#1677FF", 维修: "#FAAD14", 停用: "#722ED1" })[status], data.vehicles.filter((item) => vehicleState(item) === status).map((item) => item.plateNo)]),
+    drivers: ["出勤", "休假", "在途", "空闲"].map((status) => [status, data.drivers.filter((item) => driverState(item) === status).length, ({ 出勤: "#13C2C2", 休假: "#722ED1", 在途: "#1677FF", 空闲: "#52C41A" })[status], data.drivers.filter((item) => driverState(item) === status).map((item) => item.id)]),
   };
 }
 
@@ -974,8 +1033,14 @@ function reportMoney(value) {
 function renderReportStatus(key, scope, items) {
   const total = items.reduce((sum, item) => sum + item[1], 0);
   $(`#report${key}Total`).textContent = `${total}${key === "Vehicle" ? " 台" : " 名"}`;
-  $(`#report${key}Bar`).innerHTML = items.map(([, count, color]) => `<i style="width:${total ? count / total * 100 : 0}%;background:${color}"></i>`).join("");
-  $(`#report${key}Status`).innerHTML = items.map(([label, count, color, ids]) => {
+  let running = 0;
+  const segments = items.filter(([, count]) => count > 0).map(([, count, color]) => {
+    const start = running / total * 100;
+    running += count;
+    return `${color} ${start}% ${running / total * 100}%`;
+  });
+  $(`#report${key}Pie`).style.background = segments.length === 1 ? items.find(([, count]) => count > 0)[2] : total ? `conic-gradient(${segments.join(", ")})` : "";
+  $(`#report${key}Status`).innerHTML = items.map(([label, count, color]) => {
     const active = reportState.capacityFilter?.scope === scope && reportState.capacityFilter.status === label;
     return `<button class="report-status-item ${active ? "active" : ""}" data-report-capacity-scope="${scope}" data-report-capacity-status="${h(label)}" aria-pressed="${active}" type="button"><i style="--status-color:${color}"></i><span>${h(label)}</span><strong>${count}</strong></button>`;
   }).join("");
@@ -990,6 +1055,7 @@ function renderReports() {
     thresholdSelect.dataset.ready = "true";
   }
   reportPopulateFilters();
+  syncReportPickers();
   const range = reportRange();
   const data = reportRawData();
   const planRows = reportPlanRows(range);
@@ -1027,9 +1093,9 @@ function renderReports() {
   $("#reportCompletionBar").style.width = `${completionRate}%`;
   $("#reportCompletionNote").textContent = `已完成 ${completedPlans} / ${planned}`;
   $("#reportTaskMetrics").innerHTML = [
-    ["计划数", planned, range.label], ["已派单", assigned.length, `自动 ${automatic} / 手动 ${manual}`], ["进行中", moving, "节点执行中"],
-    ["待派发", pending, "等待运力"], ["异常任务", exceptions, "需要处理"], ["已完成", completed, `${range.label}完成`],
-  ].map(([label, value, note]) => `<div class="report-task-metric"><span>${label}</span><strong>${value}</strong><small>${note}</small></div>`).join("");
+    ["plan", "计划数", planned, range.label], ["assigned", "已派单", assigned.length, `自动 ${automatic} / 手动 ${manual}`], ["active", "进行中", moving, "节点执行中"],
+    ["pending", "待派发", pending, "等待运力"], ["exception", "异常任务", exceptions, "需要处理"], ["done", "已完成", completed, `${range.label}完成`],
+  ].map(([icon, label, value, note]) => `<div class="report-task-metric"><div class="report-task-metric-heading"><span>${h(label)}</span><img src="icons/metrics/${icon}.svg" width="24" height="24" alt="" /></div><strong>${value}</strong><small>${h(note)}</small></div>`).join("");
   $("#reportAmountTotals").innerHTML = [[`${range.label}预估`, amount], ["本月金额", monthAmount], ["累计金额", totalAmount]].map(([label, value]) => `<div class="report-amount-total"><span>${label}</span><strong>${reportMoney(value)}</strong></div>`).join("");
   $("#reportAmountDistribution").innerHTML = amountEntries.length ? amountEntries.map(([name, value]) => `<div class="report-bar-row"><span title="${h(name)}">${h(name)}</span><span class="report-bar-track"><i style="width:${Math.round(value / maxAmount * 100)}%"></i></span><strong>${reportMoney(value)}</strong></div>`).join("") : `<div class="report-empty">暂无金额数据</div>`;
   const capacity = reportCapacityGroups(data, range);
@@ -1055,27 +1121,23 @@ function switchView(view) {
   if ($("#managerProfileSubpage").classList.contains("open")) closeProfileSubpage(true);
   $(".manager-shell").classList.remove("subpage-open");
   $$(".manager-view").forEach((item) => item.classList.toggle("active", item.id === `${view}View`));
-  $$("#managerBottomNav button").forEach((button) => button.classList.toggle("active", button.dataset.view === view));
+  $$("#managerBottomNav button").forEach((button) => {
+    const active = button.dataset.view === view;
+    button.classList.toggle("active", active);
+    if (active) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  });
   $("#managerTitle").textContent = { workbench: "工作台", reports: "数据报表", messages: "消息", profile: "我的" }[view];
   $("#headerEyebrow").textContent = view === "workbench" ? "集卡物流管理端" : view === "reports" ? "运营数据概览" : view === "messages" ? "任务与预警通知" : "运营中心账号";
   if (view === "messages") renderMessages();
   if (view === "reports") renderReports();
+  else closeReportFilters();
   $("#moduleView").classList.remove("open");
   $("#managerDetailView").classList.remove("open");
   $("#managerEntryView").classList.remove("open");
   $("#managerEntryView").setAttribute("aria-hidden", "true");
   $("#managerProfileSubpage").classList.remove("open");
   $("#managerProfileSubpage").setAttribute("aria-hidden", "true");
-}
-
-function renderWorkbench() {
-  const pendingCount = moduleCatalog.dispatch.items.filter((item) => item.status === "待派单").length;
-  const expiredCount = moduleCatalog.reminder.items.filter((item) => item.status === "已过期").length;
-  const alertCount = expiredCount + allMessages().filter((item) => item.unread && item.type === "warning").length;
-  $("#focusList").innerHTML = `
-    <button class="focus-row" data-open-module="dispatch-management" type="button"><span class="focus-symbol"><i data-lucide="circle-alert"></i></span><span><strong>${pendingCount} 条任务等待派单</strong><small>优先完成司机和车辆匹配</small></span><em>开始派单</em></button>
-    <button class="focus-row" data-open-module="reminder" type="button"><span class="focus-symbol blue"><i data-lucide="shield-alert"></i></span><span><strong>${alertCount} 项车辆证件预警</strong><small>包含 ${expiredCount} 项已过期记录</small></span><em>查看</em></button>`;
-  refreshIcons();
 }
 
 function moduleStatusMatches(item, filter) {
@@ -1089,6 +1151,21 @@ function moduleStatusMatches(item, filter) {
   return item.status === filter;
 }
 
+function renderListRoute(item, value) {
+  const routeIds = item.raw?.routeIds || [item.raw?.routeId].filter(Boolean);
+  const routes = routeIds.map((id) => moduleCatalog.route.items.find((route) => route.id === id));
+  const entries = routes.length ? routes.map((route) => [route?.title || value, route?.raw]) : [[value]];
+  return entries.map(([name, route]) => {
+    const [start, end] = String(name || "").split(/\s*(?:—|→|–|->)\s*/, 2);
+    const origin = end ? start : route?.origin;
+    const destination = end || route?.destination;
+    if (!origin || !destination) return h(name || "-");
+    const mileage = route?.mileage;
+    const distance = mileage == null || mileage === "" ? "—" : `${mileage} km`;
+    return `<span class="list-route-track"><span class="list-route-origin"><em>提重地</em><strong title="${h(origin)}">${h(origin)}</strong></span><span class="list-route-arrow"><span class="list-route-distance">${h(distance)}</span><i class="route-arrow-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></span><span class="list-route-destination"><em>卸货地</em><strong title="${h(destination)}">${h(destination)}</strong></span></span>`;
+  }).join("");
+}
+
 function renderModule() {
   const meta = moduleCatalog[state.currentModule];
   if (!meta) return;
@@ -1096,12 +1173,20 @@ function renderModule() {
   const items = meta.items.filter((item) => moduleStatusMatches(item, state.moduleFilter) && (!query || JSON.stringify(item).toLowerCase().includes(query)));
   $("#moduleFilters").innerHTML = meta.filters.map((filter) => { const active = filter === state.moduleFilter; return `<button class="filter-chip ${active ? "active" : ""}" data-module-filter="${h(filter)}" aria-pressed="${active}" type="button">${h(filter)}</button>`; }).join("");
   $("#moduleSummary").innerHTML = `<span>当前结果</span><strong>${items.length} 条</strong>`;
-  $("#moduleList").innerHTML = items.length ? items.map((item) => `
+  $("#moduleList").innerHTML = items.length ? items.map((item) => {
+    const taskType = item.fields?.find(([label]) => label === "任务类型")?.[1];
+    const showDualBadge = state.currentModule === "plan" && taskType;
+    const statusBadge = showDualBadge
+      ? `<span class="dual-badge dual-badge-${h(item.statusClass)}"><span>${h(item.status)}</span><i aria-hidden="true"></i><span>${h(taskType)}</span></span>`
+      : `<span class="status-tag ${h(item.statusClass)}">${h(item.status)}</span>`;
+    return `
     <article class="manager-list-card">
-      <div class="list-card-top"><div><strong>${h(item.title)}</strong><small>${h(item.id)} · ${h(item.subtitle)}</small></div><span class="status-tag ${h(item.statusClass)}">${h(item.status)}</span></div>
-      <div class="list-card-grid">${item.fields.slice(0, meta.listFieldLimit || 4).map(([label, value]) => `<div class="list-field"><span>${h(label)}</span><strong>${h(value)}</strong></div>`).join("")}</div>
-      <div class="list-card-footer"><span>${h(item.note || "资料已同步")}</span><div class="list-card-actions"><button data-module-detail="${h(item.id)}" type="button">查看详情</button>${["待派单", "待匹配"].includes(item.status) && ["dispatch", "dispatch-management"].includes(state.currentModule) ? `<button class="primary" data-start-dispatch="${h(item.id)}" type="button">开始派单</button>` : item.status === "待处理" ? `<button class="primary" data-module-detail="${h(item.id)}" type="button">去处理</button>` : ""}</div></div>
-    </article>`).join("") : `<div class="module-empty"><span><i data-lucide="inbox"></i></span><strong>暂无匹配数据</strong><small>调整搜索或筛选条件后重试</small></div>`;
+      <div class="list-card-top"><div><strong>${h(item.title)}</strong>${state.currentModule === "plan" ? "" : `<small>${h(item.id)} · ${h(item.subtitle)}</small>`}</div>${statusBadge}</div>
+      <div class="list-card-grid">${item.fields.slice(0, meta.listFieldLimit || 4).map(([label, value]) => `<div class="list-field"><span>${h(label)}</span><strong>${label === "线路" ? renderListRoute(item, value) : h(value)}</strong></div>`).join("")}</div>
+      ${item.note ? `<p class="task-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg><span>备注：${h(item.note)}</span></p>` : ""}
+      <div class="list-card-footer"><div class="list-card-actions"><button data-module-detail="${h(item.id)}" type="button">查看详情</button>${["待派单", "待匹配"].includes(item.status) && ["dispatch", "dispatch-management"].includes(state.currentModule) ? `<button class="primary" data-start-dispatch="${h(item.id)}" type="button">开始派单</button>` : item.status === "待处理" ? `<button class="primary" data-module-detail="${h(item.id)}" type="button">去处理</button>` : ""}</div></div>
+    </article>`;
+  }).join("") : `<div class="module-empty"><span><i data-lucide="inbox"></i></span><strong>暂无匹配数据</strong><small>调整搜索或筛选条件后重试</small></div>`;
   refreshIcons();
 }
 
@@ -1483,6 +1568,14 @@ const planWaybillFieldLabels = {
   boxNo1: "箱号 1", sealNo1: "封号 1", boxNo2: "箱号 2", sealNo2: "封号 2",
 };
 
+const planRouteFieldLabels = {
+  id: "线路档案ID", routeCode: "线路编号", customerId: "客户编号", customerName: "客户名称", projectId: "项目编号", projectName: "项目名称",
+  routeName: "线路名称", origin: "起运地", destination: "目的地", pickupPoint: "提箱点", loadingPoint: "装货点", unloadingPoint: "卸货点",
+  dropoffPoint: "落箱点", viaPoints: "途经点", taskType: "任务类型", mileage: "里程（公里）", routeState: "线路状态",
+  estimatedRevenue: "预估收入", baseFreight: "基础运价", commissionType: "提成方式", commissionValue: "提成金额 / 比例",
+  commissionRemark: "提成规则说明", defaultVehicle: "常用车辆", defaultDriver: "常用司机", remark: "备注",
+};
+
 function planValueText(value) {
   if (value == null || value === "") return "-";
   if (typeof value === "boolean") return value ? "是" : "否";
@@ -1507,7 +1600,7 @@ function renderPlanDetail(item) {
     ["计划子任务数", rows.length], ["完成进度", item.fields.find(([label]) => label === "完成进度")?.[1]],
     ["计划状态", item.status], ["备注", first.remark],
   ];
-  const routeSections = routes.map((route) => `<section class="detail-section"><h3>线路信息 · ${h(route.title)}</h3>${planDetailRows(Object.entries(route.raw || {}).map(([key, value]) => [({ routeName: "线路名称", routeCode: "线路编号", origin: "起运地", destination: "目的地", viaPoints: "途经点", routeState: "线路状态", customerName: "客户名称", projectName: "项目名称", estimatedRevenue: "预估收入", baseFreight: "基础运价", commissionType: "提成方式", commissionValue: "提成规则值", defaultVehicle: "常用车辆", defaultDriver: "常用司机", remark: "备注" })[key] || key, value]))}</section>`).join("");
+  const routeSections = routes.map((route) => `<section class="detail-section"><h3>线路信息 · ${h(route.title)}</h3>${planDetailRows(Object.entries(route.raw || {}).map(([key, value]) => [planRouteFieldLabels[key] || key, key === "commissionType" ? (value === "rate" ? "按收入比例提成" : value === "fixed" ? "固定金额提成" : value) : value]))}</section>`).join("");
   const childSections = rows.map((waybill) => {
     const dispatch = dispatchByWaybill.get(waybill.waybillNo);
     const waybillFields = Object.entries(waybill).map(([key, value]) => [planWaybillFieldLabels[key] || key, value]);
@@ -1750,15 +1843,27 @@ function updateWorkbenchCounts() {
   const transitCount = moduleCatalog.dispatch.items.filter((item) => item.status === "运输中").length;
   const idleVehicleCount = moduleCatalog.capacity.items.filter((item) => item.status === "闲置").length;
   const alertCount = moduleCatalog.reminder.items.filter((item) => item.status === "已过期").length + allMessages().filter((item) => item.unread && item.type === "warning").length;
-  const labels = {
-    waybill: `${moduleCatalog.waybill.items.length} 条记录`, plan: `${moduleCatalog.plan.items.length} 个任务`, route: `${moduleCatalog.route.items.length} 条线路`, "dispatch-management": `${moduleCatalog["dispatch-management"].items.filter((item) => item.status === "待匹配").length} 条待匹配`,
-    dispatch: `${pendingDispatchCount} 条待派单`,
-    capacity: `${moduleCatalog.capacity.items.length} 条运力`, vehicle: `${moduleCatalog.vehicle.items.length} 台车辆`, trailer: `${moduleCatalog.trailer.items.length} 台挂车`, driver: `${moduleCatalog.driver.items.length} 名司机`,
-    customer: `${moduleCatalog.customer.items.length} 家往来单位`, reminder: `${moduleCatalog.reminder.items.length} 项待处理`,
-  };
-  Object.entries(labels).forEach(([moduleName, label]) => {
-    const node = $(`#moduleGrid [data-open-module="${moduleName}"] small`);
-    if (node) node.textContent = label;
+  const dispatchByWaybill = new Map(moduleCatalog.dispatch.items.map((item) => {
+    const dispatch = dispatchRawForItem(item);
+    return [dispatch.waybillNo, item.status];
+  }));
+  const pendingPlans = moduleCatalog.plan.items.filter((item) => {
+    if (!["待派发", "待派单"].includes(item.status)) return false;
+    const waybills = item.raw?.rows?.map((row) => row.waybillNo) || item.raw?.waybills || [];
+    return !waybills.length || waybills.some((no) => (dispatchByWaybill.get(no) || "待派单") === "待派单");
+  }).length;
+  const badges = [
+    ["plan", pendingPlans, "个待派发计划"],
+    ["dispatch-management", moduleCatalog["dispatch-management"].items.filter((item) => item.status === "待匹配").length, "条待匹配"],
+    ["dispatch", pendingDispatchCount, "条待派单"],
+  ];
+  badges.forEach(([moduleName, count, unit]) => {
+    const button = $(`#moduleGrid [data-open-module="${moduleName}"]`);
+    const badge = button.querySelector(".module-badge");
+    badge.hidden = count === 0;
+    badge.textContent = count > 99 ? "99+" : count;
+    if (count) button.setAttribute("aria-label", `${moduleCatalog[moduleName].title}，${count} ${unit}`);
+    else button.removeAttribute("aria-label");
   });
   $("#workbenchPendingCount").textContent = pendingDispatchCount;
   $("#workbenchTransitCount").textContent = transitCount;
@@ -2018,8 +2123,16 @@ function saveEntry(event) {
 }
 
 function renderMessages() {
-  const list = allMessages().filter((item) => state.messageFilter === "all" || item.type === state.messageFilter);
+  const items = allMessages();
+  const unread = items.filter((item) => item.unread).length;
+  $("#messageUnreadSummary").textContent = unread ? `${unread} 条未读消息` : "暂无未读消息";
+  $("#readAllButton").disabled = unread === 0;
+  $("#messageNavBadge").textContent = unread > 99 ? "99+" : unread || "";
+  const list = items.filter((item) => state.messageFilter === "all" || item.type === state.messageFilter);
   $("#messageList").innerHTML = list.map((item) => `<button class="message-item ${item.unread ? "unread" : ""}" data-message-id="${item.id}" type="button"><span class="message-icon ${item.style}"><i data-lucide="${item.icon}"></i></span><span class="message-copy"><strong>${h(item.title)}</strong><p>${h(item.desc)}</p><time>${h(item.time)}</time></span></button>`).join("");
+  if (!list.length) {
+    $("#messageList").innerHTML = '<div class="module-empty"><span><i data-lucide="bell-off"></i></span><strong>暂无消息</strong><small>此分类的新消息会显示在这里</small></div>';
+  }
   refreshIcons();
 }
 
@@ -2038,6 +2151,153 @@ $("#managerBottomNav").addEventListener("click", (event) => {
   const button = event.target.closest("[data-view]");
   if (button) switchView(button.dataset.view);
 });
+
+const moreFilters = $("#reportMoreFilters");
+const morePanel = $("#reportMorePanel");
+const pickerOptions = $("#reportPickerOptions");
+const reportScrim = $("#reportScrim");
+const draftProject = $("#reportProject").cloneNode(true);
+const draftRoute = $("#reportRoute").cloneNode(true);
+let activeReportPicker = null;
+
+function reportPickerSelect(id) {
+  if (id === "reportProject") return draftProject;
+  if (id === "reportRoute") return draftRoute;
+  return document.getElementById(id);
+}
+
+function syncReportPickers() {
+  document.querySelectorAll("[data-report-picker]").forEach((button) => {
+    const select = reportPickerSelect(button.dataset.reportPicker);
+    const label = select.selectedOptions[0]?.textContent || "";
+    button.lastElementChild.textContent = label;
+    button.title = label;
+  });
+  moreFilters.classList.toggle("is-filtered", Boolean($("#reportProject").value || $("#reportRoute").value));
+}
+
+function positionReportPopover(panel, anchor) {
+  const bounds = $("#reportsView").getBoundingClientRect();
+  const rect = anchor.getBoundingClientRect();
+  const { left, width } = $(".manager-shell").getBoundingClientRect();
+  const toolbarBottom = $(".report-toolbar").getBoundingClientRect().bottom;
+  const scrimTop = Math.max(bounds.top, toolbarBottom);
+  const top = Math.max(scrimTop, Math.min(rect.bottom + 6, bounds.bottom - 180));
+  reportScrim.style.top = `${scrimTop - bounds.top}px`;
+  panel.style.width = `${width}px`;
+  panel.style.maxHeight = `${Math.max(0, bounds.bottom - top - 6)}px`;
+  panel.style.left = `${left}px`;
+  panel.style.top = `${top}px`;
+}
+
+function closeReportPicker(restoreFocus = false) {
+  if (!activeReportPicker) return;
+  activeReportPicker.setAttribute("aria-expanded", "false");
+  if (restoreFocus) activeReportPicker.focus({ preventScroll: true });
+  activeReportPicker = null;
+  pickerOptions.hidden = true;
+  reportScrim.hidden = morePanel.hidden;
+}
+
+function closeReportFilters(restoreFocus = false) {
+  closeReportPicker();
+  morePanel.hidden = true;
+  reportScrim.hidden = true;
+  moreFilters.setAttribute("aria-expanded", "false");
+  if (restoreFocus) moreFilters.focus({ preventScroll: true });
+}
+
+function refreshDraftFilters() {
+  reportPopulateFilters($("#reportCustomer"), draftProject, draftRoute);
+  syncReportPickers();
+}
+
+moreFilters.addEventListener("click", () => {
+  if (!morePanel.hidden) return closeReportFilters(true);
+  closeReportPicker();
+  draftProject.replaceChildren(...Array.from($("#reportProject").options, (option) => option.cloneNode(true)));
+  draftRoute.replaceChildren(...Array.from($("#reportRoute").options, (option) => option.cloneNode(true)));
+  draftProject.value = $("#reportProject").value;
+  draftRoute.value = $("#reportRoute").value;
+  syncReportPickers();
+  morePanel.hidden = false;
+  reportScrim.hidden = false;
+  moreFilters.setAttribute("aria-expanded", "true");
+  positionReportPopover(morePanel, moreFilters);
+  $("#reportCloseFilters").focus({ preventScroll: true });
+});
+
+document.querySelectorAll("[data-report-picker]").forEach((button) => {
+  button.addEventListener("click", () => {
+    if (activeReportPicker === button) return closeReportPicker(true);
+    if (!morePanel.contains(button)) closeReportFilters();
+    else closeReportPicker();
+    activeReportPicker = button;
+    button.setAttribute("aria-expanded", "true");
+    const select = reportPickerSelect(button.dataset.reportPicker);
+    $("#reportPickerTitle").textContent = button.getAttribute("aria-label") || button.firstElementChild.textContent;
+    $("#reportPickerChoices").replaceChildren(...Array.from(select.options, (option) => {
+      const choice = document.createElement("button");
+      choice.type = "button";
+      choice.textContent = option.textContent;
+      choice.setAttribute("aria-pressed", String(option.selected));
+      choice.addEventListener("click", () => {
+        const changed = select.value !== option.value;
+        select.value = option.value;
+        closeReportPicker(true);
+        if (!changed) return;
+        if (select === draftProject || select === draftRoute) {
+          if (select === draftProject) draftRoute.value = "";
+          refreshDraftFilters();
+        } else {
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      });
+      return choice;
+    }));
+    pickerOptions.hidden = false;
+    reportScrim.hidden = false;
+    positionReportPopover(pickerOptions, button);
+    pickerOptions.querySelector('[aria-pressed="true"]')?.focus({ preventScroll: true });
+  });
+});
+
+$("#reportClosePicker").addEventListener("click", () => closeReportPicker(true));
+$("#reportCloseFilters").addEventListener("click", () => closeReportFilters(true));
+$("#reportResetFilters").addEventListener("click", () => {
+  closeReportPicker();
+  draftProject.value = "";
+  draftRoute.value = "";
+  refreshDraftFilters();
+});
+$("#reportApplyFilters").addEventListener("click", () => {
+  $("#reportProject").value = draftProject.value;
+  reportPopulateFilters();
+  $("#reportRoute").value = draftRoute.value;
+  reportState.capacityFilter = null;
+  closeReportFilters(true);
+  renderReports();
+});
+document.addEventListener("pointerdown", (event) => {
+  if (event.target.closest("#reportMoreFilters, #reportMorePanel, #reportPickerOptions, [data-report-picker]")) return;
+  if (event.target === reportScrim && activeReportPicker) closeReportPicker(true);
+  else closeReportFilters();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  if (activeReportPicker) closeReportPicker(true);
+  else if (!morePanel.hidden) closeReportFilters(true);
+});
+$("#reportsView").addEventListener("scroll", () => {
+  const anchor = morePanel.hidden ? activeReportPicker : moreFilters;
+  if (!anchor) return;
+  const view = $("#reportsView").getBoundingClientRect();
+  const rect = $(".report-toolbar").getBoundingClientRect();
+  if (rect.bottom <= view.top || rect.top >= view.bottom) return closeReportFilters();
+  if (!morePanel.hidden) positionReportPopover(morePanel, moreFilters);
+  if (activeReportPicker) positionReportPopover(pickerOptions, activeReportPicker);
+});
+window.addEventListener("resize", () => closeReportFilters());
 
 $("#reportsView").addEventListener("change", (event) => {
   reportState.capacityFilter = null;
@@ -2102,6 +2362,7 @@ document.addEventListener("keydown", (event) => {
   const entryOpen = $("#managerEntryView").classList.contains("open");
   const profileOpen = $("#managerProfileSubpage").classList.contains("open");
   if (event.key === "Escape") {
+    if ($("#profileDiscardDialog").open) return;
     if (profileOpen) closeProfileSubpage();
     else if (entryOpen) closeEntry();
     return;
@@ -2117,7 +2378,6 @@ document.addEventListener("keydown", (event) => {
 window.addEventListener("storage", (event) => {
   if (event.key === NODE_NOTIFICATION_STORAGE_KEY) {
     renderMessages();
-    renderWorkbench();
     updateWorkbenchCounts();
     return;
   }
@@ -2141,7 +2401,6 @@ window.addEventListener("storage", (event) => {
   if (event.key !== window.AdminDataBridge?.STORAGE_KEY) return;
   loadSharedCatalog();
   updateWorkbenchCounts();
-  renderWorkbench();
   if (state.currentView === "reports") renderReports();
   if (state.currentModule) renderModule();
 });
@@ -2167,6 +2426,9 @@ $("#entryBackButton").addEventListener("click", closeEntry);
 $("#managerEntryView").addEventListener("click", (event) => { if (event.target === event.currentTarget) closeEntry(); });
 $("#entryCancelButton").addEventListener("click", closeEntry);
 $("#managerEntryForm").addEventListener("submit", saveEntry);
+$("#profileDiscardDialog").addEventListener("close", (event) => {
+  if (event.currentTarget.returnValue === "discard") closeProfileSubpage(true);
+});
 $("#profileSubpageBack").addEventListener("click", () => closeProfileSubpage());
 
 $("#profileSubpageContent").addEventListener("click", (event) => {
@@ -2326,7 +2588,7 @@ $("#moduleSearch").addEventListener("input", (event) => {
   $("#clearModuleSearch").classList.toggle("visible", Boolean(state.search));
   renderModule();
 });
-$("#clearModuleSearch").addEventListener("click", () => { state.search = ""; $("#moduleSearch").value = ""; $("#clearModuleSearch").classList.remove("visible"); renderModule(); });
+$("#clearModuleSearch").addEventListener("click", () => { state.search = ""; $("#moduleSearch").value = ""; $("#clearModuleSearch").classList.remove("visible"); $("#moduleSearch").focus(); renderModule(); });
 $("#moduleFilters").addEventListener("click", (event) => { const button = event.target.closest("[data-module-filter]"); if (!button) return; state.moduleFilter = button.dataset.moduleFilter; renderModule(); });
 $("#moduleList").addEventListener("click", (event) => {
   const autoRun = event.target.closest("[data-auto-run]");
@@ -2347,7 +2609,10 @@ $("#messageTabs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-message-filter]");
   if (!button) return;
   state.messageFilter = button.dataset.messageFilter;
-  $$("#messageTabs button").forEach((item) => item.classList.toggle("active", item === button));
+  $$("#messageTabs button").forEach((item) => {
+    item.classList.toggle("active", item === button);
+    item.setAttribute("aria-pressed", String(item === button));
+  });
   renderMessages();
 });
 $("#messageList").addEventListener("click", (event) => {
@@ -2370,7 +2635,7 @@ $("#readAllButton").addEventListener("click", () => {
   let readIds = [];
   try { readIds = JSON.parse(localStorage.getItem(NODE_NOTIFICATION_READ_STORAGE_KEY) || "[]"); } catch (_error) { readIds = []; }
   localStorage.setItem(NODE_NOTIFICATION_READ_STORAGE_KEY, JSON.stringify([...new Set([...readIds, ...readNodeNotifications().map((item) => item.nodeNotificationId)])]));
-  renderMessages(); renderWorkbench(); updateWorkbenchCounts(); showToast("消息已全部标记为已读");
+  renderMessages(); updateWorkbenchCounts(); showToast("消息已全部标记为已读");
 });
 
 loadSharedCatalog();
@@ -2378,8 +2643,163 @@ loadCreatedRecords();
 ensurePendingDispatchSamples();
 rebuildDispatchManagementCatalog();
 updateWorkbenchCounts();
-renderWorkbench();
 renderMessages();
 renderManagerProfile();
 refreshIcons();
 window.setInterval(() => { if (state.currentView === "reports") renderReports(); }, 15000);
+
+/* ===== 底部弹窗选择器组件 ===== */
+(function() {
+  // 创建弹窗 DOM
+  function createSelectSheet() {
+    if (document.getElementById('mobileSelectSheet')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'mobileSelectOverlay';
+    overlay.className = 'mobile-select-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:0;visibility:hidden;transition:opacity 0.3s;';
+    document.body.appendChild(overlay);
+
+    const sheet = document.createElement('div');
+    sheet.id = 'mobileSelectSheet';
+    sheet.className = 'mobile-select-sheet';
+    sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:9999;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:60vh;display:flex;flex-direction:column;overflow:hidden;';
+    sheet.innerHTML =
+      '<div class="mobile-select-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f1f5;">' +
+        '<strong id="mobileSelectTitle" style="font-size:16px;font-weight:600;color:#30324d;">请选择</strong>' +
+        '<button type="button" onclick="closeMobileSelect()" style="width:32px;height:32px;border:none;background:#f5f6fa;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<div id="mobileSelectOptions" class="mobile-select-options" style="flex:1;overflow-y:auto;padding:8px 0;-webkit-overflow-scrolling:touch;"></div>';
+    document.body.appendChild(sheet);
+
+    overlay.addEventListener('click', closeMobileSelect);
+  }
+
+  // 打开弹窗
+  window.openMobileSelect = function(options, title, currentValue, onSelect) {
+    createSelectSheet();
+    const overlay = document.getElementById('mobileSelectOverlay');
+    const sheet = document.getElementById('mobileSelectSheet');
+    const optionsEl = document.getElementById('mobileSelectOptions');
+    const titleEl = document.getElementById('mobileSelectTitle');
+
+    titleEl.textContent = title || '请选择';
+
+    optionsEl.innerHTML = options.map(function(opt) {
+      const val = (typeof opt === 'object' && opt !== null) ? opt[0] : opt;
+      const label = (typeof opt === 'object' && opt !== null) ? opt[1] : opt;
+      const isSelected = String(val) === String(currentValue);
+      const checkSvg = isSelected
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="#3a7afe" stroke-width="2.5" width="18" height="18"><path d="M20 6L9 17l-5-5"/></svg>'
+        : '';
+      return '<div class="mobile-select-option' + (isSelected ? ' selected' : '') + '"' +
+        ' data-value="' + String(val).replace(/"/g, '&quot;') + '"' +
+        ' style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;font-size:15px;color:' + (isSelected ? '#3a7afe' : '#30324d') + ';cursor:pointer;font-weight:' + (isSelected ? '600' : '400') + ';transition:background 0.2s;"' +
+        ' onclick="selectMobileOption(this)">' +
+        '<span>' + label + '</span>' + checkSvg +
+      '</div>';
+    }).join('');
+
+    window._mobileSelectCallback = onSelect;
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:1;visibility:visible;transition:opacity 0.3s;';
+    sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:9999;transform:translateY(0);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:60vh;display:flex;flex-direction:column;overflow:hidden;';
+  };
+
+  // 关闭弹窗
+  window.closeMobileSelect = function() {
+    const overlay = document.getElementById('mobileSelectOverlay');
+    const sheet = document.getElementById('mobileSelectSheet');
+    if (overlay) overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:0;visibility:hidden;transition:opacity 0.3s;';
+    if (sheet) sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:9999;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:60vh;display:flex;flex-direction:column;overflow:hidden;';
+    window._mobileSelectCallback = null;
+  };
+
+  // 选择选项
+  window.selectMobileOption = function(el) {
+    const value = el.dataset.value;
+    if (window._mobileSelectCallback) {
+      window._mobileSelectCallback(value);
+    }
+    closeMobileSelect();
+  };
+
+  // 初始化：把 select 转成自定义选择器
+  function initMobileSelects() {
+    document.querySelectorAll('.mobile-field select, select[data-mobile-select]').forEach(function(select) {
+      if (select.dataset.mobileSelectInit) return;
+      select.dataset.mobileSelectInit = 'true';
+
+      const field = select.closest('.mobile-field') || select.parentElement;
+      const labelEl = field ? field.querySelector('span') : null;
+      const label = labelEl ? labelEl.textContent : '请选择';
+      const display = document.createElement('div');
+      display.className = 'mobile-select-display';
+      display.style.cssText = 'flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:14px;color:#30324d;text-align:right;cursor:pointer;';
+
+      const updateDisplay = function() {
+        const selected = select.options[select.selectedIndex];
+        const text = selected && select.value ? selected.text : (selected && selected.value === '' ? selected.text : '请选择');
+        const isPlaceholder = !select.value;
+        display.innerHTML = '<span style="color:' + (isPlaceholder ? '#b5bac7' : '#30324d') + ';">' + text + '</span>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="#97a1b3" stroke-width="2" width="16" height="16"><path d="M6 9l6 6 6-6"/></svg>';
+      };
+      updateDisplay();
+
+      display.addEventListener('click', function() {
+        const options = Array.from(select.options).map(function(opt) { return [opt.value, opt.text]; });
+        openMobileSelect(options, label, select.value, function(val) {
+          select.value = val;
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+          updateDisplay();
+        });
+      });
+
+      select.parentElement.insertBefore(display, select);
+      select.style.cssText = 'position:absolute;opacity:0;pointer-events:none;width:0;height:0;';
+    });
+  }
+
+  // 页面加载后初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileSelects);
+  } else {
+    initMobileSelects();
+  }
+
+  // 监听动态内容
+  const selectObserver = new MutationObserver(function(mutations) {
+    let needInit = false;
+    mutations.forEach(function(m) {
+      m.addedNodes.forEach(function(node) {
+        if (node.nodeType === 1 && (node.tagName === 'SELECT' || (node.querySelector && node.querySelector('select')))) {
+          needInit = true;
+        }
+      });
+    });
+    if (needInit) initMobileSelects();
+  });
+  selectObserver.observe(document.body, { childList: true, subtree: true });
+})();
+
+/* ===== 打开字段选择器（供 fieldMarkup 生成的自定义选择器调用） ===== */
+window.openFieldSelect = function(displayEl) {
+  const fieldName = displayEl.dataset.fieldName;
+  const fieldLabel = displayEl.dataset.fieldLabel || '请选择';
+  const select = displayEl.parentElement.querySelector('select[name="' + fieldName + '"]');
+  if (!select) return;
+
+  const options = Array.from(select.options).map(function(opt) { return [opt.value, opt.text]; });
+  const currentValue = select.value;
+
+  window.openMobileSelect(options, fieldLabel, currentValue, function(val) {
+    select.value = val;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    // 更新显示
+    const selected = select.options[select.selectedIndex];
+    const textEl = displayEl.querySelector('.select-display-text');
+    if (textEl) textEl.textContent = selected ? selected.text : '请选择';
+    displayEl.style.color = val ? '#30324d' : '#b5bac7';
+  });
+};
+

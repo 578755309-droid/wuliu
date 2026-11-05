@@ -1,0 +1,158 @@
+/* Driver mobile theme, loaded after the shared and feature styles. */
+:root {
+  --primary: #0065ff;
+  --primary-hover: #0638cb;
+  --primary-soft: #eaf2ff;
+  --page: #f5f6f8;
+  --text: #252930;
+  --muted: #5f6673;
+  --line: #e5e8ef;
+  --radius-card: 12px;
+  --status-active-fg: #0055d5;
+  --status-active-bg: var(--primary-soft);
+  --status-complete-fg: #08704c;
+  --status-complete-bg: #e7faf1;
+  --shadow-card: none;
+  --nav-height: calc(62px + var(--safe-bottom));
+}
+
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; }
+.phone-shell, .detail-view, .subpage-view { background: var(--page); }
+.phone-shell::before { display: none; }
+.phone-shell { width: min(100%, 380px); box-shadow: 0 20px 60px rgba(18, 28, 46, .15); border-radius: 14px; overflow: hidden; }
+.mobile-header, .detail-nav {
+  min-height: calc(54px + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) 16px 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.mobile-header h1 { font-size: 22px; line-height: 28px; }
+.eyebrow { display: none; }
+.detail-nav { grid-template-columns: 44px minmax(0, 1fr) 44px; }
+.detail-nav strong { font-size: 17px; line-height: 22px; }
+.detail-nav .icon-button { width: 44px; height: 44px; color: var(--text); box-shadow: none; }
+.mobile-view { padding: 12px 16px calc(var(--nav-height) + 16px); }
+#tasksView { padding-top: 0; }
+
+.work-stage-tabs, .driver-message-tabs {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  gap: 0;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface);
+}
+.work-stage-tabs { margin-inline: -16px; }
+.driver-message-tabs { margin-top: -12px; margin-inline: -16px; }
+.work-stage-tabs button, .driver-message-tabs button {
+  position: relative;
+  height: 48px;
+  border: 0;
+  border-radius: 0;
+  color: var(--muted);
+  background: transparent;
+  font-size: 15px;
+}
+.work-stage-tabs button.active, .driver-message-tabs button.active {
+  color: var(--text);
+  background: transparent;
+  box-shadow: none;
+}
+.work-stage-tabs button.active::after, .driver-message-tabs button.active::after {
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - 10px);
+  width: 20px;
+  height: 3px;
+  border-radius: 4px;
+  background: var(--primary);
+  content: "";
+}
+.work-stage-tabs button strong { font-size: 12px; }
+.work-stage-tabs button.active strong { color: var(--status-active-fg); background: var(--primary-soft); }
+
+:is(.task-card, .order-card, .profile-order-panel, .profile-menu-group, .detail-route-card, .detail-card, .info-section, .driver-message-list, .driver-message-summary) {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: none;
+}
+.task-card { padding: 16px; }
+.task-route-name { max-width: none; font-size: 17px; line-height: 22px; white-space: normal; overflow-wrap: anywhere; }
+.task-number, .dispatch-time, .status-badge, .meta-chip, .task-note { font-size: 12px; line-height: 16px; }
+.task-number { color: var(--muted); overflow-wrap: anywhere; }
+.task-extra-meta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 12px; margin: 14px 0 0; }
+.task-extra-meta > div:nth-child(n+3) { grid-column: 1 / -1; }
+.task-extra-meta dt { color: var(--muted); font-size: 12px; line-height: 16px; }
+.task-extra-meta dd { margin: 2px 0 0; color: var(--text); font-size: 14px; line-height: 20px; overflow-wrap: anywhere; }
+.driver-job-locations, .task-node-overview { border-color: var(--line); background: #f8faff; }
+.driver-job-location-heading strong { font-size: 13px; }
+.driver-job-location-heading span, .driver-job-location-row > span { color: var(--muted); font-size: 12px; }
+.driver-job-location-row { grid-template-columns: minmax(86px, 1fr) minmax(0, 2fr); }
+.driver-job-location-row > strong { color: var(--text); font-size: 14px; line-height: 20px; }
+.driver-job-location-row > span i { font-size: 10px; }
+.detail-field span, .timeline-row time, .detail-progress-meta { color: var(--muted); font-size: 12px; }
+.detail-field strong, .timeline-copy p { color: var(--text); font-size: 14px; line-height: 20px; overflow-wrap: anywhere; }
+.detail-status-card, .subpage-summary { border-radius: var(--radius-card); background: var(--primary); box-shadow: none; }
+.detail-status-card h2 { font-size: 22px; line-height: 28px; }
+.profile-hero { border-radius: var(--radius-card); }
+.profile-menu-list button { min-height: 54px; font-size: 15px; }
+.profile-menu-group > h2, .detail-card-title { font-size: 15px; }
+.profile-menu-list button > small, .profile-vehicle-summary small, .profile-copy small { font-size: 12px; }
+
+.driver-message-summary button, .address-action :is(button, a), .sheet-close { min-height: 44px; }
+.sheet-close { min-width: 44px; }
+.driver-message-copy strong { color: var(--text); font-size: 15px; }
+.driver-message-copy p { color: var(--text); font-size: 14px; line-height: 20px; }
+.driver-message-copy :is(small, time), .driver-message-summary small, .driver-message-summary button { color: var(--muted); font-size: 12px; }
+.driver-message-summary button { color: var(--status-active-fg); }
+.driver-message-icon:not(.warning, .announcement) { color: var(--primary); background: var(--primary-soft); }
+.driver-message-item:active { background: var(--primary-soft); }
+
+:is(.card-button, .detail-action-bar button, .primary-action, .subpage-primary, .order-progress-action, .order-accept-action, .order-contact-action) {
+  min-height: 44px;
+  height: auto;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 15px;
+  line-height: 20px;
+  box-shadow: none;
+}
+.card-button { border-color: var(--line); color: var(--text); }
+.card-button.soft, .card-button.primary { border-color: var(--primary); color: white; background: var(--primary); }
+.danger-action { border-color: var(--danger); background: var(--danger); }
+.bottom-nav, .detail-action-bar {
+  inset-inline: 0;
+  bottom: 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface);
+  box-shadow: none;
+}
+.bottom-nav { min-height: var(--nav-height); padding: 4px 0 var(--safe-bottom); }
+.bottom-nav button { min-height: 48px; color: var(--muted); font-size: 12px; }
+.bottom-nav button.active, .bottom-nav button.active .nav-symbol { color: var(--primary); }
+.bottom-nav button.active .nav-symbol { background: var(--primary-soft); box-shadow: none; }
+.detail-action-bar { min-height: 0; padding: 10px 16px calc(10px + var(--safe-bottom)); }
+.detail-action-bar:empty { display: none; }
+.detail-scroll { padding-bottom: calc(86px + var(--safe-bottom)); }
+
+:is(.sheet-field, .mobile-field, .feedback-field) { font-size: 14px; }
+:is(.sheet-field, .mobile-field, .feedback-field) :is(input:not([type="file"]), select, textarea) {
+  min-height: 44px;
+  font-size: 16px;
+  line-height: 22px;
+}
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .mobile-view.active, .detail-view.open, .subpage-view.open, .bottom-sheet[open] { animation: none; }
+}
+
+.task-card::before { content: none; }
+.status-badge { flex: 0 0 auto; white-space: nowrap; }
+.dispatch-time { font-variant-numeric: tabular-nums; }

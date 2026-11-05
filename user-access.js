@@ -64,8 +64,10 @@
   });
   function normalizeRole(role, index = 0) {
     const source = role?.permissions || {};
-    const permissions = EMPTY_PERMISSIONS();
+    const isAdministrator = clean(role?.id) === "role-admin";
+    const permissions = isAdministrator ? ALL_PERMISSIONS() : EMPTY_PERMISSIONS();
     MODULES.forEach((module) => {
+      if (isAdministrator) return;
       const settlementPermissionIds = new Set(["receivables", "payables", "abnormalFees", "settlementTransactions"]);
       const legacyPermissions = module.id === "transportTaskConfig" && source[module.id] === undefined
         ? source.photoRequirements
@@ -80,10 +82,10 @@
       id: clean(role?.id) || `role-${index + 1}`,
       name: clean(role?.name),
       description: clean(role?.description),
-      status: role?.status === "disabled" ? "disabled" : "active",
-      isSystem: Boolean(role?.isSystem),
+      status: isAdministrator ? "active" : role?.status === "disabled" ? "disabled" : "active",
+      isSystem: isAdministrator || Boolean(role?.isSystem),
       permissions,
-      scope: normalizeScope(role?.scope),
+      scope: isAdministrator ? { type: "all", customers: [], projects: [], routes: [] } : normalizeScope(role?.scope),
       updatedAt: clean(role?.updatedAt),
     };
   }
@@ -108,12 +110,13 @@
       const stored = JSON.parse(storage.getItem(STORAGE_KEY) || "null");
       const configuration = stored ? normalizeConfiguration(stored) : clone(seed);
       const admin = configuration.users.find((user) => user.id === "user-admin" || user.account === "admin");
-      if (admin && configuration.roles.some((role) => role.id === "role-admin" && role.status === "active")) {
-        configuration.users.forEach((user) => { user.isCurrentUser = user.id === admin.id; });
+      if (admin) {
         admin.roleId = "role-admin";
         admin.status = "active";
-        if (stored) storage.setItem(STORAGE_KEY, JSON.stringify(configuration));
       }
+      const activeCurrent = configuration.users.find((user) => user.isCurrentUser && user.status === "active");
+      if (!activeCurrent && admin) configuration.users.forEach((user) => { user.isCurrentUser = user.id === admin.id; });
+      if (stored) storage.setItem(STORAGE_KEY, JSON.stringify(configuration));
       return configuration;
     } catch (error) {
       return clone(seed);
@@ -123,6 +126,14 @@
     const normalized = normalizeConfiguration(configuration);
     storage.setItem(STORAGE_KEY, JSON.stringify(normalized));
     return clone(normalized);
+  }
+  function switchCurrentUser(userId, storage = localStorage) {
+    const configuration = load(storage);
+    const user = configuration.users.find((item) => item.id === userId && item.status === "active");
+    const role = configuration.roles.find((item) => item.id === user?.roleId && item.status === "active");
+    if (!user || !role) return { error: "该账号或角色当前不可用。" };
+    configuration.users.forEach((item) => { item.isCurrentUser = item.id === user.id; });
+    return { configuration: save(configuration, storage), user: clone(user), role: clone(role) };
   }
   function makeId(prefix) {
     return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -252,6 +263,7 @@
   function can(moduleId, action = "view", configuration = load()) {
     const role = currentRole(configuration);
     if (!role) return false;
+    if (role.id === "role-admin") return true;
     return Boolean(role.permissions?.[moduleId]?.[action]);
   }
   function pageModule(pageId) { return PAGE_MODULES[pageId] || null; }
@@ -278,7 +290,7 @@
     }));
   }
 
-  if (typeof window !== "undefined") window.UserAccess = { STORAGE_KEY, ACTIONS, ACTION_LABELS, MODULES, PAGE_MODULES, clone, load, save, createUser, updateUser, deleteUser, createRole, updateRole, duplicateRole, deleteRole, setPermission, permissionCount, scopeLabel, normalizeConfiguration, currentUser, currentRole, can, pageModule, canPage, filterRecords };
+  if (typeof window !== "undefined") window.UserAccess = { STORAGE_KEY, ACTIONS, ACTION_LABELS, MODULES, PAGE_MODULES, clone, load, save, switchCurrentUser, createUser, updateUser, deleteUser, createRole, updateRole, duplicateRole, deleteRole, setPermission, permissionCount, scopeLabel, normalizeConfiguration, currentUser, currentRole, can, pageModule, canPage, filterRecords };
   if (typeof document === "undefined" || !document.querySelector("#userAccessPage")) return;
 
   const page = document.querySelector("#userAccessPage");
@@ -607,6 +619,7 @@
   });
   window.addEventListener("storage", (event) => { if (event.key === STORAGE_KEY) { state = load(); render(); window.dispatchEvent(new CustomEvent("user-access-changed")); } });
   window.UserAccessManager = { render, loadState: () => clone(state) };
+  window.addEventListener("user-access-changed", () => { state = load(); render(); });
   render();
   window.dispatchEvent(new CustomEvent("user-access-changed"));
 })();

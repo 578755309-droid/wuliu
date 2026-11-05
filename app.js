@@ -423,6 +423,13 @@ userAccountMenu?.addEventListener("click", (event) => {
   const actionButton = event.target.closest("[data-user-action]");
   if (!actionButton) return;
   setUserAccountMenu(false);
+  if (actionButton.dataset.userAction === "switch-account") {
+    const result = window.UserAccess?.switchCurrentUser?.(actionButton.dataset.userId);
+    if (result?.error) return showUserActionFeedback(result.error);
+    window.dispatchEvent(new CustomEvent("user-access-changed", { detail: { userId: actionButton.dataset.userId } }));
+    showUserActionFeedback(`已切换为${result?.user?.name || "所选账号"}`);
+    return;
+  }
   showUserActionFeedback(actionButton.dataset.userAction);
 });
 
@@ -1683,13 +1690,13 @@ function filterPlanTaskGroups(groups, filter, today = getPlanTaskToday()) {
 function renderPlanTaskQuickStats(groups) {
   const values = getPlanTaskQuickStatValues(groups);
   const stats = [
-    ["overdue", "已延期计划", values.overdue, "alarm-clock", "overdue"],
-    ["pending-dispatch", "待派发子任务", values.pendingDispatch, "clipboard-list", "pending"],
-    ["today-berthing", "今日待靠台", values.todayBerthing, "calendar-clock", "today"],
-    ["in-progress", "进行中计划", values.inProgress, "truck", "moving"],
-    ["upcoming", "即将执行计划", values.upcoming, "calendar-range", "tomorrow"],
+    ["overdue", "已延期计划", values.overdue, "overdue"],
+    ["pending-dispatch", "待派发子任务", values.pendingDispatch, "pending"],
+    ["today-berthing", "今日待靠台", values.todayBerthing, "today"],
+    ["in-progress", "进行中计划", values.inProgress, "moving"],
+    ["upcoming", "即将执行计划", values.upcoming, "tomorrow"],
   ];
-  planTaskQuickStats.innerHTML = stats.map(([filter, label, count, icon, style]) => `<button class="dispatch-management-stat plan-task-quick-stat ${style}${planTaskQuickFilter === filter ? " active" : ""}" type="button" data-plan-task-filter="${filter}" aria-pressed="${planTaskQuickFilter === filter}"><span class="dispatch-management-stat-icon"><i data-lucide="${icon}" aria-hidden="true"></i></span><div><span>${label}</span><strong>${count}</strong></div></button>`).join("");
+  planTaskQuickStats.innerHTML = stats.map(([filter, label, count, style]) => `<button class="dispatch-management-stat plan-task-quick-stat ${style}${planTaskQuickFilter === filter ? " active" : ""}" type="button" data-plan-task-filter="${filter}" aria-pressed="${planTaskQuickFilter === filter}"><img class="workspace-stat-icon" src="assets/stat-icons/${filter}.svg" width="28" height="28" alt=""><div><span>${label}</span><strong>${count}</strong></div></button>`).join("");
   window.lucide?.createIcons();
 }
 
@@ -4674,12 +4681,11 @@ function taskMatchesCapacityFilter(dispatch) {
 
 function renderDashboardStatusGroup(target, donutTarget, items, groups, scope) {
   const total = items.reduce((sum, item) => sum + groups[item.key].length, 0);
-  const colors = { available: "#2aa56f", moving: "#397fd0", maintenance: "#e29a42", disabled: "#97a3b2", attendance: "#24a0b5", leave: "#97a3b2" };
   let cursor = 0;
   const segments = items.map((item) => {
     const start = cursor;
     cursor += total ? groups[item.key].length / total * 100 : 0;
-    return `${colors[item.className]} ${start}% ${cursor}%`;
+    return `var(--chart-${item.className}) ${start}% ${cursor}%`;
   });
   document.querySelector(donutTarget).style.background = total ? `conic-gradient(${segments.join(", ")})` : "#edf1f5";
   document.querySelector(target).innerHTML = items.map((item) => {
@@ -4728,10 +4734,10 @@ function renderDashboardAmounts(planRows) {
   const monthAmount = amountRows.reduce((sum, item) => sum + item.monthAmount, 0);
   const totalAmount = amountRows.reduce((sum, item) => sum + item.totalAmount, 0);
   document.querySelector("#dashboardAmountTotals").innerHTML = [
-    [`${range.label}预估`, periodAmount, "calendar-days", "today"],
-    ["本月金额", monthAmount, "calendar-range", "month"],
-    ["累计金额", totalAmount, "landmark", "total"],
-  ].map(([label, value, icon, className]) => `<div class="amount-total ${className}"><span><i data-lucide="${icon}" class="dashboard-icon" aria-hidden="true"></i>${label}</span><strong>${formatMoney(value)}</strong></div>`).join("");
+    [`${range.label}预估`, periodAmount, "today"],
+    ["本月金额", monthAmount, "month"],
+    ["累计金额", totalAmount, "total"],
+  ].map(([label, value, className]) => `<div class="amount-total ${className}"><span>${renderDashboardBadge(className)}${label}</span><strong>${formatMoney(value)}</strong></div>`).join("");
   const groups = new Map();
   amountRows.forEach((item) => {
     const name = dashboardAmountDimension === "customer" ? item.customerName : item.routeName;
@@ -4740,6 +4746,64 @@ function renderDashboardAmounts(planRows) {
   const entries = [...groups.entries()].sort((a, b) => b[1] - a[1]);
   const max = Math.max(...entries.map((item) => item[1]), 1);
   document.querySelector("#dashboardAmountDistribution").innerHTML = entries.length ? entries.map(([name, value]) => `<div class="amount-distribution-row"><span title="${dashboardEscape(name)}">${dashboardEscape(name)}</span><i><b style="width:${Math.round(value / max * 100)}%"></b></i><strong>${formatMoney(value)}</strong></div>`).join("") : '<div class="dashboard-empty-state compact"><strong>暂无金额数据</strong><span>请调整筛选条件</span></div>';
+}
+
+const dashboardBadgeArtwork = {
+  planned: '<path d="M10 8h-3v17h18V8h-3M12 7h8v5h-8zM11 16h10m-10 4h7"/>',
+  assigned: '<path d="m6 14 20-8-7 20-4-9-9-3Zm9 3L26 6"/>',
+  active: '<path d="M5 9h13v12H5zM18 14h5l4 4v3h-9M8 21a2 2 0 1 0 4 0m9 0a2 2 0 1 0 4 0"/>',
+  pending: '<circle cx="16" cy="16" r="9"/><path d="M16 11v5l3 2"/>',
+  exception: '<path d="M15 7a1.2 1.2 0 0 1 2 0l10 16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1l10-16Zm1 6v4m0 3h.01"/>',
+  done: '<circle cx="16" cy="16" r="9"/><path d="m12 16 3 3 5-6"/>',
+  today: '<rect x="7" y="9" width="18" height="17" rx="3"/><path d="M11 6v6m10-6v6M7 15h18m-13 5h8"/>',
+  month: '<rect x="7" y="9" width="18" height="17" rx="3"/><path d="M11 6v6m10-6v6M7 15h18m-13 5h.01m4 0h.01m4 0h.01"/>',
+  total: '<path d="m6 12 10-6 10 6H6Zm1 13h18M10 15v7m6-7v7m6-7v7"/>',
+};
+
+function renderDashboardBadge(kind, scope = "dashboard") {
+  const gradientId = `${scope}-badge-${kind}`;
+  return `<svg class="dashboard-metric-badge" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+    <defs><linearGradient id="${gradientId}" x2="1" y2="1">
+      <stop class="badge-light"/><stop class="badge-dark" offset="1"/>
+    </linearGradient></defs>
+    <rect x="1" y="1" width="30" height="30" rx="8" fill="url(#${gradientId})" stroke="#fff" stroke-opacity=".36"/>
+    <g fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${dashboardBadgeArtwork[kind]}</g>
+  </svg>`;
+}
+
+function renderDashboardTaskTrend(taskList, range) {
+  const counts = Array.from({ length: range.days }, (_, index) => {
+    const date = shiftDashboardDate(range.start, index);
+    return { date, count: 0 };
+  });
+  const countsByDate = new Map(counts.map((item) => [item.date, item]));
+  taskList.forEach((task) => {
+    const item = countsByDate.get(getDashboardDispatchDate(task));
+    if (item) item.count += 1;
+  });
+  const max = Math.max(1, ...counts.map((item) => item.count));
+  const points = counts.map(({ date, count }, index) => ({
+    x: counts.length === 1 ? 350 : 32 + index * 636 / (counts.length - 1),
+    y: 112 - count * 88 / max,
+    label: `${date}：${count} 条任务`,
+  }));
+  const dots = points.map(({ x, y, label }) =>
+    `<circle cx="${x}" cy="${y}" r="4" aria-label="${dashboardEscape(label)}"><title>${dashboardEscape(label)}</title></circle>`
+  ).join("");
+  const line = points.map(({ x, y }) => `${x},${y}`).join(" ");
+  document.querySelector("#dashboardTaskTrend").innerHTML = `
+    <svg class="dashboard-trend-chart" viewBox="0 0 700 128" role="img" aria-label="所选日期任务数量趋势">
+      <path d="M32 24H668 M32 68H668 M32 112H668" class="dashboard-trend-grid"/>
+      <defs><linearGradient id="dashboardTrendFill" x2="0" y2="1">
+        <stop stop-color="#6385ea" stop-opacity=".26"/>
+        <stop offset="1" stop-color="#6385ea" stop-opacity=".02"/>
+      </linearGradient></defs>
+      ${points.length > 1 ? `<polygon points="${points[0].x},112 ${line} ${points.at(-1).x},112" fill="url(#dashboardTrendFill)"/>` : ""}
+      <polyline points="${line}"/>
+      ${dots}
+    </svg>
+    <div class="dashboard-trend-caption"><span>${range.start}</span><strong>${taskList.length} 条任务</strong><span>${range.end}</span></div>
+  `;
 }
 
 function renderDashboard() {
@@ -4781,7 +4845,7 @@ function renderDashboard() {
   ], driverData.groups, "driver");
 
   document.querySelector("#dashboardCompletionRate").textContent = `${completionRate}%`;
-  document.querySelector("#dashboardCompletionGauge").style.background = `conic-gradient(#397fd0 0 ${completionRate}%, #edf1f6 ${completionRate}% 100%)`;
+  document.querySelector("#dashboardCompletionGauge").style.background = `conic-gradient(var(--chart-moving) 0 ${completionRate}%, #e8edfc ${completionRate}% 100%)`;
   document.querySelector("#dashboardCompletionNote").textContent = `已完成 ${completedPlans} / ${plannedTasks}`;
   document.querySelector("#dashboardTaskSummary").textContent = `${getDashboardDateLabel(range)} · ${taskList.length} 条任务进入调度`;
   document.querySelector("#dashboardTaskMetrics").innerHTML = [
@@ -4791,8 +4855,9 @@ function renderDashboard() {
     { label: "待派发", value: pendingTasks.filter((item) => item.status === "待派单").length, note: "等待运力", className: "pending" },
     { label: "异常任务", value: exceptionTasks, note: "需要处理", className: "exception", action: "exception-list" },
     { label: "已完成", value: completedTasks, note: `${range.label}完成`, className: "done" },
-  ].map((item) => `<button class="dashboard-task-metric ${item.className}" ${item.action ? `data-dashboard-action="${item.action}"` : 'data-dashboard-action="dispatch-list"'} type="button"><span>${item.label}</span><strong>${item.value}</strong><small>${item.note}</small></button>`).join("");
+  ].map((item) => `<button class="dashboard-task-metric ${item.className}" ${item.action ? `data-dashboard-action="${item.action}"` : 'data-dashboard-action="dispatch-list"'} type="button">${renderDashboardBadge(item.className)}<div class="dashboard-metric-copy"><span>${item.label}（${item.note}）</span><strong>${item.value}</strong></div></button>`).join("");
 
+  renderDashboardTaskTrend(taskList, range);
   renderDashboardTaskList(taskList);
   renderDashboardPlanRows(planRows);
   renderDashboardAmounts(planRows);
@@ -4801,6 +4866,10 @@ function renderDashboard() {
 }
 
 function openDashboardTarget(action) {
+  if (["waybill", "dispatch-management", "announcements"].includes(action)) {
+    switchPage(action);
+    return;
+  }
   if (action === "vehicle-list") {
     switchPage("vehicle-archives");
     return;
@@ -6372,6 +6441,12 @@ function renderCurrentUserIdentity() {
   if (menuNameNode) menuNameNode.textContent = name;
   if (roleNode) roleNode.textContent = `当前身份：${roleName}`;
   userAccountButton?.setAttribute("aria-label", `当前用户：${name}，已登录`);
+  document.querySelectorAll('[data-user-action="switch-account"][data-user-id]').forEach((button) => {
+    const selected = button.dataset.userId === user.id;
+    button.setAttribute("aria-checked", String(selected));
+    button.classList.toggle("selected", selected);
+    button.disabled = selected;
+  });
 }
 
 function inferAccessAction(label) {

@@ -204,6 +204,9 @@ h1 {
 .user-account-menu > button { display: flex; width: 100%; min-height: 48px; align-items: center; gap: 10px; border: 0; border-radius: 6px; padding: 7px 9px; color: #4d5d74; background: transparent; text-align: left; cursor: pointer; }
 .user-account-menu > button:hover,
 .user-account-menu > button:focus-visible { outline: 0; background: #f3f6fb; }
+.user-account-menu > button.selected { color: var(--primary); background: #edf3ff; }
+.user-account-menu > button.selected > svg { color: var(--primary); }
+.user-account-menu > button:disabled { cursor: default; opacity: 1; }
 .user-account-menu > button > svg { width: 17px; height: 17px; flex: 0 0 auto; color: #7188ac; }
 .user-account-menu > button span,
 .user-account-menu > button strong,
