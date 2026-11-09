@@ -1,0 +1,41 @@
+/* 44px status + 44px navigation; 34px bottom safe area. */
+body :is(.phone-shell,.manager-shell) { box-sizing:border-box; padding-top:44px !important; padding-bottom:34px !important; --safe-bottom:0px; }
+.mini-system-status { position:absolute; top:0; left:0; right:0; height:44px; z-index:120; display:flex; align-items:center; justify-content:space-between; padding:0 16px 0 35px; color:#17191d; background:#fff; pointer-events:none; font:600 14px/20px Arial,sans-serif; }
+.mini-system-status svg { width:68px !important; height:16px !important; stroke:none; }
+.mini-system-capsule { position:absolute; z-index:120; right:8px; top:50px; width:87px; height:32px; color:#17191d; pointer-events:none; }
+.mini-system-capsule svg { display:block; width:87px !important; height:32px !important; stroke:none; }
+.mini-system-capsule .capsule-background { fill:#fff; fill-opacity:.65; stroke:#17191d; stroke-opacity:.08; stroke-width:1; }
+.mini-home-safe-area { position:absolute; z-index:120; bottom:0; left:0; right:0; height:34px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px; background:#fff; pointer-events:none; }
+.mini-home-safe-area span { width:134px; height:5px; border-radius:3px; background:#17191d; opacity:.22; }
+body :is(.mobile-header,.manager-header,.detail-nav,.subpage-header) { box-sizing:border-box; height:44px !important; min-height:44px !important; flex:0 0 44px !important; padding:0 103px 0 16px !important; background:#fff !important; border-bottom:0 !important; box-shadow:none !important; }
+body :is(.mobile-header,.manager-header) { display:flex; align-items:center; }
+body :is(.mobile-header,.manager-header) :is(.eyebrow,.manager-eyebrow) { display:none !important; }
+body :is(.mobile-header,.manager-header) :is(h1,.header-copy,.manager-header-copy) { margin:0 !important; }
+body :is(.mobile-header,.manager-header) h1 { font-size:17px !important; line-height:24px !important; }
+body :is(.detail-nav,.subpage-header) { display:grid !important; grid-template-columns:32px minmax(0,1fr) !important; gap:8px !important; }
+body :is(.detail-nav,.subpage-header) > :is(strong,div) { margin:0 !important; min-width:0; text-align:center; }
+body :is(.detail-nav,.subpage-header) > :is(strong,div strong) { font-size:16px !important; line-height:24px !important; margin-top:0 !important; }
+body .subpage-header > div > span { display:none !important; }
+body :is(.detail-nav,.subpage-header) > button { width:32px !important; height:32px !important; padding:0 !important; border-radius:0 !important; background:transparent !important; box-shadow:none !important; }
+body :is(.detail-nav,.subpage-header) > button:last-child:not(:first-child), body .detail-nav > span:last-child { display:none !important; }
+body :is(.detail-view,.subpage-view,.module-view,.entry-view,.profile-subpage) { top:44px !important; bottom:34px !important; }
+body :is(.bottom-nav,.manager-bottom-nav) { left:0 !important; right:0 !important; bottom:34px !important; width:100% !important; height:50px !important; min-height:50px !important; padding:0 8px !important; border-radius:0 !important; border:0 !important; border-top:1px solid #f0f1f5 !important; background:#fff !important; box-shadow:none !important; backdrop-filter:none !important; }
+body :is(.bottom-nav,.manager-bottom-nav) button { min-height:0 !important; padding:0 !important; gap:0 !important; }
+body :is(.bottom-nav,.manager-bottom-nav) button :is(.nav-symbol,span:first-child) { height:28px !important; }
+body .manager-shell:has(#workbenchView.active):not(.subpage-open) :is(.mini-system-status,.manager-header) { color:#fff; background:#0065ff !important; }
+body .manager-shell:has(#workbenchView.active):not(.subpage-open) .manager-header h1 { color:#fff !important; }
+body .manager-shell:has(#workbenchView.active):not(.subpage-open) .mini-system-capsule { color:#fff; }
+body .manager-shell:has(#workbenchView.active):not(.subpage-open) .capsule-background { fill:#fff; fill-opacity:.18; stroke:#fff; stroke-opacity:.12; }
+/* Secondary views are children of the content viewport, which already excludes system bars. */
+body :is(.mobile-main,.manager-main) > :is(.detail-view,.subpage-view,.module-view,.entry-view,.profile-subpage) { top:0 !important; bottom:0 !important; }
+body .bottom-sheet { padding-bottom:34px !important; }
+body .bottom-sheet::after { content:''; position:absolute; bottom:8px; left:calc(50% - 67px); width:134px; height:5px; border-radius:3px; background:#17191d; opacity:.22; pointer-events:none; }
+/* 页头仅保留主标题，底部操作栏取消外边距并贴齐视口。 */
+body :is(.eyebrow,.manager-eyebrow,#moduleEyebrow,#entryEyebrow) { display:none !important; }
+body .phone-shell #detailActionBar { position:static !important; flex:0 0 auto; min-height:0 !important; margin:0 !important; padding:10px !important; border:0 !important; border-top:1px solid #eef1f6 !important; border-radius:0 !important; background:#fff !important; box-shadow:none !important; align-items:center !important; }
+body .phone-shell #detailView .detail-scroll { padding-bottom:10px !important; }
+
+/* Shared mobile placeholder and helper text token. */
+:is(.phone-shell,.manager-shell) { --text-placeholder:#b5bac7; }
+body :is(.phone-shell,.manager-shell) :is(input,textarea)::placeholder { color:var(--text-placeholder) !important; opacity:1 !important; }
+body :is(.phone-shell,.manager-shell) :is(select:invalid,.placeholder,.expense-field-hint,.image-upload-hint,.photo-requirement-desc,.progress-photo-hint,.field-hint,.form-hint,.input-hint,.sheet-field-hint,.mobile-field-hint,.expense-upload small) { color:var(--text-placeholder) !important; }

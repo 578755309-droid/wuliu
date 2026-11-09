@@ -3739,3 +3739,267 @@ select[data-mobile-select] {
 
 /* ===== 选择器只保留一个下拉箭头：JS 已内联 SVG，隐藏 ::after 的重复箭头 ===== */
 .mobile-select-display::after { display: none !important; }
+/* 双信息标签：统一 8px 外边距、内边距和内容间距。 */
+.dual-badge {
+  margin: 8px !important;
+  padding: 8px !important;
+  gap: 8px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 节点记录：当前步骤与历史记录。 */
+.timeline-list .timeline-row { gap: 12px !important; border-bottom: 0 !important; }
+.timeline-step-icon { display:flex; align-items:center; justify-content:center; flex:0 0 24px; width:24px; height:24px; border-radius:50%; background:#edf2f8; color:#8292a8; position:relative; }
+.timeline-step-icon svg { width:18px; height:18px; }
+.timeline-row:not(:last-child) .timeline-step-icon::after { content:""; position:absolute; width:2px; top:28px; bottom:auto; height:calc(var(--timeline-line-height, 100px)); background:#e6ebf2; }
+.timeline-list .timeline-row { position:relative; }
+.timeline-row:not(:last-child)::before { content:""; position:absolute; left:11px; top:40px; bottom:-8px; width:2px; background:#e6ebf2; }
+.timeline-row .timeline-step-icon::after { display:none; }
+.timeline-row.is-current .timeline-step-icon { background:#0065ff; color:#fff; box-shadow:0 0 0 4px #eaf3ff; }
+.timeline-node-heading { display:flex; align-items:center; gap:8px; min-height:24px; }
+.timeline-row.is-current .timeline-node { color:#0065ff !important; }
+.timeline-current-label { display:inline-flex; align-items:center; padding:4px 8px; border-radius:6px; background:#eaf3ff; color:#0065ff; font-size:11px; line-height:1.3; white-space:nowrap; }
+
+/* 移动端按钮统一使用 12px 圆角。 */
+body :is(.phone-shell, .manager-shell) button,
+body :is(.phone-shell, .manager-shell) a.subpage-primary,
+body :is(.phone-shell, .manager-shell) .address-action a,
+#detailActionBar button,
+#detailActionBar button.primary { border-radius:12px !important; }
+body .phone-shell .detail-action-bar { border-radius:12px !important; }
+
+/* 我的运单图标：黑色描边、蓝色点缀，无底色。 */
+#profileView .profile-order-stats button .stat-icon {
+  width:30px !important; height:30px !important; min-height:30px !important;
+  flex:0 0 30px !important; padding:0 !important; margin:0 !important;
+  background:transparent !important; border:0 !important; border-radius:0 !important;
+}
+#profileView .profile-order-stats button .stat-icon svg { width:28px !important; height:28px !important; display:block; }
+#profileView .profile-order-stats button { height:auto !important; min-height:78px !important; }
+
+/* 物流记录时间线：突出最新进度，弱化历史节点。 */
+.timeline-list .timeline-row { gap:14px !important; padding:16px 0 !important; }
+.timeline-row .timeline-step-icon { width:20px; height:20px; flex-basis:20px; background:transparent; color:#aeb5c0; }
+.timeline-row.is-current .timeline-step-icon { background:#0065ff; color:#fff; box-shadow:0 0 0 4px #eaf3ff; }
+.timeline-row.is-recorded .timeline-step-icon svg { display:none; }
+.timeline-row.is-recorded .timeline-step-icon::before { content:""; width:8px; height:8px; border-radius:50%; background:#c9ced7; }
+.timeline-list .timeline-row:not(:last-child)::before { left:9px; top:40px; bottom:-12px; width:1px; background:#e1e5eb; }
+.timeline-row .timeline-copy { position:relative; min-width:0; flex-direction:row !important; flex-wrap:wrap; align-content:flex-start; align-items:center; gap:4px 8px !important; }
+.timeline-row .timeline-node-heading { display:contents; }
+.timeline-row .timeline-node { order:0; font-size:14px !important; color:#9099a8 !important; line-height:22px !important; }
+.timeline-row .timeline-time { order:1; color:#9da5b1 !important; line-height:22px !important; }
+.timeline-row .timeline-current-label { order:2; padding:3px 6px; font-size:10px; }
+.timeline-row .timeline-desc { order:3; flex-basis:100%; color:#9099a8 !important; margin:3px 0 0 !important; }
+.timeline-row .photo-tags { order:4; flex-basis:100%; }
+.timeline-row.is-current .timeline-node { color:#0065ff !important; font-size:16px !important; }
+.timeline-row.is-current .timeline-time { color:#0065ff !important; }
+.timeline-row.is-current .timeline-desc { color:#303b50 !important; }
+
+/* 已通过标签展示任务类型的卡片，不重复展示字段行。 */
+.manager-list-card:has(.dual-badge) .task-type-field,
+.task-card:has(.dual-badge) .task-type-field,
+.detail-card:has(.dual-badge) .task-type-field { display:none !important; }
+
+/* 运单统计项使用独立直线分隔，避免按钮圆角影响边线。 */
+#profileView .profile-order-stats button + button { border-left:0 !important; }
+#profileView .profile-order-stats button + button::before {
+  content:""; position:absolute; left:0; top:8px; bottom:8px;
+  width:1px; border:0; border-radius:0; background:#eef1f6; pointer-events:none;
+}
+
+/* 运单信息行：无内边距、固定28px高度。 */
+.phone-shell .task-card-info-grid .info-cell {
+  display:flex !important; flex-direction:row !important; align-items:center !important;
+  justify-content:space-between !important; padding:0 !important; height:18px !important;
+  min-height:18px !important; box-sizing:border-box !important;
+}
+/* 更新进度现场说明：标签在上，输入框在下。 */
+#progressForm .sheet-field { flex-direction:column !important; align-items:stretch !important; gap:8px !important; }
+#progressForm .sheet-field > span { width:auto !important; padding-top:0 !important; }
+#progressForm .sheet-field textarea { width:100% !important; flex:none !important; box-sizing:border-box !important; min-height:80px !important; text-align:left !important; }
+
+.phone-shell .task-card-info-grid .info-cell :is(.info-label,.info-value) { line-height:18px !important; }
+
+/* 备注保留原有外部布局，仅上下内边距改为6px。 */
+.task-note { padding-top:6px !important; padding-bottom:6px !important; }
+/* 标题与运单号组成独立纵向布局，不改变卡片其他间距。 */
+.task-card-header .task-title-group { display:flex !important; flex-direction:column !important; gap:8px !important; }
+.task-card-header .task-title-group .task-number { margin-top:0 !important; }
+
+/* 我的运单：24px图标与右上角数量角标。 */
+#profileView .profile-order-stats button .stat-icon { position:relative; overflow:visible; width:24px !important; height:24px !important; min-height:24px !important; flex:0 0 24px !important; }
+#profileView .profile-order-stats button .stat-icon svg { width:24px !important; height:24px !important; stroke-width:1.4; }
+#profileView .profile-order-stats button .stat-icon .stat-count { position:absolute; top:-5px; left:17px; display:flex; align-items:center; justify-content:center; min-width:16px; height:16px; box-sizing:border-box; margin:0; padding:0 4px; border-radius:8px; background:#ff6b00; color:#fff; font:500 10px/16px Arial,sans-serif; white-space:nowrap; }
+#profileView .profile-order-stats button { min-height:64px !important; justify-content:center; gap:8px !important; }
+#profileView .profile-order-stats button > span { margin-top:0 !important; }
+
+/* 个人中心角标：品牌红，单个数字16×16固定尺寸。 */
+#profileView .profile-order-stats button .stat-icon .stat-count { background:#BD3838; }
+#profileView .profile-order-stats button .stat-icon .stat-count.is-single { width:16px; min-width:16px; max-width:16px; height:16px; padding:0; }
+/* 节点记录照片：固定正方形缩略图，文件名置于下方。 */
+.timeline-row .photo-tags { grid-template-columns:repeat(auto-fill,80px); }
+.timeline-row .timeline-photo { width:80px; }
+.timeline-row .timeline-photo-frame { width:80px; height:80px; aspect-ratio:1 / 1; }
+/* 费用上报：柔和渐变卡片与独立SVG插画。 */
+#profileSubpage:has(.expense-type-grid) .subpage-scroll { background:radial-gradient(ellipse at 6% 22%,#d7eaffaa,transparent 54%),radial-gradient(ellipse at 100% 52%,#c9f2f7aa,transparent 48%),linear-gradient(155deg,#f4f7ff,#edf6ff 60%,#f9f7ff); }
+.expense-summary { overflow:hidden; position:relative; border:1px solid #ffffffa8; background:linear-gradient(120deg,#3e80ff,#0065ff 70%,#328aff) !important; border-radius:16px !important; box-shadow:0 8px 24px #0065ff14; }
+.expense-summary::after { content:''; position:absolute; width:140px; height:140px; right:-35px; top:-65px; border:24px solid #ffffff14; border-radius:50%; pointer-events:none; }
+.expense-summary .subpage-summary-icon { background:#ffffff24; width:42px; height:42px; border-radius:12px; }
+.expense-summary .subpage-summary-icon svg { width:30px; height:30px; }
+.expense-type-section { background:transparent !important; border:0 !important; box-shadow:none !important; }
+.expense-type-section h2 { border:0 !important; padding:0 2px 12px !important; }
+.expense-type-grid { padding:0 !important; gap:10px !important; }
+.expense-type-option { --expense-soft:#fff1e7; --expense-color:#e5935b; position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-start; height:104px; min-height:104px; padding:13px !important; border:1px solid #ffffffd9 !important; border-radius:12px !important; background:linear-gradient(140deg,var(--expense-soft),#ffffff 64%) !important; box-shadow:0 4px 12px #6081a20a; }
+.expense-type-option::before { content:''; pointer-events:none; position:absolute; width:145px; height:18px; top:28px; right:-34px; transform:rotate(-40deg); background:#ffffff70; }
+.expense-type-option::after { content:''; pointer-events:none; position:absolute; width:98px; height:9px; top:16px; right:-30px; transform:rotate(-40deg); background:#ffffff4a; }
+.expense-type-copy { flex:0 0 auto; position:relative; z-index:1; width:100%; }
+.expense-type-copy strong { display:flex; align-items:center; gap:6px; color:#333c4d; font-size:14px; line-height:20px; }
+.expense-type-copy small { max-width:112px; font-size:10px; line-height:16px; margin-top:3px; color:#a2a9b3; }
+.expense-type-chevron { color:var(--expense-color); width:12px !important; height:12px !important; flex:0 0 12px; }
+.expense-type-icon { position:absolute; right:12px; bottom:10px; width:34px; height:34px; border-radius:0; background:transparent; padding:0; }
+.expense-type-icon .expense-illustration { display:block; width:34px; height:34px; stroke:none; }
+.expense-fuel { --expense-soft:#fff2d8; --expense-color:#efa900; }
+.expense-electricity { --expense-soft:#e4f5ff; --expense-color:#28b5f5; }
+.expense-gas { --expense-soft:#e8fbef; --expense-color:#38cd83; }
+.expense-toll { --expense-soft:#eeebff; --expense-color:#8b80eb; }
+.expense-parking { --expense-soft:#fff0ee; --expense-color:#e99d9d; }
+.expense-repair { --expense-soft:#f0ecff; --expense-color:#9780ee; }
+.expense-container { --expense-soft:#e5f9fc; --expense-color:#22c4dc; }
+.expense-other { --expense-soft:#fff0e7; --expense-color:#f5a16c; }
+.expense-history { border-radius:12px; box-shadow:0 5px 16px #6a85a00a; }
+/* 统一图片上传：一个入口、已选缩略图和图下提示。 */
+.image-upload-row,.selected-photo-previews { display:flex; flex-wrap:wrap; align-items:flex-start; gap:10px; }
+.selected-photo-previews:empty,.expense-file-previews:empty { display:none; }
+.image-upload-tile { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; flex:0 0 80px; width:80px; height:80px; box-sizing:border-box; padding:8px; border:1px solid #e6eaf0; border-radius:12px; background:#fff; color:#b5bac2; font-size:12px; cursor:pointer; }
+.image-upload-tile[hidden],.photo-slot-backing[hidden] { display:none !important; }
+.image-upload-tile input[type=file] { position:absolute; inset:0; width:100%; height:100%; opacity:0; margin:0; cursor:pointer; }
+.image-upload-tile svg { width:30px; height:30px; flex:none; stroke:none; }
+.image-upload-preview { position:relative; display:flex; width:80px; height:80px; flex:0 0 80px; align-items:center; justify-content:center; padding:0; border:1px solid #e6eaf0; border-radius:12px; background:#f2f4f7; color:#a0a7b2; }
+.image-upload-preview img { width:100%; height:100%; object-fit:cover; border-radius:11px; }
+.image-upload-preview .image-upload-remove { position:absolute; display:flex; align-items:center; justify-content:center; top:-7px; right:-7px; width:20px; height:20px; padding:0; border:1.5px solid #fff; border-radius:50% !important; background:#252a30; color:#fff; cursor:pointer; }
+.image-upload-remove svg { width:12px; height:12px; stroke:none; }
+.image-upload-hint { margin:8px 0 0; color:#989aab; font-size:12px; line-height:18px; }
+.photo-requirement-group-heading { margin-bottom:10px; }
+.expense-proof-field { align-items:flex-start !important; }
+.expense-proof-field > span:first-child { padding-top:8px; }
+.expense-proof-field .expense-upload { display:flex !important; flex:1; flex-direction:column; align-items:flex-start; gap:8px; border:0 !important; padding:0 !important; background:none !important; min-width:0; }
+.expense-upload > small { display:block; margin:0; color:#989aab; font-size:12px; line-height:18px; }
+.expense-upload .expense-upload-filename { max-width:100%; color:#7e8795; font-size:12px; font-weight:400; word-break:break-all; }
+.expense-upload-filename[hidden] { display:none; }
+
+/* Expense details: stacked remark and persistent horizontal actions. */
+#expenseForm .expense-remark-field { flex-direction:column !important; align-items:stretch !important; gap:8px !important; }
+#expenseForm .expense-remark-field > span { flex:none !important; width:100% !important; }
+#expenseForm .expense-remark-field textarea { box-sizing:border-box; width:100%; margin:0; min-height:80px; }
+.subpage-scroll:has(> #expenseForm) { display:flex; flex-direction:column; gap:12px; overflow:hidden; min-height:0; padding-bottom:0; }
+#expenseForm { display:flex; flex-direction:column; flex:1; min-height:0; margin:0; gap:0; }
+#expenseForm > .info-section { flex:1; min-height:0; overflow-y:auto; margin:0; }
+#expenseForm .expense-fixed-actions { display:flex; flex-direction:row; flex:0 0 auto; align-items:center; gap:10px; margin:0 -10px; padding:10px; background:#fff; border-top:1px solid #eef1f5; }
+#expenseForm .expense-fixed-actions button { min-width:0; flex:1; height:44px; margin:0; padding:0 8px; border-radius:12px; font-size:14px; }
+#expenseForm .expense-fixed-actions .subpage-secondary { color:#4f526d; background:#fff; border:1px solid #dce3ed; }
+
+/* Keep location copying beside its address; actions stay in the bottom bar. */
+.detail-job-locations .driver-job-location-value { display:flex; flex-direction:row; align-items:center; gap:8px; min-width:0; }
+.detail-job-locations .driver-job-location-value > strong { flex:1; min-width:0; }
+.detail-job-locations .copy-location-icon { display:flex; align-items:center; justify-content:center; width:28px; height:28px; flex:0 0 28px; padding:4px; border:0; border-radius:0; color:#0065ff; background:transparent; box-shadow:none; }
+.detail-action-bar button { min-width:0; padding-inline:6px; }
+
+.detail-job-locations .driver-job-location-value { width:100%; }
+.detail-job-locations .driver-job-location-value > strong { color:#30324d; font-size:13px; line-height:1.5; font-weight:600; overflow-wrap:anywhere; }
+
+/* Vehicle actions remain visible while the vehicle record scrolls. */
+.subpage-scroll:has(> .vehicle-page-body) { display:flex; flex-direction:column; overflow:hidden; min-height:0; padding:0; }
+.vehicle-page-body { flex:1; min-height:0; overflow-y:auto; padding:10px; }
+.vehicle-fixed-actions { display:flex; flex-direction:row; flex:0 0 auto; align-items:center; gap:10px; padding:10px; border-top:1px solid #eef1f5; background:#fff; }
+.vehicle-fixed-actions button { flex:1; min-width:0; height:44px; padding:0 10px; border:1px solid #dce3ed; border-radius:12px; color:#4f526d; background:#fff; font-size:14px; font-weight:600; }
+.vehicle-fixed-actions .primary { border-color:#0065ff; color:#fff; background:#0065ff; }
+.vehicle-fixed-actions button:disabled { opacity:.55; cursor:not-allowed; }
+
+/* Job locations follow the compact numbered reference panel. */
+body .detail-job-locations { margin:12px 0 0; border:1px solid #e5eaf2; border-radius:12px; background:#fbfcff; overflow:hidden; }
+body .detail-job-locations .driver-job-location-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; height:38px; padding:0 12px; border-bottom:1px solid #edf0f5; }
+body .detail-job-locations .driver-job-location-heading strong { font-size:12px; color:#4a5870; }
+body .detail-job-locations .driver-job-location-heading span { color:#8d98aa; font-size:12px; }
+body .detail-job-locations .driver-job-location-row { box-sizing:border-box; min-height:68px; gap:3px !important; padding:10px 12px; border-radius:0; background:transparent; }
+body .detail-job-locations .driver-job-location-row > span { display:flex; align-items:center; gap:7px; color:#8d98aa !important; font-size:12px !important; }
+body .detail-job-locations .driver-job-location-row > span i { display:flex; align-items:center; justify-content:center; width:24px; height:24px; flex:0 0 24px; border-radius:50%; background:#eaf0ff; color:#0065ff; font-size:12px; font-weight:500; }
+body .detail-job-locations .driver-job-location-row + .driver-job-location-row { border-top:1px dashed #e6eaf1; }
+body .detail-job-locations .driver-job-location-row:not(:last-child)::after { left:23px; height:15px; bottom:-8px; border-left:1px dashed #aebdde; }
+body .detail-job-locations .driver-job-location-value { min-height:20px; gap:8px; }
+body .detail-job-locations .driver-job-location-value > strong { color:#30324d; font-size:13px; font-weight:600; line-height:20px; }
+body .detail-job-locations .copy-location-icon { width:20px; height:20px; flex:0 0 20px; padding:2px; color:#9aa4b4; }
+body .detail-job-locations .copy-location-icon svg { width:16px; height:16px; }
+
+/* Unified driver form actions: the form scrolls above a persistent button row. */
+body .subpage-scroll:has(> .driver-form-actions) { display:flex; flex-direction:column; gap:0; min-height:0; overflow:hidden; padding:0; }
+.driver-form-scroll { flex:1; min-height:0; overflow-y:auto; padding:10px; }
+.driver-form-scroll > form { margin-top:12px; }
+.driver-form-actions { display:flex; flex-direction:row; align-items:center; flex:0 0 auto; gap:10px; padding:10px; border-top:1px solid #eef1f5; background:#fff; }
+body .driver-form-actions > button { flex:1; min-width:0; width:auto; height:44px; margin:0; padding:0 8px; border-radius:12px; font-size:14px; }
+body .driver-form-actions > .subpage-secondary { color:#4f526d; border:1px solid #dce3ed; background:#fff; box-shadow:none; }
+body .driver-form-actions > .subpage-primary { border:1px solid #0065ff; background:#0065ff; color:#fff; }
+body .driver-form-actions > button:disabled { cursor:not-allowed; opacity:.55; }
+
+/* Recent reports: primary text and amount 16px, supporting information 14px. */
+body .expense-history > h2 { font-size:16px; font-weight:600; color:#333; }
+body .expense-history .expense-record { display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; gap:8px; min-height:0; margin:0 16px; padding:16px 0; }
+body .expense-history .expense-record-top, body .expense-history .expense-record-heading { display:flex; flex-direction:row; align-items:center; justify-content:space-between; gap:12px; min-width:0; }
+body .expense-history .expense-record-top > small { flex:1; min-width:0; margin:0; color:#888; font-size:14px; line-height:20px; overflow-wrap:anywhere; }
+body .expense-history .expense-record-heading > strong, body .expense-history .expense-record-heading > b { display:block; margin:0; color:#333; font-size:16px; line-height:24px; font-weight:600; }
+body .expense-history .expense-record-heading > b { white-space:nowrap; }
+body .expense-history .expense-record-date { display:block; margin:0; color:#888; font-size:14px; line-height:20px; }
+body .expense-history .expense-record-top > em { flex:0 0 auto; padding:2px 6px; border-radius:2px; font-size:14px; line-height:20px; font-weight:400; }
+body .expense-history .expense-rejection-reason { margin:0; max-width:none; font-size:14px; line-height:20px; }
+
+/* Independent vehicle repair module. */
+.repair-list-summary { display:flex; align-items:center; justify-content:space-between; padding:4px 6px; color:#7f889c; font-size:14px; }
+.driver-repair-card { padding:16px; }
+.driver-repair-card header { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:16px; color:#30324d; }
+.driver-repair-card > small { display:block; margin-top:8px; color:#969caf; font-size:12px; }
+.driver-repair-card > p { margin:14px 0; color:#606579; font-size:14px; line-height:1.6; }
+.repair-card-meta { display:flex; flex-direction:column; gap:6px; color:#969caf; font-size:12px; }
+.repair-card-actions { display:flex; justify-content:flex-end; margin-top:14px; padding-top:12px; border-top:1px solid #eef1f5; }
+.repair-detail-copy > p { margin:0; padding:14px 16px; color:#606579; line-height:1.6; font-size:14px; }
+.repair-attachment { display:block; max-width:calc(100% - 32px); margin:12px 16px; padding:10px 12px; border:1px solid #e5eaf2; border-radius:8px; color:#0065ff; background:#f8faff; overflow-wrap:anywhere; }
+.repair-detail-copy .repair-empty-copy { color:#b5bac7; }
+
+/* Expense status summary reuses the waybill icon and badge language. */
+#profileView .profile-expense-stats { grid-template-columns:repeat(4,minmax(0,1fr)) !important; }
+.expense-record-tabs { display:flex; flex-direction:row; gap:0; padding:0 0 8px; }
+.expense-record-tabs button { position:relative; flex:1; height:44px; border:0; background:transparent; color:#969caf; font-size:14px; }
+.expense-record-tabs button.active { color:#0065ff; font-weight:600; }
+.expense-record-tabs button.active::after { content:""; position:absolute; bottom:0; left:calc(50% - 10px); width:20px; height:3px; border-radius:2px; background:#0065ff; }
+.expense-list-summary { display:flex; align-items:center; justify-content:space-between; padding:12px 4px; color:#969caf; font-size:12px; }
+.expense-full-history { margin-top:0; }
+.expense-record-remark { margin:0 !important; color:#888 !important; font-size:14px !important; line-height:20px; }
+
+/* SVG credential cards: same four document types as the Figma design. */
+.credential-document-card { padding: 16px; border-bottom: 0; }
+.credential-document-list { gap: 8px; }
+.credential-document-card > header strong { color: var(--ink); font-size: 14px; font-weight: 600; }
+.credential-document-card > header span { font-size: 11px; line-height: 1.6; }
+.credential-document-card > header em { background: #ecf5ff; color: #0065ff; font-size: 10px; border-radius: 6px; }
+.credential-attachment-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.credential-illustrated-stage, .credential-card-empty.credential-illustrated-stage { position: relative; isolation: isolate; display: flex; flex-direction: column; gap: 8px; width: 100%; min-height: 180px; aspect-ratio: 323 / 180; align-items: center; justify-content: center; padding: 12px; border: 0; border-radius: 10px; background: #ecf5ff; overflow: hidden; cursor: pointer; }
+.credential-illustrated-stage.readonly { cursor: default; }
+.credential-illustrated-stage > .credential-svg-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: -1; }
+.credential-illustrated-stage > .credential-camera-mark { display: block; margin: 0; width: 40px; height: 40px; filter: drop-shadow(0 3px 5px #0065ff26); }
+.credential-camera-mark > svg, .credential-card-empty .credential-camera-mark > svg { display: block; width: 40px; height: 40px; margin: 0; }
+.credential-illustrated-stage > strong { color: #0065ff; font-size: 14px; font-weight: 500; }
+.credential-attachment-list > .credential-illustrated-stage { display: flex; }
+.credential-photo-file { display: flex; width: 100%; border: 0; padding: 0; border-radius: 10px; overflow: hidden; background: #ecf5ff; cursor: zoom-in; }
+.credential-photo-file > span { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 180px; }
+.credential-photo-file img { display: block; width: 100%; height: 180px; object-fit: contain; }
+.credential-pdf-file { display: flex; align-items: center; gap: 8px; width: 100%; padding: 12px; border: 1px solid #e3eaf5; border-radius: 10px; background: #f8faff; }
+.credential-pdf-tag { color: #e35f5f; background: #fff0ef; padding: 8px 4px; border-radius: 5px; font-size: 10px; font-weight: 700; }
+.credential-pdf-file > strong { flex: 1; min-width: 0; overflow-wrap: anywhere; color: var(--ink); font-size: 12px; }
+.credential-pdf-file > button { flex: 0 0 auto; border: 0; background: transparent; color: #0065ff; padding: 8px 0; font-size: 12px; }
+.credential-card-stage .credential-photo-file, .credential-card-stage .credential-pdf-file { margin-bottom: 8px; }
+.credential-attachment-list > .credential-illustrated-stage { display:flex; min-height:180px; padding:12px; border:0; border-radius:10px; background:#ecf5ff; text-align:center; }
+.credential-attachment-list .credential-camera-mark { width:40px; height:40px; overflow:visible; }
+.credential-attachment-list .credential-camera-mark svg { width:40px; height:40px; }
+.credential-attachment-list > .credential-photo-file { display:flex; border:0; padding:0; background:#ecf5ff; }
+.credential-attachment-list > .credential-photo-file span { display:flex; width:100%; min-height:180px; }
+.credential-attachment-list .credential-pdf-file > button { display:block; min-height:36px; border:0; padding:8px 0; color:#0065ff; background:transparent; }

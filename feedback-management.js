@@ -83,6 +83,9 @@
       categoryLabel: clean(item?.categoryLabel) || category.label,
       description: clean(item?.description),
       contactPhone: clean(item?.contactPhone) || clean(item?.submitterPhone),
+      businessId: clean(item?.businessId),
+      moduleId: clean(item?.moduleId),
+      moduleLabel: clean(item?.moduleLabel),
       relatedType: clean(item?.relatedType),
       relatedId: clean(item?.relatedId),
       relatedLabel: clean(item?.relatedLabel),
@@ -247,8 +250,8 @@
     for (const file of files) {
       const isImage = String(file.type).startsWith("image/");
       const isVideo = String(file.type).startsWith("video/");
-      if (!isImage && !isVideo) return { error: `不支持文件“${file.name}”，请上传图片或视频。`, files: [] };
-      if (isImage && file.size > 10 * 1024 * 1024) return { error: `图片“${file.name}”超过 10 MB。`, files: [] };
+      if (!isImage && !isVideo && file.type !== "application/pdf") return { error: `不支持文件“${file.name}”，请上传图片、视频或PDF。`, files: [] };
+      if ((isImage || file.type === "application/pdf") && file.size > 10 * 1024 * 1024) return { error: `图片“${file.name}”超过 10 MB。`, files: [] };
       if (isVideo && file.size > 100 * 1024 * 1024) return { error: `视频“${file.name}”超过 100 MB。`, files: [] };
     }
     return { error: "", files };
@@ -374,7 +377,7 @@
       const priorityMeta = PRIORITY_META[item.priority];
       const related = item.relatedLabel || item.relatedId || "未关联";
       return `<tr><td><strong class="primary-text">${escapeHtml(item.id)}</strong></td><td><span class="feedback-source ${item.source}">${escapeHtml(item.sourceLabel)}</span></td><td class="feedback-submitter">${submitterMarkup(item)}</td><td>${escapeHtml(item.categoryLabel)}</td><td><div class="feedback-description-cell">${escapeHtml(item.description)}</div></td><td>${escapeHtml(related)}</td><td>${item.attachments.length ? `${item.attachments.length} 个` : "无"}</td><td><time>${escapeHtml(item.createdAt)}</time></td><td><span class="feedback-status ${statusMeta.className}">${statusMeta.label}</span><small class="feedback-priority ${priorityMeta.className}">${priorityMeta.label}</small></td><td>${escapeHtml(item.handlerName || "未指派")}</td><td class="fixed-action-column"><button class="link-btn" data-feedback-view="${escapeHtml(item.id)}" type="button">查看处理</button></td></tr>`;
-    }).join("") : '<tr><td colspan="11"><div class="feedback-empty"><strong>暂无匹配的意见反馈</strong><span>可以调整来源、状态或日期条件后重新查询。</span></div></td></tr>';
+    }).join("") : window.JikaEmptyStates.table(load().length ? "empty-search" : "empty-feedback",11);
     document.querySelector("#feedbackResultText").textContent = `筛选结果 ${rows.length} 条反馈`;
     document.querySelector("#feedbackCountBadge").textContent = `${rows.filter((item) => item.status === "pending").length} 条待处理`;
     document.querySelector("#feedbackCurrentPage").textContent = String(currentPage);
@@ -398,14 +401,14 @@
     const identity = item.source === "driver"
       ? [["司机编号", item.submitterId], ["手机号", item.submitterPhone], ["运力归属", item.capacityOwnership], ["所属单位", item.organizationName], ["所属车队", item.fleetName], ["当前车辆", item.vehicleId]]
       : [["账号", item.submitterAccount], ["手机号", item.submitterPhone], ["所属部门", item.submitterDepartment], ["当前角色", item.submitterRole]];
-    return [["来源端", item.sourceLabel], ["提交人", item.submitterName], ...identity, ["问题类型", item.categoryLabel], ["关联业务", item.relatedLabel || item.relatedId || "未关联"], ["联系方式", item.contactPhone || "未提供"], ["提交时间", item.createdAt], ["客户端", `${item.clientVersion}${item.deviceInfo ? ` · ${item.deviceInfo}` : ""}`]];
+    return [["来源端", item.sourceLabel], ["提交人", item.submitterName], ...identity, ["问题类型", item.categoryLabel], ["相关功能模块", item.moduleLabel || item.relatedLabel || "未关联"], ["业务编号", item.businessId || (item.relatedType === "business" ? item.relatedId : "") || "未填写"], ["联系方式", item.contactPhone || "未提供"], ["提交时间", item.createdAt], ["客户端", `${item.clientVersion}${item.deviceInfo ? ` · ${item.deviceInfo}` : ""}`]];
   }
 
   async function renderDetailAttachments(item) {
     const container = document.querySelector("#feedbackDetailAttachments");
     clearObjectUrls();
     if (!item.attachments.length) {
-      container.innerHTML = '<div class="feedback-media-empty">未上传图片或视频</div>';
+      container.innerHTML = window.JikaEmptyStates.render("empty-attachments",{layout:"compact"});
       return;
     }
     container.innerHTML = '<div class="feedback-media-empty">正在加载附件…</div>';

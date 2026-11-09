@@ -1709,7 +1709,7 @@ function renderRows(rows) {
   const visibleTaskCount = visibleGroups.reduce((sum, group) => sum + group.waybills.length, 0);
   if (resultText) resultText.textContent = `共 ${visibleGroups.length} 个计划任务，子任务 ${visibleTaskCount} 条；可进入详情查看计划信息与派单情况`;
   if (!visibleGroups.length) {
-    tableBody.innerHTML = '<tr><td class="no-data-cell" colspan="9">暂无符合条件的计划任务</td></tr>';
+    tableBody.innerHTML = window.JikaEmptyStates.table(window.UserAccess?.filterRecords(waybills).length ? 'empty-search' : 'empty-tasks', 9);
     return;
   }
   tableBody.innerHTML = visibleGroups.map((group) => {
@@ -1880,7 +1880,7 @@ function getWarningDays() {
 function renderVehicleRows(rows, warningDays = 30) {
   const vehicleBody = document.querySelector("#vehicleBody");
   if (!rows.length) {
-    vehicleBody.innerHTML = '<tr><td class="no-data-cell" colspan="12">暂无符合条件的车辆</td></tr>';
+    vehicleBody.innerHTML = window.JikaEmptyStates.table(window.UserAccess?.filterRecords(vehicles).length ? 'empty-search' : 'empty-vehicles', 12);
     return;
   }
 
@@ -2091,7 +2091,7 @@ function renderInspectionRows(plateNo = selectedVehicle?.plateNo || "") {
       <td>${dashboardEscape(result)}</td>
       <td>${renderComplianceStatus(dueDate, 30, "inspection")}</td>
     </tr>`;
-  }).join("") : '<tr><td class="no-data-cell" colspan="8">暂无审验记录</td></tr>';
+  }).join("") : window.JikaEmptyStates.table("empty-records", 8);
 }
 
 function renderInsuranceRows(plateNo = selectedVehicle?.plateNo || "") {
@@ -2114,7 +2114,7 @@ function renderInsuranceRows(plateNo = selectedVehicle?.plateNo || "") {
       <td>${dashboardEscape(complianceRecordValue(policy, insurancePolicyFields, "attachment") || "—")}</td>
       <td>${renderComplianceStatus(dueDate, 30, "insurance")}</td>
     </tr>`;
-  }).join("") : '<tr><td class="no-data-cell" colspan="10">暂无保险记录</td></tr>';
+  }).join("") : window.JikaEmptyStates.table("empty-records", 10);
 }
 
 function openInspectionRecordDialog() {
@@ -2775,7 +2775,7 @@ function updateDriverSelection() {
 function renderDriverRows(rows) {
   renderedDriverIds = rows.map((driver) => driver.id);
   if (!rows.length) {
-    driverBody.innerHTML = '<tr><td class="no-data-cell" colspan="16">暂无符合条件的司机档案</td></tr>';
+    driverBody.innerHTML = window.JikaEmptyStates.table(window.UserAccess?.filterRecords(drivers).length ? 'empty-search' : 'empty-drivers', 16);
     updateDriverSelection();
     return;
   }
@@ -2821,7 +2821,7 @@ function renderDriverRows(rows) {
 function renderDriverDetail(driver) {
   const detailRoot = document.querySelector("#driverDetailBase");
   if (!driver) {
-    detailRoot.innerHTML = '<div class="driver-detail-empty">未找到司机档案，请返回列表重新选择。</div>';
+    detailRoot.innerHTML = window.JikaEmptyStates.render("error-not-found");
     return;
   }
 
@@ -3080,7 +3080,7 @@ function updateRouteSelection() {
 function renderRouteRows(rows) {
   renderedRouteIds = rows.map((route) => route.id);
   if (!rows.length) {
-    routeBody.innerHTML = '<tr><td class="no-data-cell" colspan="14">暂无符合条件的固定线路</td></tr>';
+    routeBody.innerHTML = window.JikaEmptyStates.table(getScopedRoutes(window.UserAccess?.filterRecords(fixedRoutes) || fixedRoutes).length ? 'empty-search' : 'empty-fixed-routes', 14);
     updateRouteSelection();
     return;
   }
@@ -3544,7 +3544,7 @@ function renderDispatchCapacityProgress(dispatch) {
 function renderDispatchRows(rows) {
   renderedDispatchIds = rows.map((dispatch) => dispatch.id);
   if (!rows.length) {
-    dispatchBody.innerHTML = '<tr><td class="no-data-cell" colspan="12">暂无符合条件的派单记录</td></tr>';
+    dispatchBody.innerHTML = window.JikaEmptyStates.table(window.UserAccess?.filterRecords(dispatches).length ? 'empty-search' : 'empty-waybills', 12);
     updateDispatchSelection();
     return;
   }
@@ -4721,7 +4721,7 @@ function renderDashboardPlanRows(planRows) {
     const route = fixedRoutes.find((candidate) => candidate.id === item.routeId);
     const rate = item.planned ? Math.round(item.completed / item.planned * 100) : 0;
     return `<div class="plan-completion-row"><span class="plan-owner"><strong>${dashboardEscape(item.customerName)}</strong><small>${dashboardEscape(item.projectName)}</small></span><span class="plan-route" title="${dashboardEscape(route?.routeName || item.routeId)}">${dashboardEscape(route?.routeName || item.routeId)}</span><span class="plan-result"><strong>${item.completed}/${item.planned}</strong><i><b style="width:${rate}%"></b></i><small>${rate}%</small></span></div>`;
-  }).join("") : '<div class="dashboard-empty-state compact"><strong>暂无计划数据</strong><span>请调整客户、项目或线路筛选</span></div>';
+  }).join("") : window.JikaEmptyStates.render("empty-reports", {layout:"compact"});
 }
 
 function renderDashboardAmounts(planRows) {
@@ -4745,7 +4745,7 @@ function renderDashboardAmounts(planRows) {
   });
   const entries = [...groups.entries()].sort((a, b) => b[1] - a[1]);
   const max = Math.max(...entries.map((item) => item[1]), 1);
-  document.querySelector("#dashboardAmountDistribution").innerHTML = entries.length ? entries.map(([name, value]) => `<div class="amount-distribution-row"><span title="${dashboardEscape(name)}">${dashboardEscape(name)}</span><i><b style="width:${Math.round(value / max * 100)}%"></b></i><strong>${formatMoney(value)}</strong></div>`).join("") : '<div class="dashboard-empty-state compact"><strong>暂无金额数据</strong><span>请调整筛选条件</span></div>';
+  document.querySelector("#dashboardAmountDistribution").innerHTML = entries.length ? entries.map(([name, value]) => `<div class="amount-distribution-row"><span title="${dashboardEscape(name)}">${dashboardEscape(name)}</span><i><b style="width:${Math.round(value / max * 100)}%"></b></i><strong>${formatMoney(value)}</strong></div>`).join("") : window.JikaEmptyStates.render("empty-reports", {layout:"compact"});
 }
 
 const dashboardBadgeArtwork = {
@@ -5642,7 +5642,7 @@ function renderDriverExpenseRows(rows) {
       <td class="check-col"><input class="driver-expense-checkbox" type="checkbox" value="${dashboardEscape(item.id)}" aria-label="选择费用 ${dashboardEscape(item.id)}" ${item.status === "pending" ? "" : "disabled"} ${selectedDriverExpenseIds.has(item.id) ? "checked" : ""} /></td>
       <td><strong class="primary-text">${dashboardEscape(item.id)}</strong></td><td>${financeFormatCell(item.driverName)}</td><td>${financeFormatCell(item.waybillNo)}</td><td>${financeFormatCell(item.vehicleId)}</td><td>${CapacityOwnership.badgeMarkup(item.capacityOwnership, item.capacityOwnershipTooltip)}</td><td>${financeFormatCell(item.driverOrganization)}</td><td>${financeFormatCell(item.vehicleOrganization)}</td><td>${financeFormatCell(item.typeLabel)}</td><td class="finance-money-cell">${financeMoney(item.amount)}</td><td>${financeFormatCell(item.date)}</td><td class="driver-expense-receipt">${financeFormatCell(item.receiptName, "未上传")}</td><td class="driver-expense-remark">${financeFormatCell(item.remark, "无")}</td><td>${financeFormatCell(driverExpenseDateTime(item.createdAt))}</td><td><span class="driver-expense-status ${status.className}">${status.label}</span></td><td>${reviewInfo}</td><td class="fixed-action-column"><div class="vehicle-action-group">${actions}</div></td>
     </tr>`;
-  }).join("") : '<tr><td colspan="17" class="empty-table-cell">暂无符合条件的费用上报记录</td></tr>';
+  }).join("") : window.JikaEmptyStates.table("empty-records", 17);
 }
 
 function renderDriverExpenseSelectionState(rows) {
@@ -5854,7 +5854,7 @@ function renderVehicleRepairPage() {
     <td><span class="repair-status-pill ${record.status === "已完成" ? "done" : record.status === "已取消" ? "cancelled" : record.status === "维修中" ? "working" : "pending"}">${dashboardEscape(record.status)}</span></td>
     <td class="money"><strong>¥${Number(record.actualCost || 0).toFixed(2)}</strong></td>
     <td class="fixed-action-column"><div class="vehicle-action-group"><button class="link-btn" data-edit-repair="${dashboardEscape(record.id)}" type="button">处理</button></div></td>
-  </tr>`).join("") : '<tr><td class="no-data-cell" colspan="10">暂无符合条件的维修保养工单</td></tr>';
+  </tr>`).join("") : window.JikaEmptyStates.table("empty-records", 10);
   document.querySelector("#vehicleRepairResultText").textContent = `共 ${rows.length} 条维修保养工单`;
   fillVehicleRepairRecordFeeOptions();
   renderVehicleRepairRecords();
@@ -6319,7 +6319,7 @@ function renderVehicleRepairRecords() {
   const totals = rows.reduce((sum, { item }) => ({ parts: sum.parts + item.partsCost, labor: sum.labor + item.laborCost, other: sum.other + item.otherCost, total: sum.total + item.subtotal }), { parts: 0, labor: 0, other: 0, total: 0 });
   const vehiclesCount = new Set(rows.map(({ record }) => record.plateNo)).size;
   document.querySelector("#vehicleRepairRecordSummary").innerHTML = `<article><span>费用子目</span><strong>${rows.length}</strong></article><article><span>涉及车辆</span><strong>${vehiclesCount}</strong></article><article><span>配件费</span><strong>¥${totals.parts.toFixed(2)}</strong></article><article><span>工时费</span><strong>¥${totals.labor.toFixed(2)}</strong></article><article><span>其他费用</span><strong>¥${totals.other.toFixed(2)}</strong></article><article class="total"><span>费用合计</span><strong>¥${totals.total.toFixed(2)}</strong></article>`;
-  body.innerHTML = rows.length ? rows.map(({ record, item }) => `<tr><td>${dashboardEscape(formatRepairDateTime(record.repairedAt))}</td><td><strong>${dashboardEscape(record.repairNo)}</strong></td><td>${dashboardEscape(record.plateNo)}</td><td><strong>${dashboardEscape(item.feeName)}</strong><small>${dashboardEscape(item.feeCategory)}</small></td><td>${dashboardEscape(item.content || record.description)}</td><td>${dashboardEscape(item.serviceProvider || record.repairVendor || "-")}</td><td>${dashboardEscape(item.periodStart && item.periodEnd ? `${item.periodStart} 至 ${item.periodEnd}` : "-")}</td><td class="money">¥${item.partsCost.toFixed(2)}</td><td class="money">¥${item.laborCost.toFixed(2)}</td><td class="money">¥${item.otherCost.toFixed(2)}</td><td class="money"><strong>¥${item.subtotal.toFixed(2)}</strong></td><td><span class="repair-status-pill ${record.status === "已完成" ? "done" : record.status === "已取消" ? "cancelled" : record.status === "维修中" ? "working" : "pending"}">${dashboardEscape(record.status)}</span></td></tr>`).join("") : '<tr><td class="no-data-cell" colspan="12">暂无符合条件的维修保养记录</td></tr>';
+  body.innerHTML = rows.length ? rows.map(({ record, item }) => `<tr><td>${dashboardEscape(formatRepairDateTime(record.repairedAt))}</td><td><strong>${dashboardEscape(record.repairNo)}</strong></td><td>${dashboardEscape(record.plateNo)}</td><td><strong>${dashboardEscape(item.feeName)}</strong><small>${dashboardEscape(item.feeCategory)}</small></td><td>${dashboardEscape(item.content || record.description)}</td><td>${dashboardEscape(item.serviceProvider || record.repairVendor || "-")}</td><td>${dashboardEscape(item.periodStart && item.periodEnd ? `${item.periodStart} 至 ${item.periodEnd}` : "-")}</td><td class="money">¥${item.partsCost.toFixed(2)}</td><td class="money">¥${item.laborCost.toFixed(2)}</td><td class="money">¥${item.otherCost.toFixed(2)}</td><td class="money"><strong>¥${item.subtotal.toFixed(2)}</strong></td><td><span class="repair-status-pill ${record.status === "已完成" ? "done" : record.status === "已取消" ? "cancelled" : record.status === "维修中" ? "working" : "pending"}">${dashboardEscape(record.status)}</span></td></tr>`).join("") : window.JikaEmptyStates.table("empty-records", 12);
   document.querySelector("#vehicleRepairRecordResultText").textContent = `共 ${rows.length} 条费用明细，合计 ¥${totals.total.toFixed(2)}`;
 }
 

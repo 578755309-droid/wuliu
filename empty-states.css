@@ -1,0 +1,12 @@
+.jika-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;min-height:340px;padding:24px 16px;box-sizing:border-box;text-align:center}
+.jika-empty .jika-empty-art{display:block;flex:none;width:180px;height:180px;max-width:100%;object-fit:contain;background:none}
+.jika-empty .jika-empty-title{font-size:16px;line-height:24px;font-weight:600;color:#303133}
+.jika-empty .jika-empty-description{margin:0;max-width:32em;font-size:13px;line-height:21px;color:#909399;white-space:normal;overflow-wrap:anywhere}
+.jika-empty .jika-empty-action{margin-top:12px;flex:none;cursor:pointer}
+.jika-empty--compact{min-height:180px;padding:12px}
+.jika-empty--compact .jika-empty-art{width:120px;height:120px}
+.jika-empty--compact .jika-empty-title{font-size:14px;font-weight:500}
+td.jika-empty-cell{padding:0!important;background:#fff;vertical-align:middle}
+.jika-empty--table{min-height:430px}.jika-empty--table .jika-empty-art{width:240px;height:240px}
+@media(max-width:600px){.jika-empty--table{min-height:320px}.jika-empty--table .jika-empty-art{width:180px;height:180px}}
+

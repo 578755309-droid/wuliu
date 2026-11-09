@@ -2636,3 +2636,69 @@ select[data-mobile-select] {
 
 /* ===== 选择器只保留一个下拉箭头：JS 已内联 SVG，隐藏 ::after 的重复箭头 ===== */
 .mobile-select-display::after { display: none !important; }
+/* 双信息标签：统一 8px 外边距、内边距和内容间距。 */
+.dual-badge {
+  margin: 8px !important;
+  padding: 8px !important;
+  gap: 8px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 移动端按钮统一使用 12px 圆角。 */
+body :is(.phone-shell, .manager-shell) button,
+body :is(.phone-shell, .manager-shell) a.subpage-primary,
+body :is(.phone-shell, .manager-shell) .address-action a,
+#detailActionBar button,
+#detailActionBar button.primary { border-radius:12px !important; }
+body .phone-shell .detail-action-bar { border-radius:12px !important; }
+
+/* 已通过标签展示任务类型的卡片，不重复展示字段行。 */
+.manager-list-card:has(.dual-badge) .task-type-field,
+.task-card:has(.dual-badge) .task-type-field,
+.detail-card:has(.dual-badge) .task-type-field { display:none !important; }
+
+/* 报表执行任务：分段进度与横向作业地址。 */
+.report-task-progress { display:flex; flex-direction:column; gap:8px; padding:10px 12px; margin:10px 0; border:1px solid #e9edf5; border-radius:12px; background:#fff; }
+.report-task-progress-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; color:#969fb1; font-size:12px; line-height:1.4; }
+.report-task-progress-heading b { color:#0065ff; font-weight:600; }
+.report-task-progress-segments { display:flex; gap:4px; align-items:center; }
+.report-task-progress-segments i { display:block; flex:1; height:6px; border-radius:3px; background:#e3e7ef; }
+.report-task-progress-segments i.is-complete { background:#0065ff; }
+.report-dispatch-item > .mobile-address-route { margin:0; }
+
+/* 备注保留原有外部布局，仅上下内边距改为6px。 */
+.task-note { padding-top:6px !important; padding-bottom:6px !important; }
+/* 标题与运单号组成独立纵向布局，不改变卡片其他间距。 */
+.task-card-header .task-title-group { display:flex !important; flex-direction:column !important; gap:8px !important; }
+.task-card-header .task-title-group .task-number { margin-top:0 !important; }
+/* 已有标题与编号组单独使用8px间距。 */
+.list-card-top > div:first-child:has(> small) { display:flex !important; flex-direction:column !important; gap:8px !important; }
+
+/* 管理端普通表单行统一54px；多行说明、备注和上传保留原有高度。 */
+.mobile-field:not(:has(textarea)):not(:has(.file-picker)),
+.profile-form-row:not(:has(textarea)):not(:has(input[type="file"])) {
+  box-sizing:border-box !important; height:54px !important; min-height:54px !important;
+  padding-top:0 !important; padding-bottom:0 !important;
+}
+.mobile-field:not(:has(textarea)):not(:has(.file-picker)) > input,
+.mobile-field:not(:has(textarea)):not(:has(.file-picker)) > select {
+  height:100% !important; max-height:53px !important; margin-top:0 !important;
+}
+.mobile-form-section-heading { min-height:54px; gap:8px; }
+.mobile-form-section-heading > div { display:flex; align-items:center; }
+.form-heading-accent { display:block; width:6px; height:16px; flex:0 0 6px; }
+.repeat-heading > div > strong { display:flex; align-items:center; gap:8px; }
+
+.form-heading-accent, .form-heading-accent path { stroke:none !important; }
+
+/* 小程序详情右上方留给原生胶囊；线路操作固定在独立底栏。 */
+#detailActionButton { display:none !important; }
+.manager-detail-footer { flex:0 0 auto; padding:10px 10px calc(10px + var(--safe-bottom)); background:#f7f8fc; border-top:1px solid #eef1f6; }
+.manager-detail-footer[hidden] { display:none; }
+.manager-detail-footer .detail-action-bar { margin:0; }
+#managerDetailView:has(.manager-detail-footer:not([hidden])) .detail-scroll { padding-bottom:10px; }
+
+/* 独立悬浮新增组件，圆形不继承普通按钮12px圆角。 */
+body .manager-shell button.module-primary-fab { width:52px !important; height:52px !important; border-radius:50% !important; }

@@ -77,7 +77,7 @@ const moduleCatalog = {
     ],
   },
   reminder: {
-    title: "到期提醒", eyebrow: "车辆管理", icon: "shield-alert", primary: "消息提醒",
+    title: "预警待办", eyebrow: "车辆管理", icon: "shield-alert", primary: "消息提醒",
     filters: ["全部", "保险即将到期", "审验即将到期", "已过期"],
     items: [
       { id: "苏E·T5568", title: "车辆证件已过期", subtitle: "苏州园区集卡车队", status: "已过期", statusClass: "danger", fields: [["保险到期", "2026-09-10"], ["审验到期", "2026-08-30"], ["司机", "刘军"], ["车辆状态", "维修中"]], note: "立即补办审验或续保，暂停派车" },
@@ -162,7 +162,7 @@ const mobileFormDefinitions = {
         { name: "drivingLicenseNo", label: "行驶证号" }, { name: "drivingLicenseExpiry", label: "行驶证有效期", type: "date" },
         { name: "permitNo", label: "营运证号", required: true, placeholder: "请输入营运证号" }, { name: "operatingPermitExpiry", label: "营运证有效期", type: "date", placeholder: "请选择有效期" },
         { name: "inspectionDue", label: "审验到期日期", type: "date", required: true, placeholder: "请选择审验到期日期" },
-        { name: "attachments", label: "附件资料", placeholder: "例如：行驶证、营运证、保单", full: true },
+        { name: "attachments", label: "附件资料", type: "file", placeholder: "例如：行驶证、营运证、保单", full: true },
       ] },
       { title: "保险与备注", hint: "保单及到期日期", fields: [
         { name: "commercialInsuranceCompany", label: "商业险保险公司" }, { name: "commercialInsuranceNo", label: "商业险单号" }, { name: "commercialInsuranceExpiry", label: "商业险有效期", type: "date" },
@@ -250,7 +250,7 @@ const mobileFormDefinitions = {
       { name: "engineNo", label: "发动机号" },
       { name: "mandatoryInsuranceCompany", label: "强制险保险公司" }, { name: "mandatoryInsuranceNo", label: "强制险单号" }, { name: "mandatoryInsuranceExpiry", label: "强制险有效期", type: "date" },
       { name: "commercialInsuranceCompany", label: "商业险保险公司" }, { name: "commercialInsuranceNo", label: "商业险单号" }, { name: "commercialInsuranceExpiry", label: "商业险有效期", type: "date" },
-      { name: "attachments", label: "附件" }, { name: "remark", label: "备注", type: "textarea", placeholder: "请输入备注", full: true },
+      { name: "attachments", label: "附件", type: "file" }, { name: "remark", label: "备注", type: "textarea", placeholder: "请输入备注", full: true },
     ] }],
   },
   plan: {
@@ -364,7 +364,7 @@ function fieldMarkup(field) {
 }
 
 function sectionMarkup(section, index) {
-  return `<section class="mobile-form-section"><header class="mobile-form-section-heading"><span>${String(index + 1).padStart(2, "0")}</span><div><strong>${h(section.title)}</strong><small>${h(section.hint || "")}</small></div></header><div class="mobile-form-grid">${section.fields.map(fieldMarkup).join("")}${section.title === "收入与提成" ? '<div class="commission-preview"><span>预计司机提成</span><strong id="mobileCommissionPreview">¥0.00</strong></div>' : ""}</div></section>`;
+  return `<section class="mobile-form-section"><header class="mobile-form-section-heading"><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg><div><strong>${h(section.title)}</strong></div></header><div class="mobile-form-grid">${section.fields.map(fieldMarkup).join("")}${section.title === "收入与提成" ? '<div class="commission-preview"><span>预计司机提成</span><strong id="mobileCommissionPreview">¥0.00</strong></div>' : ""}</div></section>`;
 }
 
 function formIntro(icon, text) {
@@ -425,28 +425,28 @@ function loadSharedCatalog() {
   const vehicles = Array.isArray(snapshot.vehicles) ? snapshot.vehicles : [];
   const trailers = Array.isArray(snapshot.trailers) ? snapshot.trailers : [];
   const drivers = Array.isArray(snapshot.drivers) ? snapshot.drivers : [];
-  const customers = Array.isArray(snapshot.customers) && snapshot.customers.length ? snapshot.customers : (window.AdminDataBridge.readCustomers?.() || []);
-  if (routes.length) moduleCatalog.route.items = routes.map((route) => ({
+  const customers = Array.isArray(snapshot.customers) ? snapshot.customers : (window.AdminDataBridge.readCustomers?.() || []);
+  if (Array.isArray(snapshot.fixedRoutes)) moduleCatalog.route.items = routes.map((route) => ({
     id: route.id, title: route.routeName, subtitle: `${route.routeCode || route.id} · ${route.origin || ""} → ${route.destination || ""}`,
     status: route.routeState || "启用", statusClass: sharedStatusClass(route.routeState),
     fields: [["线路编号", route.routeCode || route.id], ["客户 / 项目", `${route.customerName || route.customerId || "-"} / ${route.projectName || route.projectId || "-"}`], ["提箱地 → 装卸地", `${route.origin || "-"} → ${route.destination || "-"}`], ["里程", route.mileage === "" || route.mileage == null ? "待维护" : `${route.mileage} KM`], ["预估收入", `¥${route.estimatedRevenue || 0}`], ["提成方式", route.commissionType === "rate" ? "按收入比例提成" : "固定金额提成"]], note: route.remark || "", raw: route,
   }));
-  if (waybills.length) moduleCatalog.waybill.items = waybills.map((waybill) => {
+  if (Array.isArray(snapshot.waybills)) moduleCatalog.waybill.items = waybills.map((waybill) => {
     const route = routes.find((item) => item.id === waybill.routeId);
     const containers = Array.isArray(waybill.containers) ? waybill.containers : [];
     const boxLabel = containers.map((item) => item.containerType || item.boxType).filter(Boolean).join("、") || waybill.boxType || "待装箱";
     return { id: waybill.waybillNo, title: waybill.customerName || "未指定客户", subtitle: route?.routeName || waybill.routeName || "未指定线路", status: waybill.status === "草稿" ? "草拟" : waybill.status || "草拟", statusClass: sharedStatusClass(waybill.status), fields: [["接单日期", waybill.orderDate || "-"], ["计划任务", waybill.planTaskNo || waybill.planTaskId || "-"], ["箱型", boxLabel], ["装卸地址", waybill.loadAddress || "-"], ["应收金额", `¥${waybill.receivable || 0}`], ["应付金额", `¥${waybill.payable || 0}`]], note: waybill.remark || "", raw: waybill };
   });
-  if (dispatches.length) moduleCatalog.dispatch.items = dispatches.map((dispatch) => ({
+  if (Array.isArray(snapshot.dispatches)) moduleCatalog.dispatch.items = dispatches.map((dispatch) => ({
     id: dispatch.id, title: dispatch.routeName || "未指定线路", subtitle: dispatch.waybillNo || "-", status: dispatch.status || "待派单", statusClass: sharedStatusClass(dispatch.status), fields: [["计划靠台时间", dispatch.plannedBerthingTime || dispatch.executionTime || "-"], ["运力归属", dispatch.capacityOwnershipSnapshot || "待确定"], ["司机", dispatch.driverName || "待分配"], ["司机所属单位", dispatch.driverOrganizationSnapshot || "待确定"], ["车辆", dispatch.vehicleId || "待分配"], ["车辆所属单位", dispatch.vehicleOrganizationSnapshot || "待确定"], ["挂车", dispatch.trailerId || "未绑定"], ["挂车所属单位", dispatch.trailerOrganizationSnapshot || "未绑定"], ["当前节点", dispatch.currentNode || "待派单"], ["派单方式", dispatch.dispatchMode === "auto" ? "自动派单" : dispatch.dispatchMode === "manual" ? "手动派单" : "待分配"], ["派单时间", dispatch.dispatchTime || "-"]], note: dispatch.note || "", raw: dispatch }));
   vehicles.forEach((item) => window.CapacityOwnership.normalizeResource(item, "vehicle"));
   trailers.forEach((item) => window.CapacityOwnership.normalizeResource(item, "trailer"));
   drivers.forEach((item) => window.CapacityOwnership.normalizeResource(item, "driver"));
-  if (vehicles.length) moduleCatalog.vehicle.items = vehicles.map((vehicle) => ({ id: vehicle.plateNo, title: vehicle.vehicleType || "集装箱牵引车", subtitle: vehicle.fleetName || vehicle.fleet || "未设置车队", status: vehicle.vehicleState || "停用", statusClass: sharedStatusClass(vehicle.vehicleState), fields: [["运力归属", vehicle.capacityOwnership], ["所属单位", window.CapacityOwnership.organizationName(vehicle)], ["司机", vehicle.driver || "未绑定"], ["挂车", vehicle.trailerId || "未绑定"], ["VIN", vehicle.vin || "-"], ["营运证号", vehicle.permitNo || "-"]], note: vehicle.remark || "", raw: vehicle }));
-  if (trailers.length) moduleCatalog.trailer.items = trailers.map((trailer) => ({ id: trailer.id, title: trailer.plateNo, subtitle: trailer.trailerType || "挂车", status: trailer.trailerState || "停用", statusClass: sharedStatusClass(trailer.trailerState), fields: [["运力归属", trailer.capacityOwnership], ["所属单位", window.CapacityOwnership.organizationName(trailer)], ["车架号", trailer.vin || "-"], ["所属车队", trailer.fleet || "-"], ["营运证号", trailer.permitNo || "-"], ["审验到期", trailer.inspectionDue || "-"]], note: trailer.remark || "", raw: trailer }));
-  if (drivers.length) moduleCatalog.driver.items = drivers.map((driver) => ({ id: driver.id, title: driver.name, subtitle: `${driver.fleet || "未设置车队"} · ${driver.phone || "-"}`, status: driver.driverState || "停用", statusClass: sharedStatusClass(driver.driverState), fields: [["运力归属", driver.capacityOwnership], ["所属单位", window.CapacityOwnership.organizationName(driver)], ["司机编号", driver.id], ["准驾车型", driver.licenseClass || "A2"], ["车辆", driver.vehiclePlate || driver.vehicle || "未绑定"], ["认证状态", certificationStatusLabel(driver.certificationStatus)]], note: driver.remark || "", raw: driver }));
-  if (customers.length) moduleCatalog.customer.items = customers.map((customer) => ({ id: customer.customerNo, title: customer.customerName, subtitle: `简称：${customer.shortName || "-"}`, status: customer.customerStatus || "启用", statusClass: sharedStatusClass(customer.customerStatus), fields: [["单位编号", customer.customerNo], ["单位角色", customer.businessRole || "客户"], ["客户类型", customer.customerType || "-"], ["联系人", customer.contactName || "-"], ["手机", customer.mobile || "-"], ["结算周期", customer.settlementCycle || "-"]], note: customer.remark || "", raw: customer }));
-  ensurePendingDispatchSamples();
+  if (Array.isArray(snapshot.vehicles)) moduleCatalog.vehicle.items = vehicles.map((vehicle) => ({ id: vehicle.plateNo, title: vehicle.vehicleType || "集装箱牵引车", subtitle: vehicle.fleetName || vehicle.fleet || "未设置车队", status: vehicle.vehicleState || "停用", statusClass: sharedStatusClass(vehicle.vehicleState), fields: [["运力归属", vehicle.capacityOwnership], ["所属单位", window.CapacityOwnership.organizationName(vehicle)], ["司机", vehicle.driver || "未绑定"], ["挂车", vehicle.trailerId || "未绑定"], ["VIN", vehicle.vin || "-"], ["营运证号", vehicle.permitNo || "-"]], note: vehicle.remark || "", raw: vehicle }));
+  if (Array.isArray(snapshot.trailers)) moduleCatalog.trailer.items = trailers.map((trailer) => ({ id: trailer.id, title: trailer.plateNo, subtitle: trailer.trailerType || "挂车", status: trailer.trailerState || "停用", statusClass: sharedStatusClass(trailer.trailerState), fields: [["运力归属", trailer.capacityOwnership], ["所属单位", window.CapacityOwnership.organizationName(trailer)], ["车架号", trailer.vin || "-"], ["所属车队", trailer.fleet || "-"], ["营运证号", trailer.permitNo || "-"], ["审验到期", trailer.inspectionDue || "-"]], note: trailer.remark || "", raw: trailer }));
+  if (Array.isArray(snapshot.drivers)) moduleCatalog.driver.items = drivers.map((driver) => ({ id: driver.id, title: driver.name, subtitle: `${driver.fleet || "未设置车队"} · ${driver.phone || "-"}`, status: driver.driverState || "停用", statusClass: sharedStatusClass(driver.driverState), fields: [["运力归属", driver.capacityOwnership], ["所属单位", window.CapacityOwnership.organizationName(driver)], ["司机编号", driver.id], ["准驾车型", driver.licenseClass || "A2"], ["车辆", driver.vehiclePlate || driver.vehicle || "未绑定"], ["认证状态", certificationStatusLabel(driver.certificationStatus)]], note: driver.remark || "", raw: driver }));
+  if (Array.isArray(snapshot.customers)) moduleCatalog.customer.items = customers.map((customer) => ({ id: customer.customerNo, title: customer.customerName, subtitle: `简称：${customer.shortName || "-"}`, status: customer.customerStatus || "启用", statusClass: sharedStatusClass(customer.customerStatus), fields: [["单位编号", customer.customerNo], ["单位角色", customer.businessRole || "客户"], ["客户类型", customer.customerType || "-"], ["联系人", customer.contactName || "-"], ["手机", customer.mobile || "-"], ["结算周期", customer.settlementCycle || "-"]], note: customer.remark || "", raw: customer }));
+  if (!Array.isArray(snapshot.dispatches)) ensurePendingDispatchSamples();
   if (Array.isArray(snapshot.waybills)) {
     rebuildPlanCatalog(waybills, dispatches, routes);
   } else {
@@ -648,7 +648,7 @@ function waybillEntryMarkup() {
   const routeOptions = [["", "请选择固定线路"], ...moduleCatalog.route.items.filter((item) => item.status === "启用").map((item) => [item.id, item.title])];
   const customerOptions = [["", "请选择客户"], ...moduleCatalog.customer.items.filter((item) => item.status === "启用" && customerHasRole(item, "客户")).map((item) => [item.id, item.title])];
   return `${formIntro("file-plus-2", "运单号与接单日期自动生成，客户和线路可联动带出业务信息。")}
-    <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>01</span><div><strong>业务信息</strong><small>客户委托、箱货资料和回单要求</small></div></header>
+    <section class="mobile-form-section"><header class="mobile-form-section-heading"><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg><div><strong>业务信息</strong></div></header>
       <div class="generated-strip"><div><span>运单号</span><strong id="mobileGeneratedWaybillNo">${waybillNo}</strong></div><div><span>接单日期</span><strong>${localDate()}</strong></div></div>
       <input name="waybillNo" type="hidden" value="${waybillNo}" /><input name="orderDate" type="hidden" value="${localDate()}" />
       <div class="mobile-form-grid">
@@ -660,9 +660,9 @@ function waybillEntryMarkup() {
         ${fieldMarkup({ name: "remark", label: "备注", type: "textarea", placeholder: "请输入备注", full: true })}
       </div>
     </section>
-    <section class="mobile-form-section"><div class="repeat-heading"><div><strong>箱信息</strong><small>默认 1 个，可继续新增</small></div><button data-add-repeat="container" type="button">新增箱信息</button></div><div class="repeat-list" id="mobileContainerList">${containerCardMarkup()}</div></section>
-    <section class="mobile-form-section"><div class="repeat-heading"><div><strong>应收费用</strong><small>向客户结算的收入项目</small></div><button data-add-repeat="receivable" type="button">添加费用</button></div><div class="repeat-list" id="mobileReceivableList">${feeCardMarkup("receivable")}</div></section>
-    <section class="mobile-form-section"><div class="repeat-heading"><div><strong>应付费用</strong><small>向司机或承运商结算的成本</small></div><button data-add-repeat="payable" type="button">添加费用</button></div><div class="repeat-list" id="mobilePayableList">${feeCardMarkup("payable")}</div></section>`;
+    <section class="mobile-form-section"><div class="repeat-heading"><div><strong><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg>箱信息</strong></div><button data-add-repeat="container" type="button">新增箱信息</button></div><div class="repeat-list" id="mobileContainerList">${containerCardMarkup()}</div></section>
+    <section class="mobile-form-section"><div class="repeat-heading"><div><strong><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg>应收费用</strong></div><button data-add-repeat="receivable" type="button">添加费用</button></div><div class="repeat-list" id="mobileReceivableList">${feeCardMarkup("receivable")}</div></section>
+    <section class="mobile-form-section"><div class="repeat-heading"><div><strong><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg>应付费用</strong></div><button data-add-repeat="payable" type="button">添加费用</button></div><div class="repeat-list" id="mobilePayableList">${feeCardMarkup("payable")}</div></section>`;
 }
 
 function dispatchEntryMarkup() {
@@ -672,11 +672,11 @@ function dispatchEntryMarkup() {
   const projectOptions = [["", "请选择项目"], ...projects.map((item) => [item.projectId, item.projectName || item.projectId])];
   const trailerOptions = [["", "未绑定挂车"], ...moduleCatalog.trailer.items.filter((item) => item.status === "在用").map((item) => [item.id, `${item.title} · ${item.subtitle}`])];
   return `${formIntro("send", "先选择已有运单，再维护箱封号、运力及到达信息；保存后同步司机移动端。")}
-    <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>01</span><div><strong>选择任务</strong><small>运单、项目和固定线路</small></div></header><div class="mobile-form-grid">${fieldMarkup({ name: "waybillId", label: "运单号", type: "select", required: true, placeholder: "请选择运单号", full: true, options: waybillOptions })}${fieldMarkup({ name: "projectId", label: "项目", type: "select", options: projectOptions })}${fieldMarkup({ name: "routeId", label: "固定线路", type: "select", required: true, placeholder: "请选择固定线路", options: routeOptions })}</div>
+    <section class="mobile-form-section"><header class="mobile-form-section-heading"><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg><div><strong>选择任务</strong></div></header><div class="mobile-form-grid">${fieldMarkup({ name: "waybillId", label: "运单号", type: "select", required: true, placeholder: "请选择运单号", full: true, options: waybillOptions })}${fieldMarkup({ name: "projectId", label: "项目", type: "select", options: projectOptions })}${fieldMarkup({ name: "routeId", label: "固定线路", type: "select", required: true, placeholder: "请选择固定线路", options: routeOptions })}</div>
       <div class="readonly-summary" id="mobileDispatchSummary"><div><span>固定线路</span><strong data-summary="route"></strong></div><div><span>提箱地</span><strong data-summary="origin"></strong></div><div><span>装卸地</span><strong data-summary="destination"></strong></div><div><span>还箱地</span><strong data-summary="address"></strong></div><div><span>箱信息</span><strong data-summary="boxes"></strong></div><div><span>预估收入</span><strong data-summary="revenue"></strong></div><div><span>司机提成</span><strong data-summary="commission"></strong></div></div>
-      <section class="mobile-form-section" id="mobileDispatchJobLocations"><header class="mobile-form-section-heading"><span>作业</span><div><strong>作业地点</strong><small>按任务类型配置的顺序维护每个作业地址</small></div></header><div class="mobile-form-grid" data-job-location-fields></div></section>
+      <section class="mobile-form-section" id="mobileDispatchJobLocations"><header class="mobile-form-section-heading"><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg><div><strong>作业地点</strong></div></header><div class="mobile-form-grid" data-job-location-fields></div></section>
     </section>
-    <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>02</span><div><strong>箱信息</strong><small>每个集装箱对应填写自己的铅封号</small></div></header><div class="mobile-form-grid mobile-dispatch-box-grid">
+    <section class="mobile-form-section"><header class="mobile-form-section-heading"><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg><div><strong>箱信息</strong></div></header><div class="mobile-form-grid mobile-dispatch-box-grid">
       ${fieldMarkup({ name: "boxType", label: "箱型", type: "select", required: true, placeholder: "请选择箱型", options: ["40HQ", "40GP", "20GP", "45HQ"] })}
       <fieldset class="mobile-container-group"><legend>集装箱 1</legend><div class="mobile-container-fields">
         ${fieldMarkup({ name: "boxNo1", label: "箱号", placeholder: "请输入集装箱号" })}
@@ -687,7 +687,7 @@ function dispatchEntryMarkup() {
         ${fieldMarkup({ name: "sealNo2", label: "对应铅封号", placeholder: "请输入该箱铅封号" })}
       </div></fieldset>
     </div></section>
-    <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>03</span><div><strong>调度安排</strong><small>选择司机、车辆和挂车</small></div></header><div class="mobile-form-grid">
+    <section class="mobile-form-section"><header class="mobile-form-section-heading"><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg><div><strong>调度安排</strong></div></header><div class="mobile-form-grid">
       ${fieldMarkup({ name: "driverId", label: "司机", type: "select", required: true, placeholder: "请选择司机", disabled: true, options: [["", "请选择司机"], ...window.CapacityOwnership.sortSelfFirst(moduleCatalog.driver.items.filter((item) => item.status !== "停用"), (item) => item.raw?.capacityOwnership).map((item) => [item.id, `【${item.raw?.capacityOwnership || "待确定"}】${item.title}${item.raw?.capacityOwnership === "三方" ? ` / ${window.CapacityOwnership.organizationName(item.raw)}` : ""}`])] })}
       ${fieldMarkup({ name: "vehicleId", label: "车辆", type: "select", required: true, placeholder: "请选择车辆", disabled: true, options: [["", "请选择车辆"], ...window.CapacityOwnership.sortSelfFirst(moduleCatalog.vehicle.items.filter((item) => item.status === "在用"), (item) => item.raw?.capacityOwnership).map((item) => [item.id, `【${item.raw?.capacityOwnership || "待确定"}】${item.id}${item.raw?.capacityOwnership === "三方" ? ` / ${window.CapacityOwnership.organizationName(item.raw)}` : ""}`])] })}
       ${fieldMarkup({ name: "trailerId", label: "挂车", type: "select", options: trailerOptions })}
@@ -702,13 +702,13 @@ function dispatchEntryMarkup() {
 function autoEntryMarkup() {
   return `${formIntro("wand-sparkles", "设置自动执行方式和匹配规则，配置保存后立即生效。")}
     <div class="auto-setting-banner"><span><i data-lucide="refresh-cw"></i></span><div><strong>自动执行已开启</strong><small>新任务进入后自动匹配并派单</small></div></div>
-    <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>01</span><div><strong>执行设置</strong><small>控制触发方式与异常重试</small></div></header><div class="mobile-form-grid">
+    <section class="mobile-form-section"><header class="mobile-form-section-heading"><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg><div><strong>执行设置</strong></div></header><div class="mobile-form-grid">
       <label class="toggle-field"><span>启用自动执行</span><input name="enabled" type="checkbox" checked /></label>
       ${fieldMarkup({ name: "triggerMode", label: "执行方式", type: "select", full: true, options: [["realtime", "新任务立即执行"], ["interval", "定时批量执行"]] })}
       ${fieldMarkup({ name: "intervalMinutes", label: "执行间隔", type: "select", full: true, options: [["5", "每 5 分钟"], ["10", "每 10 分钟"], ["30", "每 30 分钟"], ["60", "每 60 分钟"]] })}
       <label class="toggle-field"><span>异常自动重试</span><input name="retry" type="checkbox" checked /></label>
     </div></section>
-    <section class="mobile-form-section"><header class="mobile-form-section-heading"><span>02</span><div><strong>匹配规则</strong><small>线路优先、闲置优先、负载均衡</small></div></header><div class="mobile-form-grid">
+    <section class="mobile-form-section"><header class="mobile-form-section-heading"><svg class="form-heading-accent" width="6" height="16" viewBox="0 0 6 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="formHeadingBlue" x1="0" y1="0" x2="6" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#56CCFF"/><stop offset="1" stop-color="#0065FF"/></linearGradient></defs><path d="M0 2a2 2 0 0 1 2-2h1a3 3 0 0 1 3 3v13H3a3 3 0 0 1-3-3V2Z" fill="url(#formHeadingBlue)"/></svg><div><strong>匹配规则</strong></div></header><div class="mobile-form-grid">
       ${fieldMarkup({ name: "maxTrips", label: "司机单日任务上限", type: "select", options: [["1", "1 趟 / 天"], ["2", "2 趟 / 天"], ["3", "3 趟 / 天"]] })}
       ${fieldMarkup({ name: "warningDays", label: "临期提示阈值", type: "select", value: "30", options: [["7", "提前 7 天"], ["30", "提前 30 天"], ["60", "提前 60 天"]] })}
     </div></section>`;
@@ -771,63 +771,50 @@ function profileEditorMarkup() {
 }
 
 function rolePageMarkup() {
-  return `<section class="profile-page-intro"><span><i data-lucide="shield-check"></i></span><div><strong>${h(managerProfile.role)}</strong><small>当前角色由系统管理员分配，本人仅可查看</small></div></section>
+  return `<section class="profile-page-intro"><span>${window.ManagerGlassIcons.icon("roleShield")}</span><div><strong>${h(managerProfile.role)}</strong><small>当前角色由系统管理员分配，本人仅可查看</small></div></section>
     <section class="profile-settings-card">
-      <div class="profile-setting-row"><span><i data-lucide="user-round-check"></i></span><span class="profile-setting-copy"><strong>当前角色</strong><small>决定可查看和办理的业务范围</small></span><em class="profile-setting-value">${h(managerProfile.role)}</em></div>
-      <div class="profile-setting-row"><span><i data-lucide="building-2"></i></span><span class="profile-setting-copy"><strong>所属部门</strong><small>当前账号所在组织</small></span><em class="profile-setting-value">${h(managerProfile.department)}</em></div>
-      <div class="profile-setting-row"><span><i data-lucide="badge-check"></i></span><span class="profile-setting-copy"><strong>账号编号</strong><small>系统内唯一身份标识</small></span><em class="profile-setting-value">${h(managerProfile.account)}</em></div>
+      <div class="profile-setting-row"><span>${window.ManagerGlassIcons.icon("roleUser")}</span><span class="profile-setting-copy"><strong>当前角色</strong><small>决定可查看和办理的业务范围</small></span><em class="profile-setting-value">${h(managerProfile.role)}</em></div>
+      <div class="profile-setting-row"><span>${window.ManagerGlassIcons.icon("department")}</span><span class="profile-setting-copy"><strong>所属部门</strong><small>当前账号所在组织</small></span><em class="profile-setting-value">${h(managerProfile.department)}</em></div>
+      <div class="profile-setting-row"><span>${window.ManagerGlassIcons.icon("accountBadge")}</span><span class="profile-setting-copy"><strong>账号编号</strong><small>系统内唯一身份标识</small></span><em class="profile-setting-value">${h(managerProfile.account)}</em></div>
     </section>
     <p class="profile-page-note">如需调整所属部门或角色权限，请联系有权限的系统管理员处理。</p>`;
 }
 
 function notificationPageMarkup() {
-  const row = (key, icon, title, note) => `<label class="profile-setting-row"><span><i data-lucide="${icon}"></i></span><span class="profile-setting-copy"><strong>${title}</strong><small>${note}</small></span><span class="profile-toggle"><input data-notification-setting="${key}" type="checkbox" ${managerNotifications[key] ? "checked" : ""} /><i aria-hidden="true"></i></span></label>`;
-  return `<section class="profile-page-intro"><span><i data-lucide="bell-cog"></i></span><div><strong>通知设置</strong><small>这里只管理接收偏好，消息内容仍在“消息”页查看</small></div></section>
+  const row = (key, icon, title, note) => `<label class="profile-setting-row"><span>${window.ManagerGlassIcons.icon(icon)}</span><span class="profile-setting-copy"><strong>${title}</strong><small>${note}</small></span><span class="profile-toggle"><input data-notification-setting="${key}" type="checkbox" ${managerNotifications[key] ? "checked" : ""} /><i aria-hidden="true"></i></span></label>`;
+  return `<section class="profile-page-intro"><span>${window.ManagerGlassIcons.icon("notificationBell")}</span><div><strong>通知设置</strong><small>这里只管理接收偏好，消息内容仍在“消息”页查看</small></div></section>
     <section class="profile-settings-card">
-      ${row("task", "list-checks", "任务通知", "派单、任务变更与执行进度")}
-      ${row("warning", "shield-alert", "预警通知", "证件到期与异常任务提醒")}
-      ${row("system", "info", "系统通知", "版本更新与服务公告")}
+      ${row("task", "taskNotice", "任务通知", "派单、任务变更与执行进度")}
+      ${row("warning", "warningShield", "预警通知", "证件到期与异常任务提醒")}
+      ${row("system", "systemInfo", "系统通知", "版本更新与服务公告")}
     </section>
     <p class="profile-page-note">关闭某类通知后，对应消息仍会保留在消息中心，不影响业务数据。</p>`;
 }
 
 function securityPageMarkup() {
-  return `<section class="profile-page-intro"><span><i data-lucide="lock-keyhole"></i></span><div><strong>账号状态正常</strong><small>当前账号未发现异常登录或安全风险</small></div></section>
+  return `<section class="profile-page-intro"><span>${window.ManagerGlassIcons.icon("securityLock")}</span><div><strong>账号状态正常</strong><small>当前账号未发现异常登录或安全风险</small></div></section>
     <section class="profile-settings-card">
-      <div class="profile-setting-row"><span><i data-lucide="smartphone"></i></span><span class="profile-setting-copy"><strong>绑定手机号</strong><small>用于身份确认和重要提醒</small></span><em class="profile-setting-value">${h(maskManagerPhone(managerProfile.phone))}</em></div>
-      <div class="profile-setting-row"><span><i data-lucide="monitor-smartphone"></i></span><span class="profile-setting-copy"><strong>当前登录设备</strong><small>微信小程序 · 本机</small></span><em class="profile-setting-value">正常</em></div>
-      <div class="profile-setting-row"><span><i data-lucide="activity"></i></span><span class="profile-setting-copy"><strong>最近登录</strong><small>登录记录仅用于安全核验</small></span><em class="profile-setting-value">刚刚</em></div>
+      <div class="profile-setting-row"><span>${window.ManagerGlassIcons.icon("phone")}</span><span class="profile-setting-copy"><strong>绑定手机号</strong><small>用于身份确认和重要提醒</small></span><em class="profile-setting-value">${h(maskManagerPhone(managerProfile.phone))}</em></div>
+      <div class="profile-setting-row"><span>${window.ManagerGlassIcons.icon("device")}</span><span class="profile-setting-copy"><strong>当前登录设备</strong><small>微信小程序 · 本机</small></span><em class="profile-setting-value">正常</em></div>
+      <div class="profile-setting-row"><span>${window.ManagerGlassIcons.icon("loginHistory")}</span><span class="profile-setting-copy"><strong>最近登录</strong><small>登录记录仅用于安全核验</small></span><em class="profile-setting-value">刚刚</em></div>
     </section>
     <button class="profile-page-button" data-profile-nested-action="profile" type="button">更新个人资料</button>`;
 }
 
 function helpPageMarkup() {
+ const guides=[['工作台','查看待办、运力状态和快捷操作',['在工作台查看待处理任务与预警。','点击业务入口进入计划、派单或档案管理。','常用操作可从快捷操作区进入。']],['任务派单','分配司机与车辆并推进任务',['选择任务，检查线路与作业地点。','选择符合条件的司机和车辆。','确认派单后，在派单列表查看执行进度。']],['档案管理','维护司机、车辆、线路与客户资料',['进入对应档案模块查看资料。','有维护权限时可新增或编辑。','证件与车辆状态会影响派单可选范围。']],['报表与消息','查看运营数据和业务提醒',['按日期、客户与线路筛选报表。','消息页查看任务变化、预警和系统通知。']]];
+ return `<section class="profile-page-intro"><span><img src="icons/profile/help.svg" alt=""></span><div><strong>帮助中心</strong><small>查看操作指引和常见问题，快速完成日常管理工作</small></div></section><section class="profile-settings-card help-guides">${guides.map(([title,note,steps],i)=>`<details ${i===0?'open':''}><summary><img src="icons/workbench/${['plan','dispatch-management','vehicle','capacity'][i]}.svg" alt=""><span><strong>${title}</strong><small>${note}</small></span></summary><ol>${steps.map(step=>`<li>${step}</li>`).join('')}</ol></details>`).join('')}</section><section class="profile-settings-card help-faq"><h3>常见问题</h3><details open><summary>为什么无法选择某个司机或车辆？</summary><p>司机或车辆可能处于运输中、维修、停用或证件异常状态，请先在运力管理中核对状态。</p></details></section><button class="profile-page-button" type="button" data-profile-nested-action="feedback">仍有疑问？提交意见反馈</button>`;
+}
+
+function feedbackPageMarkup() {
   const records = window.FeedbackManager.bySubmitter("manager", managerProfile.account);
   const categories = window.FeedbackManager.categories("manager");
   const statusMeta = window.FeedbackManager.STATUS_META;
-  const tabs = `<div class="feedback-mobile-tabs" role="tablist" aria-label="管理端反馈视图"><button class="${state.feedbackTab === "submit" ? "active" : ""}" data-manager-feedback-tab="submit" type="button" role="tab" aria-selected="${state.feedbackTab === "submit"}">提交反馈</button><button class="${state.feedbackTab === "history" ? "active" : ""}" data-manager-feedback-tab="history" type="button" role="tab" aria-selected="${state.feedbackTab === "history"}">我的反馈${records.length ? `（${records.length}）` : ""}</button></div>`;
-  if (state.feedbackTab === "history") {
-    return `<div class="manager-feedback-page feedback-mobile-page">${tabs}<div class="feedback-history-list">${records.length ? records.map((item) => {
-      const status = statusMeta[item.status];
-      return `<article class="feedback-history-card"><header><span><strong>${h(item.categoryLabel)}</strong><small>${h(item.id)} · ${h(item.createdAt)}</small></span><em class="feedback-status ${status.className}">${status.label}</em></header><p>${h(item.description)}</p><div class="feedback-history-meta"><span>${h(item.relatedLabel || "未关联模块")}</span><span>${item.attachments.length ? `${item.attachments.length} 个附件` : "无附件"}</span></div>${item.publicReply ? `<div class="feedback-history-reply"><strong>处理回复：</strong>${h(item.publicReply)}</div>` : ""}</article>`;
-    }).join("") : '<div class="feedback-history-empty"><i data-lucide="message-square-dashed"></i><strong>暂无反馈记录</strong><span>提交后的处理状态会显示在这里</span></div>'}</div></div>`;
-  }
-  return `<div class="manager-feedback-page feedback-mobile-page">${tabs}
-    <section class="profile-page-intro"><span><i data-lucide="circle-help"></i></span><div><strong>帮助与反馈</strong><small>反馈将进入 PC 后台统一处理</small></div></section>
-    <section class="profile-settings-card">
-      <div class="profile-setting-row"><span><i data-lucide="book-open"></i></span><span class="profile-setting-copy"><strong>使用指南</strong><small>工作台、报表、消息和账号设置说明</small></span><em class="profile-setting-value">管理端 1.0</em></div>
-      <div class="profile-setting-row"><span><i data-lucide="file-lock-2"></i></span><span class="profile-setting-copy"><strong>隐私与协议</strong><small>账号数据仅用于业务协同</small></span><em class="profile-setting-value">已同意</em></div>
-    </section>
-    <form id="managerFeedbackForm" class="feedback-form-card">
-      <div class="feedback-form-intro"><span><i data-lucide="message-square-plus"></i></span><div><strong>提交问题或建议</strong><small>账号、部门和角色信息会自动记录</small></div></div>
-      <label class="feedback-field"><span>问题类型</span><select name="categoryCode" required><option value="">请选择问题类型</option>${categories.map((item) => `<option value="${h(item.code)}">${h(item.label)}</option>`).join("")}</select></label>
-      <label class="feedback-field"><span>相关功能模块 <em>选填</em></span><select name="relatedId"><option value="">不关联模块</option><option value="workbench">工作台</option><option value="waybill">计划与任务</option><option value="dispatch">任务派单</option><option value="capacity">运力管理</option><option value="archive">车辆、司机与客户档案</option><option value="finance">财务与结算</option><option value="reports">数据报表</option><option value="access">用户与权限</option><option value="messages">消息与公告</option></select></label>
-      <label class="feedback-field"><span>业务编号 <em>选填</em></span><input name="businessId" maxlength="60" placeholder="例如运单号、派单号或车辆编号" /></label>
-      <label class="feedback-field"><span>问题描述 <em data-manager-feedback-count>0/1000</em></span><textarea name="description" rows="5" minlength="10" maxlength="1000" placeholder="请描述发生了什么、期望如何改进，至少填写 10 个字" required></textarea></label>
-      <label class="feedback-field"><span>图片或视频 <em>选填</em></span><label class="feedback-upload"><input name="attachments" type="file" accept="image/*,video/mp4,video/quicktime" multiple /><span class="feedback-upload-icon"><i data-lucide="image-plus"></i></span><span><strong>上传截图或视频</strong><small>最多 9 个附件，视频最多 2 个；图片≤10MB，视频≤100MB</small></span></label><small class="feedback-file-summary" data-manager-feedback-files>尚未选择附件</small></label>
-      <label class="feedback-field"><span>联系电话</span><input name="contactPhone" inputmode="tel" maxlength="11" value="${h(managerProfile.phone)}" required /></label>
-      <button class="feedback-submit-button" type="submit">提交意见反馈</button>
-    </form></div>`;
+  $("#profileSubpageTitle").textContent=state.feedbackTab==='history'?'反馈记录':'意见反馈';
+  const tabs=state.feedbackTab==='history'?'<button class="feedback-records-entry" type="button" data-manager-feedback-tab="submit">提交反馈</button>':'<button class="feedback-records-entry" type="button" data-manager-feedback-tab="history">反馈记录</button>';
+  if (state.feedbackTab === "history") return `<div class="manager-feedback-page feedback-mobile-page">${tabs}${window.MobileFeedbackUI.list(records,"manager",managerProfile.account)}</div>`;
+
+  return `<div class="manager-feedback-page feedback-mobile-page">${tabs}${window.MobileFeedbackUI.form({source:"manager",phone:managerProfile.phone,categories})}</div>`;
 }
 
 function openProfileSubpage(action) {
@@ -838,11 +825,11 @@ function openProfileSubpage(action) {
   profileDraftAvatar = managerProfile.avatar;
   const meta = {
     profile: ["个人资料", "编辑个人资料"], role: ["账号与设置", "角色权限"],
-    notification: ["账号与设置", "通知设置"], security: ["账号与设置", "账号安全"], help: ["系统服务", "帮助与反馈"],
+    notification: ["账号与设置", "通知设置"], security: ["账号与设置", "账号安全"], help: ["系统服务", "帮助中心"], feedback: ["系统服务", "意见反馈"],
   }[action] || ["账号与设置", "个人资料"];
   $("#profileSubpageEyebrow").textContent = meta[0];
   $("#profileSubpageTitle").textContent = meta[1];
-  $("#profileSubpageContent").innerHTML = action === "profile" ? profileEditorMarkup() : action === "role" ? rolePageMarkup() : action === "notification" ? notificationPageMarkup() : action === "security" ? securityPageMarkup() : helpPageMarkup();
+  $("#profileSubpageContent").innerHTML = action === "profile" ? profileEditorMarkup() : action === "role" ? rolePageMarkup() : action === "notification" ? notificationPageMarkup() : action === "security" ? securityPageMarkup() : action === "feedback" ? feedbackPageMarkup() : helpPageMarkup();
   page.classList.add("open");
   page.setAttribute("aria-hidden", "false");
   $(".manager-shell").classList.add("subpage-open");
@@ -1095,9 +1082,9 @@ function renderReports() {
   $("#reportTaskMetrics").innerHTML = [
     ["plan", "计划数", planned, range.label], ["assigned", "已派单", assigned.length, `自动 ${automatic} / 手动 ${manual}`], ["active", "进行中", moving, "节点执行中"],
     ["pending", "待派发", pending, "等待运力"], ["exception", "异常任务", exceptions, "需要处理"], ["done", "已完成", completed, `${range.label}完成`],
-  ].map(([icon, label, value, note]) => `<div class="report-task-metric"><div class="report-task-metric-heading"><span>${h(label)}</span><img src="icons/metrics/${icon}.svg" width="24" height="24" alt="" /></div><strong>${value}</strong><small>${h(note)}</small></div>`).join("");
+  ].map(([icon, label, value, note]) => `<div class="report-task-metric"><div class="report-task-metric-heading"><span>${h(label)}</span><img src="assets/metrics/metric-${({assigned:"dispatch",active:"transit",done:"completed"})[icon]||icon}.svg" width="34" height="34" alt="" /></div><strong>${value}</strong><small>${h(note)}</small></div>`).join("");
   $("#reportAmountTotals").innerHTML = [[`${range.label}预估`, amount], ["本月金额", monthAmount], ["累计金额", totalAmount]].map(([label, value]) => `<div class="report-amount-total"><span>${label}</span><strong>${reportMoney(value)}</strong></div>`).join("");
-  $("#reportAmountDistribution").innerHTML = amountEntries.length ? amountEntries.map(([name, value]) => `<div class="report-bar-row"><span title="${h(name)}">${h(name)}</span><span class="report-bar-track"><i style="width:${Math.round(value / maxAmount * 100)}%"></i></span><strong>${reportMoney(value)}</strong></div>`).join("") : `<div class="report-empty">暂无金额数据</div>`;
+  $("#reportAmountDistribution").innerHTML = amountEntries.length ? amountEntries.map(([name, value]) => `<div class="report-bar-row"><span title="${h(name)}">${h(name)}</span><span class="report-bar-track"><i style="width:${Math.round(value / maxAmount * 100)}%"></i></span><strong>${reportMoney(value)}</strong></div>`).join("") : window.JikaEmptyStates.render("empty-reports",{layout:"compact"});
   const capacity = reportCapacityGroups(data, range);
   renderReportStatus("Vehicle", "vehicle", capacity.vehicles);
   renderReportStatus("Driver", "driver", capacity.drivers);
@@ -1106,12 +1093,17 @@ function renderReports() {
     metas = metas.filter(({ dispatch }) => matchingIds.includes(reportState.capacityFilter.scope === "vehicle" ? dispatch.vehicleId : dispatch.driverId));
   }
   $("#reportOperatingDate").textContent = range.start === range.end ? range.end.slice(5) : `${range.start.slice(5)} 至 ${range.end.slice(5)}`;
-  $("#reportDispatchList").innerHTML = metas.length ? metas.sort((a, b) => Number(b.meta.nearComplete) - Number(a.meta.nearComplete) || b.meta.progress - a.meta.progress || Number(b.meta.exception) - Number(a.meta.exception)).map(({ dispatch, meta }) => `<article class="report-dispatch-item ${meta.exception ? "exception" : ""}"><div class="report-dispatch-top"><strong>${h(dispatch.waybillNo || dispatch.id)} · ${h(dispatch.routeName || "未指定线路")}</strong><span class="report-dispatch-state">${meta.exception ? "异常" : h(meta.stage)}</span></div><div class="report-dispatch-meta"><span>${h(dispatch.driverName || "待分配")} · ${h(dispatch.vehicleId || "车辆待分配")}</span><span>${meta.progress}%${meta.nearComplete ? " · 快完成" : ""}</span></div><div class="report-dispatch-progress"><i style="width:${meta.progress}%"></i></div></article>`).join("") : `<div class="report-empty">当前筛选下无执行中任务</div>`;
+  $("#reportDispatchList").innerHTML = metas.length ? metas.sort((a, b) => Number(b.meta.nearComplete) - Number(a.meta.nearComplete) || b.meta.progress - a.meta.progress || Number(b.meta.exception) - Number(a.meta.exception)).map(({ dispatch, meta }) => {
+    const completedCount = Math.max(0, Math.min(meta.nodes.length, meta.index + 1));
+    const waybill = data.waybills.find((item) => item.waybillNo === dispatch.waybillNo) || {};
+    const routeItem = { raw: { ...waybill, ...dispatch }, fields: [] };
+    return `<article class="report-dispatch-item ${meta.exception ? "exception" : ""}"><div class="report-dispatch-top"><strong>${h(dispatch.waybillNo || dispatch.id)}</strong><span class="report-dispatch-state">${meta.exception ? "异常" : h(meta.stage)}</span></div><div class="report-dispatch-meta"><span>${h(dispatch.driverName || "待分配")} · ${h(dispatch.vehicleId || "车辆待分配")}</span>${meta.nearComplete ? "<span>快完成</span>" : ""}</div><section class="report-task-progress" aria-label="任务进度"><div class="report-task-progress-heading"><span>任务进度 <b>${meta.progress}%</b></span><span>${completedCount}/${meta.nodes.length}</span></div><div class="report-task-progress-segments" role="progressbar" aria-label="任务进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${meta.progress}">${meta.nodes.map((node, index) => `<i class="${index < completedCount ? "is-complete" : ""}" title="${h(node)}"></i>`).join("")}</div></section>${renderListRoute(routeItem, dispatch.routeName)}</article>`;
+  }).join("") : window.JikaEmptyStates.render("empty-reports",{layout:"compact"});
   $("#reportPlanList").innerHTML = planRows.length ? planRows.map((item) => {
     const route = data.routes.find((candidate) => candidate.id === item.routeId);
     const rate = item.planned ? Math.round(item.completed / item.planned * 100) : 0;
     return `<div class="report-plan-row"><span class="report-plan-owner"><strong>${h(item.customerName)}</strong><small>${h(item.projectName)}</small></span><span class="report-plan-route" title="${h(route?.routeName || item.routeId)}">${h(route?.routeName || item.routeId)}</span><span class="report-plan-result"><strong>${item.completed}/${item.planned}</strong><small>${rate}%</small></span></div>`;
-  }).join("") : `<div class="report-empty">暂无计划数据，请调整客户、项目或线路筛选</div>`;
+  }).join("") : window.JikaEmptyStates.render("empty-reports",{layout:"compact"});
   $("#reportUpdatedAt").textContent = `更新于 ${new Intl.DateTimeFormat("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date())}`;
   refreshIcons();
 }
@@ -1152,17 +1144,21 @@ function moduleStatusMatches(item, filter) {
 }
 
 function renderListRoute(item, value) {
-  const routeIds = item.raw?.routeIds || [item.raw?.routeId].filter(Boolean);
-  const routes = routeIds.map((id) => moduleCatalog.route.items.find((route) => route.id === id));
-  const entries = routes.length ? routes.map((route) => [route?.title || value, route?.raw]) : [[value]];
-  return entries.map(([name, route]) => {
-    const [start, end] = String(name || "").split(/\s*(?:—|→|–|->)\s*/, 2);
-    const origin = end ? start : route?.origin;
-    const destination = end || route?.destination;
-    if (!origin || !destination) return h(name || "-");
-    const mileage = route?.mileage;
-    const distance = mileage == null || mileage === "" ? "—" : `${mileage} km`;
-    return `<span class="list-route-track"><span class="list-route-origin"><em>提重地</em><strong title="${h(origin)}">${h(origin)}</strong></span><span class="list-route-arrow"><span class="list-route-distance">${h(distance)}</span><i class="route-arrow-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></span><span class="list-route-destination"><em>卸货地</em><strong title="${h(destination)}">${h(destination)}</strong></span></span>`;
+  const raw = item.raw || {};
+  const routeIds = raw.routeIds || [raw.routeId || (state.currentModule === "route" ? item.id : "")].filter(Boolean);
+  const routes = routeIds.map((id) => moduleCatalog.route.items.find((route) => route.id === id)).filter(Boolean);
+  const entries = routes.length ? routes.map((route) => route.raw || {}) : [raw];
+  return entries.map((route) => {
+    const mileage = raw.routeMileageSnapshot ?? route.mileage ?? raw.mileage;
+    if (raw.jobLocations?.length >= 2) return window.MobileRouteDisplay.render(raw.jobLocations, { mileage, segmentMileages: raw.segmentMileages });
+    const rows = dispatchJobLocationRows({ ...route, ...raw }, raw);
+    if (rows.length >= 2) return window.MobileRouteDisplay.render(rows.map(([name, address]) => ({ name: name.replace(/^\d+\s*·\s*/, ""), address })), { mileage });
+    const parts = String(value || "").split(/\s*(?:→|—|–|->|\s\/\s)\s*/);
+    const labels = item.fields?.find(([label]) => /→/.test(label))?.[0].split(/\s*→\s*/) || ["起运地", "目的地"];
+    const locations = route.origin && route.destination
+      ? [{ name: labels[0], address: route.origin }, { name: labels[1], address: route.destination }]
+      : parts.length >= 2 && parts.length <= 3 ? parts.map((address, index) => ({ name: parts.length === 3 ? ["起运地", "途经地", "目的地"][index] : labels[index], address })) : [];
+    return locations.length ? window.MobileRouteDisplay.render(locations, { mileage }) : h(value || "-");
   }).join("");
 }
 
@@ -1175,18 +1171,20 @@ function renderModule() {
   $("#moduleSummary").innerHTML = `<span>当前结果</span><strong>${items.length} 条</strong>`;
   $("#moduleList").innerHTML = items.length ? items.map((item) => {
     const taskType = item.fields?.find(([label]) => label === "任务类型")?.[1];
-    const showDualBadge = state.currentModule === "plan" && taskType;
+    const showDualBadge = state.currentModule === "plan" && Boolean(taskType);
+    const displayFields = item.fields.filter(([label]) => !(showDualBadge && String(label).trim() === "任务类型"));
     const statusBadge = showDualBadge
-      ? `<span class="dual-badge dual-badge-${h(item.statusClass)}"><span>${h(item.status)}</span><i aria-hidden="true"></i><span>${h(taskType)}</span></span>`
+      ? `<span class="dual-badge dual-badge-${h(item.statusClass || "info")}"><span>${h(item.status)}</span><i aria-hidden="true"></i><span>${h(taskType)}</span></span>`
       : `<span class="status-tag ${h(item.statusClass)}">${h(item.status)}</span>`;
     return `
     <article class="manager-list-card">
       <div class="list-card-top"><div><strong>${h(item.title)}</strong>${state.currentModule === "plan" ? "" : `<small>${h(item.id)} · ${h(item.subtitle)}</small>`}</div>${statusBadge}</div>
-      <div class="list-card-grid">${item.fields.slice(0, meta.listFieldLimit || 4).map(([label, value]) => `<div class="list-field"><span>${h(label)}</span><strong>${label === "线路" ? renderListRoute(item, value) : h(value)}</strong></div>`).join("")}</div>
-      ${item.note ? `<p class="task-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg><span>备注：${h(item.note)}</span></p>` : ""}
+      ${["dispatch", "dispatch-management"].includes(state.currentModule) ? renderListRoute(item, item.subtitle) : ""}
+      <div class="list-card-grid">${displayFields.slice(0, meta.listFieldLimit || 4).filter(([label]) => !(/^里程/.test(label) && item.fields.some(([name]) => /线路$|→|装卸地址/.test(name)))).map(([label, value]) => `<div class="list-field ${String(label).trim() === "任务类型" ? "task-type-field" : ""} ${/线路$|→|装卸地址/.test(label) ? "mobile-route-field" : ""}"><span>${h(label)}</span><strong>${/线路$|→|装卸地址/.test(label) ? renderListRoute(item, value) : h(value)}</strong></div>`).join("")}</div>
+      ${item.note ? `<p class="task-note"><span>备注：${h(item.note)}</span></p>` : ""}
       <div class="list-card-footer"><div class="list-card-actions"><button data-module-detail="${h(item.id)}" type="button">查看详情</button>${["待派单", "待匹配"].includes(item.status) && ["dispatch", "dispatch-management"].includes(state.currentModule) ? `<button class="primary" data-start-dispatch="${h(item.id)}" type="button">开始派单</button>` : item.status === "待处理" ? `<button class="primary" data-module-detail="${h(item.id)}" type="button">去处理</button>` : ""}</div></div>
     </article>`;
-  }).join("") : `<div class="module-empty"><span><i data-lucide="inbox"></i></span><strong>暂无匹配数据</strong><small>调整搜索或筛选条件后重试</small></div>`;
+  }).join("") : `${window.JikaEmptyStates.forList(({vehicle:"empty-vehicles",waybill:"empty-waybills",driver:"empty-drivers",route:"empty-fixed-routes",customer:"empty-customers",dispatch:"empty-waybills",plan:"empty-tasks"})[state.currentModule]||"empty-records",moduleCatalog[state.currentModule].items.length)}`;
   refreshIcons();
 }
 
@@ -1202,7 +1200,7 @@ function openModule(moduleName, filter = "全部") {
   $("#moduleEyebrow").textContent = meta.eyebrow;
   $("#moduleTitle").textContent = meta.title;
   $("#modulePrimaryButton").setAttribute("aria-label", meta.primary);
-  $("#modulePrimaryButton").hidden = ["capacity", "dispatch-management"].includes(moduleName);
+  $("#modulePrimaryButton").hidden = ["capacity", "dispatch-management", "reminder"].includes(moduleName);
   $("#moduleView").classList.add("open");
   $("#moduleView").setAttribute("aria-hidden", "false");
   $(".manager-shell").classList.add("subpage-open");
@@ -1405,7 +1403,8 @@ function openEntry(moduleName, recordId = "") {
         const picker = control.closest(".file-picker");
         if (value && picker) {
           picker.classList.add("selected");
-          picker.querySelector("strong").textContent = `已归档：${value}`;
+          picker.querySelector("strong").textContent = "已上传附件";
+          window.ManagerPhotoUI.picker(picker, value);
           picker.querySelector("small").textContent = "重新选择文件将替换现有附件";
         }
         return;
@@ -1512,6 +1511,8 @@ function populateMobileRouteOptions(customerId = "", projectId = "") {
 }
 
 function openDetail(item) {
+  $("#managerDetailFooter").replaceChildren();
+  $("#managerDetailFooter").hidden = true;
   state.detailItem = item;
   $("#detailTitle").textContent = item.title;
   $("#detailActionButton").innerHTML = '<i data-lucide="ellipsis"></i>';
@@ -1585,7 +1586,7 @@ function planValueText(value) {
 }
 
 function planDetailRows(fields) {
-  return fields.map(([label, value]) => `<div class="detail-row"><span>${h(label)}</span><strong>${h(planValueText(value))}</strong></div>`).join("");
+  return fields.map(([label, value]) => /运输节点/.test(label) && Array.isArray(value) ? window.ManagerPhotoUI.timeline({ timeline: value }) : /附件|现场图片|节点照片|凭证/.test(label) ? `<div class="detail-row"><span>${h(label)}</span>${window.ManagerPhotoUI.gallery(value)}</div>` : `<div class="detail-row"><span>${h(label)}</span><strong>${h(planValueText(value))}</strong></div>`).join("");
 }
 
 function renderPlanDetail(item) {
@@ -1630,6 +1631,10 @@ function renderRouteDetail(item) {
   ];
   setDetailEditAction("route", item.id, "编辑固定线路");
   $("#managerDetailContent").innerHTML = `<section class="detail-hero"><span>固定线路详情 · ${h(route.routeState || item.status)}</span><h2>${h(route.routeName || item.title)}</h2><p>${h(route.routeCode || route.id || item.id)} · ${h(route.origin || "-")} → ${h(route.destination || "-")}</p></section><section class="detail-section"><h3>线路完整资料</h3>${planDetailRows(fields)}</section><div class="detail-action-bar"><div><strong>需要调整线路资料？</strong><small>修改后将同步更新后台固定线路配置</small></div><button class="detail-edit-button" data-edit-route="${h(item.id)}" type="button"><i data-lucide="pencil"></i><span>编辑线路资料</span></button></div>`;
+  const routeActions = $("#managerDetailContent .detail-action-bar");
+  $("#managerDetailFooter").appendChild(routeActions);
+  $("#managerDetailFooter").hidden = false;
+
 }
 
 const dispatchFieldLabels = {
@@ -1647,9 +1652,7 @@ function dispatchDetailRows(raw, excluded = []) {
 }
 
 function renderDispatchTimeline(raw) {
-  const timeline = Array.isArray(raw.timeline) ? raw.timeline : [];
-  const rows = timeline.map((entry, index) => [`${String(index + 1).padStart(2, "0")} · ${entry.node || "运输节点"}`, [entry.time, entry.desc, ...(entry.photos || [])].filter(Boolean).join(" · ")]);
-  return `<section class="detail-section"><h3>运输节点记录</h3>${planDetailRows(rows.length ? rows : [["执行记录", "暂无运输节点"]])}</section>`;
+  return window.ManagerPhotoUI.timeline(raw);
 }
 
 function dispatchJobLocationRows(dispatch = {}, task = {}) {
@@ -2045,7 +2048,7 @@ function publishMobileRecord(moduleName, item) {
   window.AdminDataBridge.write(snapshot);
 }
 
-function saveEntry(event) {
+async function saveEntry(event) {
   event.preventDefault();
   const form = $("#managerEntryForm");
   if (!form.checkValidity()) { form.querySelectorAll("select:invalid").forEach((select) => select.classList.add("touched")); form.reportValidity(); return; }
@@ -2087,6 +2090,16 @@ function saveEntry(event) {
   }
   const duplicate = hasDuplicateRecord(state.entryModule, values);
   if (duplicate) { showToast(duplicate); return; }
+  try {
+    for (const input of form.querySelectorAll('input[type="file"]')) {
+      const file = input.files[0];
+      if (!file) { if (state.entryOriginalRaw?.[input.name]) values[input.name] = state.entryOriginalRaw[input.name]; continue; }
+      if (file.size > 10 * 1024 * 1024) { showToast("单个附件不能超过10 MB"); return; }
+      const id = `manager-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      await window.AttachmentStore.save(file, id);
+      values[input.name] = { id, name: file.name, type: file.type, size: file.size };
+    }
+  } catch (error) { showToast("附件保存失败，请重试"); return; }
   const dispatchWasPending = state.entryModule === "dispatch" && (!state.entryEditId || state.entryOriginalRaw?.status === "待派单");
   const item = createMobileRecord(state.entryModule, values);
   if (!item) return;
@@ -2131,7 +2144,7 @@ function renderMessages() {
   const list = items.filter((item) => state.messageFilter === "all" || item.type === state.messageFilter);
   $("#messageList").innerHTML = list.map((item) => `<button class="message-item ${item.unread ? "unread" : ""}" data-message-id="${item.id}" type="button"><span class="message-icon ${item.style}"><i data-lucide="${item.icon}"></i></span><span class="message-copy"><strong>${h(item.title)}</strong><p>${h(item.desc)}</p><time>${h(item.time)}</time></span></button>`).join("");
   if (!list.length) {
-    $("#messageList").innerHTML = '<div class="module-empty"><span><i data-lucide="bell-off"></i></span><strong>暂无消息</strong><small>此分类的新消息会显示在这里</small></div>';
+    $("#messageList").innerHTML = window.JikaEmptyStates.render("empty-messages");
   }
   refreshIcons();
 }
@@ -2156,11 +2169,17 @@ const moreFilters = $("#reportMoreFilters");
 const morePanel = $("#reportMorePanel");
 const pickerOptions = $("#reportPickerOptions");
 const reportScrim = $("#reportScrim");
+const draftDateRange = $("#reportDateRange").cloneNode(true);
+const draftCustomer = $("#reportCustomer").cloneNode(true);
+const draftThreshold = $("#reportThreshold").cloneNode(true);
 const draftProject = $("#reportProject").cloneNode(true);
 const draftRoute = $("#reportRoute").cloneNode(true);
 let activeReportPicker = null;
 
 function reportPickerSelect(id) {
+  if (id === "draftReportDateRange") return draftDateRange;
+  if (id === "draftReportCustomer") return draftCustomer;
+  if (id === "draftReportThreshold") return draftThreshold;
   if (id === "reportProject") return draftProject;
   if (id === "reportRoute") return draftRoute;
   return document.getElementById(id);
@@ -2173,16 +2192,15 @@ function syncReportPickers() {
     button.lastElementChild.textContent = label;
     button.title = label;
   });
-  moreFilters.classList.toggle("is-filtered", Boolean($("#reportProject").value || $("#reportRoute").value));
+  moreFilters.classList.toggle("is-filtered", Boolean($("#reportProject").value || $("#reportRoute").value || $("#reportCustomer").value || $("#reportDateRange").value !== "today" || $("#reportThreshold").value !== "70"));
 }
 
 function positionReportPopover(panel, anchor) {
   const bounds = $("#reportsView").getBoundingClientRect();
-  const rect = anchor.getBoundingClientRect();
   const { left, width } = $(".manager-shell").getBoundingClientRect();
   const toolbarBottom = $(".report-toolbar").getBoundingClientRect().bottom;
   const scrimTop = Math.max(bounds.top, toolbarBottom);
-  const top = Math.max(scrimTop, Math.min(rect.bottom + 6, bounds.bottom - 180));
+  const top = scrimTop;
   reportScrim.style.top = `${scrimTop - bounds.top}px`;
   panel.style.width = `${width}px`;
   panel.style.maxHeight = `${Math.max(0, bounds.bottom - top - 6)}px`;
@@ -2208,13 +2226,17 @@ function closeReportFilters(restoreFocus = false) {
 }
 
 function refreshDraftFilters() {
-  reportPopulateFilters($("#reportCustomer"), draftProject, draftRoute);
+  reportPopulateFilters(draftCustomer, draftProject, draftRoute);
   syncReportPickers();
 }
 
 moreFilters.addEventListener("click", () => {
   if (!morePanel.hidden) return closeReportFilters(true);
   closeReportPicker();
+  for (const [draft, id] of [[draftDateRange, "reportDateRange"], [draftCustomer, "reportCustomer"], [draftThreshold, "reportThreshold"]]) {
+    draft.replaceChildren(...Array.from($("#" + id).options, option => option.cloneNode(true)));
+    draft.value = $("#" + id).value;
+  }
   draftProject.replaceChildren(...Array.from($("#reportProject").options, (option) => option.cloneNode(true)));
   draftRoute.replaceChildren(...Array.from($("#reportRoute").options, (option) => option.cloneNode(true)));
   draftProject.value = $("#reportProject").value;
@@ -2246,7 +2268,8 @@ document.querySelectorAll("[data-report-picker]").forEach((button) => {
         select.value = option.value;
         closeReportPicker(true);
         if (!changed) return;
-        if (select === draftProject || select === draftRoute) {
+        if ([draftDateRange, draftCustomer, draftThreshold, draftProject, draftRoute].includes(select)) {
+          if (select === draftCustomer) { draftProject.value = ""; draftRoute.value = ""; }
           if (select === draftProject) draftRoute.value = "";
           refreshDraftFilters();
         } else {
@@ -2266,11 +2289,19 @@ $("#reportClosePicker").addEventListener("click", () => closeReportPicker(true))
 $("#reportCloseFilters").addEventListener("click", () => closeReportFilters(true));
 $("#reportResetFilters").addEventListener("click", () => {
   closeReportPicker();
+  draftDateRange.value = "today";
+  draftCustomer.value = "";
+  draftThreshold.value = "70";
   draftProject.value = "";
   draftRoute.value = "";
   refreshDraftFilters();
 });
 $("#reportApplyFilters").addEventListener("click", () => {
+  $("#reportDateRange").value = draftDateRange.value;
+  $("#reportCustomer").value = draftCustomer.value;
+  $("#reportThreshold").value = draftThreshold.value;
+  localStorage.setItem("container-logistics-dashboard-near-complete", draftThreshold.value);
+  reportPopulateFilters();
   $("#reportProject").value = draftProject.value;
   reportPopulateFilters();
   $("#reportRoute").value = draftRoute.value;
@@ -2383,7 +2414,7 @@ window.addEventListener("storage", (event) => {
   }
   if (event.key === window.FeedbackManager.STORAGE_KEY) {
     if (state.profilePage === "help" && $("#managerProfileSubpage").classList.contains("open")) {
-      $("#profileSubpageContent").innerHTML = helpPageMarkup();
+      $("#profileSubpageContent").innerHTML = feedbackPageMarkup();
       refreshIcons();
     }
     return;
@@ -2429,13 +2460,17 @@ $("#managerEntryForm").addEventListener("submit", saveEntry);
 $("#profileDiscardDialog").addEventListener("close", (event) => {
   if (event.currentTarget.returnValue === "discard") closeProfileSubpage(true);
 });
-$("#profileSubpageBack").addEventListener("click", () => closeProfileSubpage());
+$("#profileSubpageBack").addEventListener("click", () => {
+ if(state.profilePage==='feedback'&&document.querySelector('[data-feedback-back]')){document.querySelector('[data-feedback-back]').click();return;}
+ if(state.profilePage==='feedback'&&state.feedbackTab==='history'){state.feedbackTab='submit';$("#profileSubpageContent").innerHTML=feedbackPageMarkup();return;}
+ closeProfileSubpage();
+});
 
 $("#profileSubpageContent").addEventListener("click", (event) => {
   const feedbackTab = event.target.closest("[data-manager-feedback-tab]");
   if (feedbackTab) {
     state.feedbackTab = feedbackTab.dataset.managerFeedbackTab;
-    $("#profileSubpageContent").innerHTML = helpPageMarkup();
+    $("#profileSubpageContent").innerHTML = feedbackPageMarkup();
     $("#profileSubpageContent").scrollTop = 0;
     refreshIcons();
     return;
@@ -2503,7 +2538,7 @@ $("#profileSubpageContent").addEventListener("submit", async (event) => {
   const description = String(values.get("description") || "").trim();
   const contactPhone = String(values.get("contactPhone") || "").trim();
   if (description.length < 10) { form.elements.description.focus(); showToast("问题描述至少填写 10 个字"); return; }
-  if (!/^1[3-9]\d{9}$/.test(contactPhone)) { form.elements.contactPhone.focus(); showToast("请输入正确的 11 位联系电话"); return; }
+  if (contactPhone && !/^1[3-9]\d{9}$/.test(contactPhone)) { form.elements.contactPhone.focus(); showToast("请输入正确的 11 位联系电话"); return; }
   const validation = window.FeedbackManager.validateFiles(form.elements.attachments.files);
   if (validation.error) { showToast(validation.error); return; }
   const button = form.querySelector("[type='submit']");
@@ -2523,6 +2558,9 @@ $("#profileSubpageContent").addEventListener("submit", async (event) => {
       submitterAccount: managerProfile.account,
       submitterRole: managerProfile.role,
       submitterDepartment: managerProfile.department,
+      businessId,
+      moduleId: String(values.get("relatedId") || ""),
+      moduleLabel: relatedOption?.value ? relatedOption.textContent : "",
       categoryCode: String(values.get("categoryCode") || ""),
       description,
       contactPhone,
@@ -2534,7 +2572,7 @@ $("#profileSubpageContent").addEventListener("submit", async (event) => {
       deviceInfo: String(navigator.userAgent || "移动设备").slice(0, 120),
     });
     state.feedbackTab = "history";
-    $("#profileSubpageContent").innerHTML = helpPageMarkup();
+    $("#profileSubpageContent").innerHTML = feedbackPageMarkup();
     $("#profileSubpageContent").scrollTop = 0;
     refreshIcons();
     showToast(`反馈已提交：${feedbackId}`);
@@ -2578,7 +2616,7 @@ $("#managerEntryContent").addEventListener("change", (event) => {
     const picker = event.target.closest(".file-picker");
     const fileName = event.target.files?.[0]?.name;
     picker.classList.toggle("selected", Boolean(fileName));
-    picker.querySelector("strong").textContent = fileName || "点击选择附件";
+    picker.querySelector("strong").textContent = fileName ? "已选择附件" : "点击选择附件";
     picker.querySelector("small").textContent = fileName ? "附件已选择，可点击重新选择" : "支持 JPG、PNG、PDF，单个文件不超过 10 MB";
   }
 });
@@ -2648,158 +2686,7 @@ renderManagerProfile();
 refreshIcons();
 window.setInterval(() => { if (state.currentView === "reports") renderReports(); }, 15000);
 
-/* ===== 底部弹窗选择器组件 ===== */
-(function() {
-  // 创建弹窗 DOM
-  function createSelectSheet() {
-    if (document.getElementById('mobileSelectSheet')) return;
-    const overlay = document.createElement('div');
-    overlay.id = 'mobileSelectOverlay';
-    overlay.className = 'mobile-select-overlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:0;visibility:hidden;transition:opacity 0.3s;';
-    document.body.appendChild(overlay);
+document.addEventListener("click", event=>{if(event.target.closest("[data-feedback-cancel]"))closeProfileSubpage();});
+document.addEventListener("jika-empty-action",()=>{if(state.currentModule)renderModule();else renderReports();});
 
-    const sheet = document.createElement('div');
-    sheet.id = 'mobileSelectSheet';
-    sheet.className = 'mobile-select-sheet';
-    sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:9999;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:60vh;display:flex;flex-direction:column;overflow:hidden;';
-    sheet.innerHTML =
-      '<div class="mobile-select-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f1f5;">' +
-        '<strong id="mobileSelectTitle" style="font-size:16px;font-weight:600;color:#30324d;">请选择</strong>' +
-        '<button type="button" onclick="closeMobileSelect()" style="width:32px;height:32px;border:none;background:#f5f6fa;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
-        '</button>' +
-      '</div>' +
-      '<div id="mobileSelectOptions" class="mobile-select-options" style="flex:1;overflow-y:auto;padding:8px 0;-webkit-overflow-scrolling:touch;"></div>';
-    document.body.appendChild(sheet);
-
-    overlay.addEventListener('click', closeMobileSelect);
-  }
-
-  // 打开弹窗
-  window.openMobileSelect = function(options, title, currentValue, onSelect) {
-    createSelectSheet();
-    const overlay = document.getElementById('mobileSelectOverlay');
-    const sheet = document.getElementById('mobileSelectSheet');
-    const optionsEl = document.getElementById('mobileSelectOptions');
-    const titleEl = document.getElementById('mobileSelectTitle');
-
-    titleEl.textContent = title || '请选择';
-
-    optionsEl.innerHTML = options.map(function(opt) {
-      const val = (typeof opt === 'object' && opt !== null) ? opt[0] : opt;
-      const label = (typeof opt === 'object' && opt !== null) ? opt[1] : opt;
-      const isSelected = String(val) === String(currentValue);
-      const checkSvg = isSelected
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="#3a7afe" stroke-width="2.5" width="18" height="18"><path d="M20 6L9 17l-5-5"/></svg>'
-        : '';
-      return '<div class="mobile-select-option' + (isSelected ? ' selected' : '') + '"' +
-        ' data-value="' + String(val).replace(/"/g, '&quot;') + '"' +
-        ' style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;font-size:15px;color:' + (isSelected ? '#3a7afe' : '#30324d') + ';cursor:pointer;font-weight:' + (isSelected ? '600' : '400') + ';transition:background 0.2s;"' +
-        ' onclick="selectMobileOption(this)">' +
-        '<span>' + label + '</span>' + checkSvg +
-      '</div>';
-    }).join('');
-
-    window._mobileSelectCallback = onSelect;
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:1;visibility:visible;transition:opacity 0.3s;';
-    sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:9999;transform:translateY(0);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:60vh;display:flex;flex-direction:column;overflow:hidden;';
-  };
-
-  // 关闭弹窗
-  window.closeMobileSelect = function() {
-    const overlay = document.getElementById('mobileSelectOverlay');
-    const sheet = document.getElementById('mobileSelectSheet');
-    if (overlay) overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9998;opacity:0;visibility:hidden;transition:opacity 0.3s;';
-    if (sheet) sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;z-index:9999;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:60vh;display:flex;flex-direction:column;overflow:hidden;';
-    window._mobileSelectCallback = null;
-  };
-
-  // 选择选项
-  window.selectMobileOption = function(el) {
-    const value = el.dataset.value;
-    if (window._mobileSelectCallback) {
-      window._mobileSelectCallback(value);
-    }
-    closeMobileSelect();
-  };
-
-  // 初始化：把 select 转成自定义选择器
-  function initMobileSelects() {
-    document.querySelectorAll('.mobile-field select, select[data-mobile-select]').forEach(function(select) {
-      if (select.dataset.mobileSelectInit) return;
-      select.dataset.mobileSelectInit = 'true';
-
-      const field = select.closest('.mobile-field') || select.parentElement;
-      const labelEl = field ? field.querySelector('span') : null;
-      const label = labelEl ? labelEl.textContent : '请选择';
-      const display = document.createElement('div');
-      display.className = 'mobile-select-display';
-      display.style.cssText = 'flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:14px;color:#30324d;text-align:right;cursor:pointer;';
-
-      const updateDisplay = function() {
-        const selected = select.options[select.selectedIndex];
-        const text = selected && select.value ? selected.text : (selected && selected.value === '' ? selected.text : '请选择');
-        const isPlaceholder = !select.value;
-        display.innerHTML = '<span style="color:' + (isPlaceholder ? '#b5bac7' : '#30324d') + ';">' + text + '</span>' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="#97a1b3" stroke-width="2" width="16" height="16"><path d="M6 9l6 6 6-6"/></svg>';
-      };
-      updateDisplay();
-
-      display.addEventListener('click', function() {
-        const options = Array.from(select.options).map(function(opt) { return [opt.value, opt.text]; });
-        openMobileSelect(options, label, select.value, function(val) {
-          select.value = val;
-          select.dispatchEvent(new Event('change', { bubbles: true }));
-          updateDisplay();
-        });
-      });
-
-      select.parentElement.insertBefore(display, select);
-      select.style.cssText = 'position:absolute;opacity:0;pointer-events:none;width:0;height:0;';
-    });
-  }
-
-  // 页面加载后初始化
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMobileSelects);
-  } else {
-    initMobileSelects();
-  }
-
-  // 监听动态内容
-  const selectObserver = new MutationObserver(function(mutations) {
-    let needInit = false;
-    mutations.forEach(function(m) {
-      m.addedNodes.forEach(function(node) {
-        if (node.nodeType === 1 && (node.tagName === 'SELECT' || (node.querySelector && node.querySelector('select')))) {
-          needInit = true;
-        }
-      });
-    });
-    if (needInit) initMobileSelects();
-  });
-  selectObserver.observe(document.body, { childList: true, subtree: true });
-})();
-
-/* ===== 打开字段选择器（供 fieldMarkup 生成的自定义选择器调用） ===== */
-window.openFieldSelect = function(displayEl) {
-  const fieldName = displayEl.dataset.fieldName;
-  const fieldLabel = displayEl.dataset.fieldLabel || '请选择';
-  const select = displayEl.parentElement.querySelector('select[name="' + fieldName + '"]');
-  if (!select) return;
-
-  const options = Array.from(select.options).map(function(opt) { return [opt.value, opt.text]; });
-  const currentValue = select.value;
-
-  window.openMobileSelect(options, fieldLabel, currentValue, function(val) {
-    select.value = val;
-    select.dispatchEvent(new Event('change', { bubbles: true }));
-    // 更新显示
-    const selected = select.options[select.selectedIndex];
-    const textEl = displayEl.querySelector('.select-display-text');
-    if (textEl) textEl.textContent = selected ? selected.text : '请选择';
-    displayEl.style.color = val ? '#30324d' : '#b5bac7';
-  });
-};
-
+document.addEventListener("jika-feedback-view",e=>{$("#profileSubpageTitle").textContent=e.detail.view==="detail"?"反馈详情":"反馈记录";});

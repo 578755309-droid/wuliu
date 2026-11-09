@@ -1,0 +1,54 @@
+/* Override legacy !important hidden styles with one dialog open state. */
+#mobileSelectSheet.mobile-select-sheet {
+  position: fixed !important;
+  inset: auto auto var(--select-bottom, 0px) var(--select-left, 0px) !important;
+  width: var(--select-width, 100vw) !important;
+  max-width: 100vw !important;
+  height: auto !important;
+  max-height: min(60dvh, 520px) !important;
+  margin: 0 !important;
+  padding: 0 0 max(16px, env(safe-area-inset-bottom)) !important;
+  border: 0 !important;
+  border-radius: 20px 20px 0 0 !important;
+  color: #30324d !important;
+  background: #fff !important;
+  transform: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  display: none !important;
+}
+#mobileSelectSheet.mobile-select-sheet[open] { display: flex !important; flex-direction: column !important; }
+#mobileSelectSheet::backdrop { background: rgba(21, 32, 52, .35); }
+#mobileSelectSheet .mobile-select-header { flex: 0 0 auto; padding: 16px 20px !important; }
+#mobileSelectSheet .mobile-select-header button { display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; color: #30364f !important; }
+#mobileSelectSheet .mobile-select-header button svg, .order-filter-popover header button svg, .report-popover header button svg { display: block; width: 20px !important; height: 20px !important; fill: none !important; stroke: currentColor !important; stroke-width: 1.6 !important; }
+.order-filter-popover header button, .report-popover header button { display: flex; align-items: center; justify-content: center; }
+#mobileSelectSheet .mobile-select-options { flex: 1 1 auto !important; min-height: 0; overflow-y: auto !important; padding: 8px 0 !important; }
+#mobileSelectSheet .mobile-select-option { width: 100%; min-height: 48px; padding: 14px 20px !important; border: 0; background: #fff; text-align: left; font: inherit; font-size: 15px !important; }
+#mobileSelectSheet .mobile-select-option.selected { color: #0065ff !important; background: #f0f6ff !important; }
+#mobileSelectSheet .mobile-select-option.selected::after { content: '✓' !important; position: static !important; margin-left: auto; width: auto !important; height: auto !important; border: 0 !important; background: none !important; transform: none !important; color: #0065ff; }
+#mobileSelectSheet .mobile-select-option:disabled { color: #b5bac7 !important; cursor: default; }
+#mobileSelectSheet .mobile-select-option:focus-visible { outline: 2px solid #0065ff; outline-offset: -3px; }
+.mobile-select-display.placeholder .select-display-text { color: #b5bac7 !important; }
+.mobile-select-display[aria-disabled="true"] { opacity: .55; cursor: default; }
+.mobile-native-select { position: absolute !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; }
+.order-filter-toolbar { display: flex; align-items: center; gap: 4px; padding: 0 2px; margin-bottom: 10px; }
+.order-filter-toolbar button { display: flex; align-items: center; justify-content: center; gap: 5px; min-height: 44px; min-width: 0; padding: 0 4px; border: 0; background: transparent; color: #8b91a0; font: inherit; font-size: 13px; }
+.order-filter-toolbar [data-order-picker] { flex: 1; }
+.order-filter-toolbar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.order-filter-toolbar i { flex: none; border: 4px solid transparent; border-bottom: 0; border-top-color: currentColor; }
+.order-filter-toolbar [data-order-more] { width: 44px; margin-left: auto; flex: none; }
+.order-filter-toolbar svg { width: 20px; height: 20px; }
+.order-filter-toolbar .is-filtered, .order-filter-toolbar [aria-expanded="true"] { color: #0065ff; }
+.order-filter-popover { position: fixed; inset: auto; box-sizing: border-box; margin: 0; border: 1px solid #e2e8ef; border-radius: 12px; padding: 0 14px 14px; overflow: auto; overscroll-behavior: contain; color: #30324d; background: #fff; box-shadow: 0 12px 30px #263a5333; }
+.order-filter-popover header { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
+.order-filter-popover header button { width: 40px; height: 40px; border: 0; background: transparent; color: inherit; font-size: 24px; }
+.order-filter-row { display: flex; width: 100%; gap: 8px; align-items: center; min-height: 48px; padding: 8px 0; border: 0; border-bottom: 1px solid #edf0f5; background: #fff; color: inherit; font: inherit; font-size: 14px; text-align: left; }
+.order-filter-row span:first-child { flex: none; }
+.order-filter-row span:nth-child(2) { margin-left: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #929bb1; }
+.order-filter-popover footer { display: flex; gap: 10px; padding-top: 16px; }
+.order-filter-popover footer button { flex: 1; height: 44px; border: 1px solid #0065ff; border-radius: 12px; background: #fff; color: #0065ff; font: inherit; }
+.order-filter-popover footer button:last-child { background: #0065ff; color: #fff; }
+.report-popover, .order-filter-popover { border-top-left-radius: 0; border-top-right-radius: 0; }

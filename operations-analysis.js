@@ -232,7 +232,7 @@
     const body = document.querySelector("#operationsCustomerRanking");
     if (!body) return;
     const entries = [...grouped.values()].sort((a, b) => b.revenue - a.revenue);
-    body.innerHTML = entries.length ? entries.map((item) => `<tr><td><button class="analysis-link" data-analysis-customer="${escapeHtml(item.customerId)}" type="button">${escapeHtml(item.name)}</button></td><td>${item.count}</td><td class="finance-money-cell">${money(item.revenue)}</td><td class="finance-money-cell">${money(item.cost)}</td><td class="finance-money-cell ${item.profit < 0 ? "analysis-negative" : ""}">${money(item.profit)}</td><td>${item.pending ? `<span class="analysis-status pending">${item.pending}</span>` : "—"}</td></tr>`).join("") : `<tr><td colspan="6" class="no-data-cell">暂无符合条件的数据</td></tr>`;
+    body.innerHTML = entries.length ? entries.map((item) => `<tr><td><button class="analysis-link" data-analysis-customer="${escapeHtml(item.customerId)}" type="button">${escapeHtml(item.name)}</button></td><td>${item.count}</td><td class="finance-money-cell">${money(item.revenue)}</td><td class="finance-money-cell">${money(item.cost)}</td><td class="finance-money-cell ${item.profit < 0 ? "analysis-negative" : ""}">${money(item.profit)}</td><td>${item.pending ? `<span class="analysis-status pending">${item.pending}</span>` : "—"}</td></tr>`).join("") : window.JikaEmptyStates.table("empty-reports",6);
   }
 
   function renderOwnership(rows) {
@@ -263,7 +263,7 @@
     });
     const entries = [...grouped.values()].sort((a, b) => a.date.localeCompare(b.date));
     const max = Math.max(...entries.map((item) => item.revenue), 1);
-    target.innerHTML = entries.length ? entries.slice(-10).map((item) => `<div class="analysis-trend-row"><div><strong>${escapeHtml(item.date)}</strong><span>${item.count} 条运单 · ${money(item.profit)} 预估利润</span></div><i><b style="width:${Math.round(item.revenue / max * 100)}%"></b></i><strong>${money(item.revenue)}</strong></div>`).join("") : `<div class="analysis-empty">暂无趋势数据</div>`;
+    target.innerHTML = entries.length ? entries.slice(-10).map((item) => `<div class="analysis-trend-row"><div><strong>${escapeHtml(item.date)}</strong><span>${item.count} 条运单 · ${money(item.profit)} 预估利润</span></div><i><b style="width:${Math.round(item.revenue / max * 100)}%"></b></i><strong>${money(item.revenue)}</strong></div>`).join("") : window.JikaEmptyStates.render("empty-reports",{layout:"compact"});
   }
 
   function renderExceptions(rows) {
@@ -271,7 +271,7 @@
     if (!target) return;
     const entries = rows.filter((row) => ["pending", "partial", "negative", "unfinished"].includes(row.state)).sort((a, b) => ({ pending: 0, partial: 1, negative: 2, unfinished: 3 }[a.state] || 9) - ({ pending: 0, partial: 1, negative: 2, unfinished: 3 }[b.state] || 9)).slice(0, 8);
     document.querySelector("#operationsExceptionCount").textContent = `${entries.length} 条`;
-    target.innerHTML = entries.length ? entries.map((row) => `<button class="analysis-exception-row" data-analysis-waybill="${escapeHtml(row.waybillNo)}" type="button"><span class="analysis-exception-dot ${row.state}"></span><span><strong>${escapeHtml(row.waybillNo)}</strong><small>${escapeHtml(row.customerName)} · ${escapeHtml(row.costSource)}</small></span><em>${row.state === "negative" ? "负利润" : row.state === "unfinished" ? "未完成" : row.state === "partial" ? "部分补录" : "待补录"}</em></button>`).join("") : `<div class="analysis-empty">当前筛选下没有异常记录</div>`;
+    target.innerHTML = entries.length ? entries.map((row) => `<button class="analysis-exception-row" data-analysis-waybill="${escapeHtml(row.waybillNo)}" type="button"><span class="analysis-exception-dot ${row.state}"></span><span><strong>${escapeHtml(row.waybillNo)}</strong><small>${escapeHtml(row.customerName)} · ${escapeHtml(row.costSource)}</small></span><em>${row.state === "negative" ? "负利润" : row.state === "unfinished" ? "未完成" : row.state === "partial" ? "部分补录" : "待补录"}</em></button>`).join("") : window.JikaEmptyStates.render("empty-reports",{layout:"compact"});
   }
 
   function renderProfit() {
@@ -299,7 +299,7 @@
     document.querySelector("#waybillProfitResultText").textContent = `共 ${rows.length} 条明细，按完成日期归属；未完成运单显示为未归属日期`;
     const body = document.querySelector("#waybillProfitBody");
     if (!body) return;
-    body.innerHTML = rows.length ? rows.map((row) => `<tr><td>${escapeHtml(row.completionDate || "未完成")}</td><td><strong class="primary-text">${escapeHtml(row.waybillNo)}</strong>${row.source === "sample" ? `<small class="analysis-sample-tag">样例</small>` : ""}</td><td><strong>${escapeHtml(row.customerName)}</strong><small>${escapeHtml(row.projectName)}</small></td><td>${escapeHtml(row.routeName)}</td><td><span class="analysis-ownership ${row.ownership === "三方" ? "third" : row.ownership === "自营" ? "self" : "pending"}">${escapeHtml(row.ownership)}</span></td><td>${escapeHtml(row.vehicleNo)}<small>${escapeHtml(row.driverName)}</small></td><td><span class="dispatch-status ${row.status === "已完成" ? "completed" : row.status === "取消" ? "cancelled" : "moving"}">${escapeHtml(row.status)}</span></td><td class="finance-money-cell">${money(row.revenue)}</td><td class="finance-money-cell">${row.cost === null || row.cost === undefined ? `<span class="analysis-missing">待补录</span>` : money(row.cost)}</td><td class="finance-money-cell ${row.profit < 0 ? "analysis-negative" : ""}">${row.profit === null || row.profit === undefined ? `<span class="analysis-missing">待补录</span>` : money(row.profit)}</td><td>${row.margin === null || row.margin === undefined ? "—" : percentage(row.margin)}</td><td><span class="analysis-status ${row.state}">${row.state === "complete" ? "已完整" : row.state === "partial" ? "部分补录" : row.state === "negative" ? "负利润" : row.state === "unfinished" ? "未完成" : "待补录"}</span></td></tr>`).join("") : `<tr><td colspan="12" class="no-data-cell">暂无符合条件的利润明细</td></tr>`;
+    body.innerHTML = rows.length ? rows.map((row) => `<tr><td>${escapeHtml(row.completionDate || "未完成")}</td><td><strong class="primary-text">${escapeHtml(row.waybillNo)}</strong>${row.source === "sample" ? `<small class="analysis-sample-tag">样例</small>` : ""}</td><td><strong>${escapeHtml(row.customerName)}</strong><small>${escapeHtml(row.projectName)}</small></td><td>${escapeHtml(row.routeName)}</td><td><span class="analysis-ownership ${row.ownership === "三方" ? "third" : row.ownership === "自营" ? "self" : "pending"}">${escapeHtml(row.ownership)}</span></td><td>${escapeHtml(row.vehicleNo)}<small>${escapeHtml(row.driverName)}</small></td><td><span class="dispatch-status ${row.status === "已完成" ? "completed" : row.status === "取消" ? "cancelled" : "moving"}">${escapeHtml(row.status)}</span></td><td class="finance-money-cell">${money(row.revenue)}</td><td class="finance-money-cell">${row.cost === null || row.cost === undefined ? `<span class="analysis-missing">待补录</span>` : money(row.cost)}</td><td class="finance-money-cell ${row.profit < 0 ? "analysis-negative" : ""}">${row.profit === null || row.profit === undefined ? `<span class="analysis-missing">待补录</span>` : money(row.profit)}</td><td>${row.margin === null || row.margin === undefined ? "—" : percentage(row.margin)}</td><td><span class="analysis-status ${row.state}">${row.state === "complete" ? "已完整" : row.state === "partial" ? "部分补录" : row.state === "negative" ? "负利润" : row.state === "unfinished" ? "未完成" : "待补录"}</span></td></tr>`).join("") : window.JikaEmptyStates.table("empty-reports",12);
     window.lucide?.createIcons();
   }
 
@@ -403,7 +403,7 @@
       const result = typeof left === "number" && typeof right === "number" ? left - right : String(left).localeCompare(String(right), "zh-CN", { numeric: true });
       return result * (sort.direction === "asc" ? 1 : -1);
     });
-    body.innerHTML = ordered.length ? ordered.map((row) => `<tr>${columns.map(([key, , format]) => `<td>${format ? format(row[key], row) : escapeHtml(row[key] ?? "—")}</td>`).join("")}</tr>`).join("") : `<tr><td colspan="${columns.length}" class="no-data-cell">暂无符合条件的数据</td></tr>`;
+    body.innerHTML = ordered.length ? ordered.map((row) => `<tr>${columns.map(([key, , format]) => `<td>${format ? format(row[key], row) : escapeHtml(row[key] ?? "—")}</td>`).join("")}</tr>`).join("") : window.JikaEmptyStates.table("empty-reports",columns.length);
     head.querySelectorAll("[data-sort]").forEach((button) => button.addEventListener("click", () => onSort(button.dataset.sort)));
     head.querySelectorAll("[data-column-filter]").forEach((input) => input.addEventListener("input", () => {
       const key = input.dataset.columnFilter;
@@ -423,7 +423,7 @@
     if (!target) return;
     const entries = [...values].sort((a, b) => number(b[amountKey]) - number(a[amountKey])).slice(0, 8);
     const max = Math.max(...entries.map((entry) => number(entry[amountKey])), 1);
-    target.innerHTML = entries.length ? entries.map((entry) => `<div class="analysis-chart-row"><div><strong>${escapeHtml(entry[labelKey])}</strong><span>${formatter(entry[amountKey])}</span></div><i><b style="width:${Math.max(2, Math.round(number(entry[amountKey]) / max * 100))}%"></b></i></div>`).join("") : `<div class="analysis-empty">暂无数据</div>`;
+    target.innerHTML = entries.length ? entries.map((entry) => `<div class="analysis-chart-row"><div><strong>${escapeHtml(entry[labelKey])}</strong><span>${formatter(entry[amountKey])}</span></div><i><b style="width:${Math.max(2, Math.round(number(entry[amountKey]) / max * 100))}%"></b></i></div>`).join("") : window.JikaEmptyStates.render("empty-reports",{layout:"compact"});
   }
 
   function renderOperationsReport() {

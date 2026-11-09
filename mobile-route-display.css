@@ -1,0 +1,14 @@
+.mobile-address-route { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 6px; padding: 14px 10px; margin: 10px 0; width: 100%; min-width: 0; box-sizing: border-box; border-radius: 12px; background: #f5f7fa; }
+.mobile-address-route .mobile-address-stop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0; flex: 1 1 0; min-width: 0; text-align: center; }
+.mobile-address-route .mobile-address-stop > span { color: #606266; font-size: 13px; font-weight: 400; line-height: 18px; text-align: center; }
+.mobile-address-route .mobile-address-stop > strong { display: block; width: 100%; color: #303133; font-size: 16px; font-weight: 600; line-height: 22px; white-space: normal; overflow-wrap: anywhere; text-align: center; }
+.mobile-address-route .mobile-address-link { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; align-self: center; height: 34px; box-sizing: border-box; gap: 6px; padding: 0; flex: 0 0 32px; min-width: 32px; color: #0065ff; }
+.mobile-address-route .mobile-address-link:has(.mobile-address-distance) { flex-basis: auto; }
+.mobile-address-route .mobile-address-link > svg { display: block; width: 32px; height: 12px; flex-shrink: 0; overflow: visible; fill: currentColor; }
+.mobile-address-link svg path { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mobile-address-route .mobile-address-distance { color: #606266; font-size: 11px; font-weight: 400; line-height: 16px; white-space: nowrap; }
+.mobile-address-route[data-stops="3"] .mobile-address-stop > strong { font-size: 14px; line-height: 20px; }
+.list-field.mobile-route-field { display: flex !important; flex-direction: column !important; align-items: stretch !important; grid-column: 1 / -1; gap: 0 !important; min-width: 0; }
+.list-field.mobile-route-field > span { display: none; }
+.list-field.mobile-route-field > strong { display: block; width: 100%; min-width: 0; }
+.list-field.mobile-route-field .mobile-address-route { margin: 4px 0; }

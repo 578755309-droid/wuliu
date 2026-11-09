@@ -1,0 +1,1 @@
+(()=>{const keys=["roleUser", "department", "accountBadge", "notificationBell", "taskNotice", "warningShield", "systemInfo", "securityLock", "phone", "device", "loginHistory", "help", "roleShield"];window.ManagerGlassIcons={icon:key=>'<img class="manager-glass-svg" width="32" height="32" alt="" src="icons/settings/'+(keys.includes(key)?key:"systemInfo")+'.svg">'};})();

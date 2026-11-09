@@ -340,7 +340,7 @@
         <td><span class="dispatch-task-type" title="${escapeHtml(context.taskType)}">${escapeHtml(context.taskType)}</span></td>
         <td><span class="dispatch-task-date" title="${escapeHtml(context.plannedBerthingTime)}">${escapeHtml(context.plannedBerthingTime)}</span></td>
       </tr>`;
-      }).join("") : `<tr><td colspan="5"><div class="dispatch-management-empty"><i data-lucide="${tasks.length ? "search-x" : "circle-check-big"}" aria-hidden="true"></i><strong>${tasks.length ? "没有符合条件的任务" : "暂无待派单任务"}</strong></div></td></tr>`;
+      }).join("") : window.JikaEmptyStates.table(tasks.length ? "empty-search" : "empty-tasks",5);
     elements.taskCount.textContent = `${filteredTasks.length} 条待匹配`;
     elements.taskPageText.textContent = `第 ${taskPage} / ${totalPages} 页 · 共 ${filteredTasks.length} 条`;
     elements.taskPrev.disabled = taskPage <= 1;
@@ -481,7 +481,7 @@
         <span class="dispatch-capacity-vehicle"><strong title="${escapeHtml(vehicle.plateNo || "未绑定车辆")}">${escapeHtml(vehicle.plateNo || "未绑定车辆")}</strong><small title="${escapeHtml(trailer ? `${trailer.plateNo} · ${trailer.trailerType || "挂车"}` : "未绑定挂车")}">${escapeHtml(trailer ? `${trailer.plateNo} · ${trailer.trailerType || "挂车"}` : "未绑定挂车")}</small></span>
         <span class="dispatch-capacity-progress" title="${escapeHtml(taskLabel)}"><strong title="${escapeHtml(progressLabel)}">${escapeHtml(progressLabel)}</strong><span class="dispatch-capacity-progress-track" role="progressbar" aria-label="${escapeHtml(`${progressLabel} ${displayProgress.progress}%`)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${displayProgress.progress}"><i style="width:${displayProgress.progress}%"></i></span><b>${displayProgress.progress}%</b></span>
       </div>`;
-    }).join("")}` : '<div class="dispatch-management-empty capacity-empty"><i data-lucide="truck" aria-hidden="true"></i><strong>当前筛选下暂无运力</strong></div>';
+    }).join("")}` : window.JikaEmptyStates.render("empty-vehicles",{layout:"compact"});
     elements.capacityCount.textContent = `${filtered.length} 组运力`;
     elements.capacityPageText.textContent = `第 ${capacityPage} / ${totalPages} 页 · 共 ${filtered.length} 组`;
     elements.capacityPrev.disabled = capacityPage <= 1;

@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#f4f6fa" />
     <title>集卡司机端</title>
-    <link rel="stylesheet" href="mobile.css" />
+    <link rel="stylesheet" href="mobile.css?v=20261106-credential-svg" />
     <link rel="stylesheet" href="design-tokens.css" />
     <link rel="stylesheet" href="feedback-management.css" />
-    <link rel="stylesheet" href="../mobile-theme.css" />
-  </head>
+    <link rel="stylesheet" href="mobile-theme.css" />
+      <link rel="stylesheet" href="mobile-route-display.css?v=20261105-arrow-equal-height-center" />
+    <link rel="stylesheet" href="mini-program-shell.css?v=20261105-flush-footer" />
+    <link rel="stylesheet" href="mobile-select.css?v=20261106-svg-close" />
+  <link rel="stylesheet" href="empty-states.css?v=20261109"><link rel="stylesheet" href="ui-sync.css?v=20261109">
+</head>
   <body>
     <div class="phone-shell">
       <header class="mobile-header" id="mobileHeader">
@@ -65,16 +69,22 @@
             <div class="profile-order-stats" id="profileOrderStats"></div>
           </section>
 
+          <section class="profile-order-panel profile-expense-panel">
+            <header><div><strong>我的费用</strong></div><button data-expense-status="all" type="button">查看全部 <b>›</b></button></header>
+            <div class="profile-order-stats profile-expense-stats" id="profileExpenseStats"></div>
+          </section>
+
           </div>
 
           <section class="profile-menu-group profile-service-group">
             <h2>功能与服务</h2>
             <div class="profile-menu-list">
-              <button data-profile-page="expenses" type="button"><img class="profile-row-icon" src="../icons/profile/expenses.svg" width="24" height="24" alt="" /><span>费用上报</span><b>›</b></button>
-              <button class="profile-vehicle-row" data-profile-page="vehicle" type="button"><img class="profile-row-icon" src="../icons/profile/vehicle.svg" width="24" height="24" alt="" /><span>车辆信息</span><span class="profile-vehicle-summary"><strong id="profileVehiclePlate">暂未分配</strong><small id="profileVehicleDescription">暂无车辆信息</small></span><b>›</b></button>
-              <button data-call-service type="button"><img class="profile-row-icon" src="../icons/profile/service.svg" width="24" height="24" alt="" /><span>客服电话</span><small>400-800-6688</small><b>›</b></button>
-              <button data-profile-page="feedback" type="button"><img class="profile-row-icon" src="../icons/profile/feedback.svg" width="24" height="24" alt="" /><span>意见反馈</span><small>问题与建议</small><b>›</b></button>
-              <button data-profile-page="settings" type="button"><img class="profile-row-icon" src="../icons/profile/settings.svg" width="24" height="24" alt="" /><span>系统设置</span><b>›</b></button>
+              <button data-profile-page="expenses" type="button"><img class="profile-row-icon" src="icons/profile/expenses.svg" width="24" height="24" alt="" /><span>费用上报</span><b>›</b></button>
+              <button data-profile-page="vehicleRepairs" type="button"><img class="profile-row-icon" src="icons/profile/repair.svg" width="24" height="24" alt="" /><span>车辆报修</span><b>›</b></button>
+              <button class="profile-vehicle-row" data-profile-page="vehicle" type="button"><img class="profile-row-icon" src="icons/profile/vehicle.svg" width="24" height="24" alt="" /><span>车辆信息</span><span class="profile-vehicle-summary"><strong id="profileVehiclePlate">暂未分配</strong><small id="profileVehicleDescription">暂无车辆信息</small></span><b>›</b></button>
+              <button data-call-service type="button"><img class="profile-row-icon" src="icons/profile/service.svg" width="24" height="24" alt="" /><span>客服电话</span><small>400-800-6688</small><b>›</b></button>
+              <button data-profile-page="feedback" type="button"><img class="profile-row-icon" src="icons/profile/feedback.svg" width="24" height="24" alt="" /><span>意见反馈</span><small>问题与建议</small><b>›</b></button>
+              <button data-profile-page="settings" type="button"><img class="profile-row-icon" src="icons/profile/settings.svg" width="24" height="24" alt="" /><span>系统设置</span><b>›</b></button>
             </div>
           </section>
           <p class="version-text">集卡司机端 · 原型版 1.0</p>
@@ -159,7 +169,8 @@
       <div class="toast" id="toast" role="status"></div>
     </div>
 
-    <script src="vendor/lucide.min.js"></script>
+    <script src="empty-states.js?v=20261109"></script>
+<script src="vendor/lucide.min.js"></script>
     <script src="capacity-ownership.js"></script>
     <script src="dispatch-store.js"></script>
     <script src="admin-data-bridge.js"></script>
@@ -168,7 +179,14 @@
     <script src="photo-requirements.js"></script>
     <script src="expense-report.js"></script>
     <script src="feedback-management.js"></script>
-    <script src="mobile.js"></script>
+    <script src="mobile-route-display.js"></script>
+    <script src="expense-visuals.js?v=20261106-glass-icons"></script>
+    <script src="driver-upload-ui.js?v=20261105-unified-upload"></script>
+    <script src="mobile-select.js?v=20261106-svg-close"></script>
+    <script src="driver-order-filters.js?v=20261106-svg-close"></script>
+    <script src="mobile-feedback-ui.js?v=20261109"></script>
+<script src="mobile.js?v=20261106-credential-svg"></script>
     <script src="platform-config.js"></script>
+    <script src="mini-program-shell.js?v=20261105-flush-footer"></script>
   </body>
 </html>
